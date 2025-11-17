@@ -219,7 +219,6 @@
     background-color: #F7F8FC;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.589);
     margin-bottom: 1vh;
-    margin-top: 4vh;
     border-radius: 10px;
 }
 
@@ -263,8 +262,21 @@
     border-radius: 10px;
     padding: 24px;
     margin-top: 25px;
-    width: 147vh;
+    width: 147vh; 
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.589);
+    height: auto; 
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container-integrated {
+    width: 100%;
+    height: 50vh;  
+    display: block;
+    background-color: transparent; 
+    box-shadow: none; 
+    padding: 0;
+    margin: 0;
 }
 
 .dashboard-card-header h2 {

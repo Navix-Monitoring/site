@@ -92,10 +92,9 @@
                         <span class="kpi-subtext">Média de <span class="kpi-valor">75°C</span></span>
                     </div>
                 </div>
-
                 <section class="dashboard-card">
                     <div class="dashboard-card-header"
-                        style="display: flex; justify-content: space-between; align-items: center;">
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h2>Análise Top 5 Lotes</h2>
                         <select id="escolhaVisu" class="escolhaVisu">
                             <option value="cpu">CPU</option>
@@ -105,67 +104,12 @@
                             <option value="processo">Processo</option>
                         </select>
                     </div>
-                    <table class="heatmap-table">
-                        <thead>
-                            <tr>
-                                <th>Lote</th>
-                                <th>Média CPU (Uso)</th>
-                                <th>Média Temp. (°C)</th>
-                                <th>Média RAM (Uso)</th>
-                                <th>Uso Disco (%)</th>
-                                <th>Qtd. Média de Processos</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyAnalise">
-                            <tr>
-                                <td><strong>Lote A048</strong></td>
-                                <td class="hot">88%</td>
-                                <td class="hot">75°</td>
-                                <td class="medium">70%</td>
-                                <td class="medium">50%</td>
-                                <td class="cold">120</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Lote A012</strong></td>
-                                <td class="hot">85%</td>
-                                <td class="medium">68°</td>
-                                <td class="medium">72%</td>
-                                <td class="hot">98%</td>
-                                <td class="hot">300</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Lote A031</strong></td>
-                                <td class="hot">82%</td>
-                                <td class="hot">72°</td>
-                                <td class="medium">65%</td>
-                                <td class="hot">95%</td>
-                                <td class="hot">300</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Lote A009</strong></td>
-                                <td class="hot">81%</td>
-                                <td class="medium">65°</td>
-                                <td class="cold">40%</td>
-                                <td class="cold">30%</td>
-                                <td class="medium">230</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Lote A055</strong></td>
-                                <td class="hot">79%</td>
-                                <td class="medium">66°</td>
-                                <td class="cold">38%</td>
-                                <td class="cold">25%</td>
-                                <td class="hot">300</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
 
-                <div class="container-filho">
-                    <div class="chart-container" style="display: block;">
+                    <div class="chart-container-integrated">
                         <canvas id="evolucao"></canvas>
                     </div>
-                </div>
+                    
+                </section>
 
                 <div class="container">
                     <div class="container-filho">
@@ -224,60 +168,6 @@
     document.addEventListener('DOMContentLoaded', () => {
 
         const COR_CONTEXTO = '#B0B0B0';
-
-        function aplicarDestaqueTabela(piorLoteLabel) {
-            const tabelaBody = document.getElementById('tbodyAnalise');
-            if (!tabelaBody) return;
-
-            const todasAsLinhas = tabelaBody.querySelectorAll('tr');
-
-            todasAsLinhas.forEach(linha => {
-                const strongTag = linha.querySelector('strong');
-
-                if (strongTag) {
-                    const nomeLoteNaLinha = strongTag.innerText;
-
-                    if (nomeLoteNaLinha === piorLoteLabel) {
-                        linha.classList.add('lote-destaque');
-                    } else {
-                        linha.classList.remove('lote-destaque');
-                    }
-                }
-            });
-        }
-
-        function ordenarTabela(metrica) {
-            const tbody = document.getElementById('tbodyAnalise');
-
-            const linhas = Array.from(tbody.querySelectorAll('tr'));
-
-            const indiceColuna = {
-                'cpu': 1,
-                'temp': 2,
-                'ram': 3,
-                'disco': 4,
-                'processo': 5
-            };
-
-            const i = indiceColuna[metrica];
-
-            const getValorCelula = (linha) => {
-                const celula = linha.querySelectorAll('td')[i];
-                if (!celula) return -Infinity;
-
-                const valor = parseFloat(celula.innerText.replace('°', '').replace('%', ''));
-                return isNaN(valor) ? -Infinity : valor;
-            };
-
-            linhas.sort((linhaA, linhaB) => {
-                const valorA = getValorCelula(linhaA);
-                const valorB = getValorCelula(linhaB);
-
-                return valorB - valorA;
-            });
-
-            linhas.forEach(linha => tbody.appendChild(linha));
-        }
 
         function prepararDatasetsDestaque(lotes, piorLoteLabel) {
             const datasetsFinais = [];
@@ -365,7 +255,7 @@
             cpu: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução Uso CPU (Top 5)',
+                    titulo: 'Evolução Uso CPU',
                     eixoY: 'Uso CPU (%)',
                     lotes: [
                         { label: 'Lote A048', data: [88, 85, 87, 82, 90, 88, 86], borderColor: 'red' },
@@ -379,7 +269,7 @@
             temp: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução Temperatura (Top 5)',
+                    titulo: 'Evolução Temperatura',
                     eixoY: 'Temp. (°C)',
                     lotes: [
                         { label: 'Lote A048', data: [75, 72, 77, 73, 75, 78, 76], borderColor: 'red' },
@@ -393,7 +283,7 @@
             ram: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução RAM (Top 5)',
+                    titulo: 'Evolução RAM',
                     eixoY: 'Uso RAM (%)',
                     lotes: [
                         { label: 'Lote A012', data: [72, 70, 71, 73, 75, 74, 72], borderColor: 'red' },
@@ -407,7 +297,7 @@
             disco: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução Uso de Disco (Top 5)',
+                    titulo: 'Evolução Uso de Disco',
                     eixoY: 'Uso Disco (%)',
                     lotes: [
                         { label: 'Lote A012', data: [98, 97, 98, 99, 98, 97, 98], borderColor: 'red' },
@@ -421,7 +311,7 @@
             processo: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução Média de Processos (Top 5)',
+                    titulo: 'Evolução Média de Processos',
                     eixoY: 'Qtd. Processos',
                     lotes: [
                         { label: 'Lote A012', data: [300, 310, 290, 305, 295, 300, 310], borderColor: 'red' },
@@ -463,7 +353,7 @@
                 ],
                 titulo: 'Uso do sistema - Temperatura'
             },
-            processos: {
+            processo: {
                 labels: ['Processos'],
                 data: [
                     [150, 210, 240, 270, 310]
@@ -521,7 +411,6 @@
 
                     const piorLoteLabel = encontrarPiorLote(dados.lotes);
                     const novosDatasets = prepararDatasetsDestaque(dados.lotes, piorLoteLabel);
-                    aplicarDestaqueTabela(piorLoteLabel);
 
                     graficoEvolucao.data.datasets = novosDatasets;
                     graficoEvolucao.data.labels = dados.labels;
@@ -601,7 +490,6 @@
 
             const piorLoteLabelInicial = encontrarPiorLote(dadosIniciais.lotes);
             const datasetsIniciais = prepararDatasetsDestaque(dadosIniciais.lotes, piorLoteLabelInicial);
-            aplicarDestaqueTabela(piorLoteLabelInicial);
 
             graficoEvolucao = new Chart(ctxEvolucao, {
                 type: 'bar',
