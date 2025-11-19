@@ -68,7 +68,7 @@
             </a>
 
             <div class="topoTitulo">
-                <h1 class="tituloLote" id="tituloLote">Lote: undefined - 10 carros</h1>
+                <h1 class="tituloLote">Bateria dos Modelos Gerais</h1>
                 <select class="selectData" id="selectPeriodo">
                     <option value="semana" selected>Semana</option>
                     <option value="mes">Mês</option>
@@ -76,8 +76,48 @@
                 </select>
             </div>
 
-            <!-- KPIS -->
+            <!-- RANKING -->
             <main class="card">
+                
+                <div id="alertas" class="flex flex-col gap-4 mt-5 mb-10 bg-[#F7F8FC] p-[10px] rounded-lg">
+                    <div
+                        class="flex justify-between items-center bg-red-100 border-l-4 border-red-600 p-4 rounded-lg shadow-sm">
+                        <div>
+                            <p class="text-red-800 font-semibold text-lg">Modelo LT-B72K</p>
+                            <p class="text-red-700">Alerta crítico: eria fora do padrão</p>
+                        </div>
+                        <i class="fa-solid fa-triangle-exclamation text-red-600 text-2xl"></i>
+                    </div>
+
+                    <div
+                        class="flex justify-between items-center bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-lg shadow-sm">
+                        <div>
+                            <p class="text-yellow-800 font-semibold text-lg">Modelo LT-C19P</p>
+                            <p class="text-yellow-700">Atenção: Bateria merece atenção</p>
+                        </div>
+                        <i class="fa-solid fa-circle-exclamation text-yellow-600 text-2xl"></i>
+                    </div>
+
+                    <div
+                        class="flex justify-between items-center bg-orange-100 border-l-4 border-orange-500 p-4 rounded-lg shadow-sm">
+                        <div>
+                            <p class="text-orange-800 font-semibold text-lg">Modelo LT-D58X</p>
+                            <p class="text-orange-700">Aviso: temperatura da Bateria alta</p>
+                        </div>
+                        <i class="fa-solid fa-exclamation text-orange-600 text-2xl"></i>
+                    </div>
+
+                    <div
+                        class="flex justify-between items-center bg-orange-100 border-l-4 border-orange-500 p-4 rounded-lg shadow-sm">
+                        <div>
+                            <p class="text-orange-800 font-semibold text-lg">Modelo LT-H56N</p>
+                            <p class="text-orange-700">Aviso: Bateria alta</p>
+                        </div>
+                        <i class="fa-solid fa-exclamation text-orange-600 text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- KPIs -->
                 <div id="KPIS" class="kpis">
                     <div class="kpi">
                         <p class="tituloKPI">Estado de Saúde da Bateria</p> <br>
