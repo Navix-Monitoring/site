@@ -10,6 +10,8 @@
     <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/dashKeniti.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
     <script src="../js/sessao.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
     <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
@@ -74,28 +76,28 @@
                     <div class="kpi">
                         <span class="kpi-title">PIOR LOTE (CPU)</span>
                         <h2 class="kpi-value">Lote A048</h2>
-                        <span class="kpi-subtext">Média de <span class="kpi-valor">88%</span> de uso</span>
+                        <span class="kpi-subtext">Mediana de <span class="kpi-valor">88%</span> de uso</span>
                     </div>
                     <div class="kpi">
                         <span class="kpi-title">PIOR LOTE (PROCESSOS)</span>
                         <h2 class="kpi-value">Lote A012</h2>
-                        <span class="kpi-subtext">Média de <span class="kpi-valor">920</span> processos</span>
+                        <span class="kpi-subtext">Mediana de <span class="kpi-valor">920</span> processos</span>
                     </div>
                     <div class="kpi">
                         <span class="kpi-title">PIOR LOTE (USO DE DISCO)</span>
                         <h2 class="kpi-value">Lote A012</h2>
-                        <span class="kpi-subtext">Uso: <span class="kpi-valor">98%</span></span>
+                        <span class="kpi-subtext">Mediana de <span class="kpi-valor">98%</span> de uso</span>
                     </div>
                     <div class="kpi">
                         <span class="kpi-title">PIOR LOTE (TEMP)</span>
                         <h2 class="kpi-value">Lote A048</h2>
-                        <span class="kpi-subtext">Média de <span class="kpi-valor">75°C</span></span>
+                        <span class="kpi-subtext">Mediana de <span class="kpi-valor">75°C</span></span>
                     </div>
                 </div>
                 <section class="dashboard-card">
                     <div class="dashboard-card-header"
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h2>Análise Top 5 Lotes</h2>
+                        <h2>Análise Top 5 Piores Lotes</h2>
                         <select id="escolhaVisu" class="escolhaVisu">
                             <option value="cpu">CPU</option>
                             <option value="temp">Temp</option>
@@ -108,7 +110,7 @@
                     <div class="chart-container-integrated">
                         <canvas id="evolucao"></canvas>
                     </div>
-                    
+
                 </section>
 
                 <div class="container">
@@ -362,6 +364,8 @@
             }
         };
 
+        const LIMITES = { cpu: 85, ram: 80, disco: 90, temp: 70, processo: 250 };
+
         function atualizarGraficos() {
             const metrica = document.getElementById('escolhaVisu').value;
 
@@ -416,6 +420,11 @@
                     graficoEvolucao.data.labels = dados.labels;
                     graficoEvolucao.options.plugins.title.text = dados.titulo;
                     graficoEvolucao.options.scales.y.title.text = dados.eixoY;
+
+                    const novoLimite = LIMITES[metrica] || 0;
+                    graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMin = novoLimite;
+                    graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMax = novoLimite;
+
                     graficoEvolucao.update();
                 } else {
                     console.warn(`Dados não encontrados.`);
@@ -501,6 +510,25 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
+                        annotation: {
+                            annotations: {
+                                linhaIdeal: {
+                                    type: 'line',
+                                    yMin: 85,
+                                    yMax: 85,
+                                    borderColor: 'green',
+                                    borderWidth: 2,
+                                    borderDash: [10, 5],
+                                    label: {
+                                        display: true,
+                                        content: 'Limite Ideal',
+                                        position: 'end',
+                                        backgroundColor: 'rgba(0,0,0,0.5)',
+                                        color: 'white'
+                                    }
+                                }
+                            }
+                        },
                         legend: { position: 'top', labels: { color: 'black' } },
                         title: { display: true, text: dadosIniciais.titulo, color: 'black', font: { size: 18, weight: 'bold' } }
                     },
