@@ -75,23 +75,23 @@
                 <div class="kpis">
                     <div class="kpi">
                         <span class="kpi-title">PIOR LOTE (CPU)</span>
-                        <h2 class="kpi-value">Lote A048</h2>
-                        <span class="kpi-subtext">Mediana de <span class="kpi-valor">88%</span> de uso</span>
+                        <h2 class="kpi-value" id="kpiCPUlote">Lote A048</h2>
+                        <span class="kpi-subtext">Mediana de <span class="kpi-valor" id="kpiCPU">88%</span> de uso</span>
                     </div>
                     <div class="kpi">
                         <span class="kpi-title">PIOR LOTE (PROCESSOS)</span>
-                        <h2 class="kpi-value">Lote A012</h2>
-                        <span class="kpi-subtext">Mediana de <span class="kpi-valor">920</span> processos</span>
+                        <h2 class="kpi-value" id="kpiProcessoslote">Lote A012</h2>
+                        <span class="kpi-subtext">Mediana de <span class="kpi-valor" id="kpiProcessos">920</span> processos</span>
                     </div>
                     <div class="kpi">
                         <span class="kpi-title">PIOR LOTE (USO DE DISCO)</span>
-                        <h2 class="kpi-value">Lote A012</h2>
-                        <span class="kpi-subtext">Mediana de <span class="kpi-valor">98%</span> de uso</span>
+                        <h2 class="kpi-value" id="kpiDiscolote">Lote A012</h2>
+                        <span class="kpi-subtext">Mediana de <span class="kpi-valor" id="kpiDisco">98%</span> de uso</span>
                     </div>
                     <div class="kpi">
                         <span class="kpi-title">PIOR LOTE (TEMP)</span>
-                        <h2 class="kpi-value">Lote A048</h2>
-                        <span class="kpi-subtext">Mediana de <span class="kpi-valor">75°C</span></span>
+                        <h2 class="kpi-value" id="kpiTemplote">Lote A048</h2>
+                        <span class="kpi-subtext">Mediana de <span class="kpi-valor" id="kpiTemp">75°C</span></span>
                     </div>
                 </div>
                 <section class="dashboard-card">
@@ -169,6 +169,15 @@
 
     document.addEventListener('DOMContentLoaded', () => {
 
+        var kpicpu_lote = document.getElementById("kpiCPUlote").innerHTML = "Lote 1";
+        var kpiproce_lote = document.getElementById("kpiProcessoslote").innerHTML = "Lote 2";
+        var kpidisc_lote = document.getElementById("kpiDiscolote").innerHTML = "Lote 3";
+        var kpitemp_lote = document.getElementById("kpiTemplote").innerHTML = "Lote 4";
+        var kpicpu_valor = document.getElementById("kpiCPU").innerHTML = "v1";
+        var kpiproce_valor = document.getElementById("kpiProcessos").innerHTML = "v2";
+        var kpidisc_valor = document.getElementById("kpiDisco").innerHTML = "v3";
+        var kpitemp_valor = document.getElementById("kpiTemp").innerHTML = "v4";
+
         const COR_CONTEXTO = '#B0B0B0';
 
         function prepararDatasetsDestaque(lotes, piorLoteLabel) {
@@ -190,7 +199,7 @@
 
             return datasetsFinais;
         }
-
+        
         function encontrarPiorLote(lotes) {
             let piorLoteLabel = null;
             let maiorMedia = -Infinity;

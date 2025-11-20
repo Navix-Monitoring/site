@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 * {
-    font-family: Roboto;
+    font-family: "Inter";
 }
 
 .tituloLote {
@@ -13,7 +13,8 @@
 .topoTitulo {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    margin-left: 40px;
 }
 
 .selectData {
@@ -152,7 +153,6 @@
     padding: 20px;
     height: fit-content;
     width: 100%;
-    box-shadow: rgba(0, 0, 0, 0.342) 10px 10px 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
