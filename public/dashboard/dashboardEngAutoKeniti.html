@@ -252,7 +252,7 @@
             disco: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Visão Agregada: Disco (%) x Qtd. Média de Processos',
+                    titulo: 'Visão Pior Lote: Disco (%) x Qtd. Média de Processos',
                     disco: [3, 5, 2, 4, 6, 3, 4],
                     processos: [5, 7, 9, 6, 8, 4, 5]
                 }
@@ -260,7 +260,7 @@
             processo: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Visão Agregada: Qtd. Média de Processos x Disco (%)',
+                    titulo: 'Visão Pior Lote: Qtd. Média de Processos x Disco (%)',
                     processos: [3, 5, 2, 4, 6, 3, 4],
                     disco: [5, 7, 9, 6, 8, 4, 5]
                 }
@@ -346,35 +346,35 @@
                 data: [
                     [10, 8, 3]
                 ],
-                titulo: 'Uso do sistema - CPU'
+                titulo: 'Uso do Sistema Pior Lote - CPU'
             },
             ram: {
                 labels: ['RAM'],
                 data: [
                     [9, 3, 7]
                 ],
-                titulo: 'Uso do sistema - RAM'
+                titulo: 'Uso do Sistema Pior Lote - RAM'
             },
             disco: {
                 labels: ['Disco'],
                 data: [
                     [12, 1, 6]
                 ],
-                titulo: 'Uso do sistema - Disco'
+                titulo: 'Uso do Sistema Pior Lote - Disco'
             },
             temp: {
                 labels: ['Temperatura'],
                 data: [
                     [60, 65, 70, 72, 78]
                 ],
-                titulo: 'Uso do sistema - Temperatura'
+                titulo: 'Uso do Sistema Pior Lote - Temperatura'
             },
             processo: {
                 labels: ['Processos'],
                 data: [
                     [150, 210, 240, 270, 310]
                 ],
-                titulo: 'Uso do sistema - Processos'
+                titulo: 'Uso do Sistema Pior Lote - Processos'
             }
         };
 
@@ -575,7 +575,7 @@
                 options: {
                     indexAxis: 'x',
                     plugins: {
-                        title: { display: true, text: 'Uso do sitema do modelo', color: 'black', font: { size: 18, weight: 'bold' }, padding: { bottom: 20 } },
+                        title: { display: true, text: 'Uso do Sistema Pior Lote - CPU', color: 'black', font: { size: 18, weight: 'bold' }, padding: { bottom: 20 } },
                         legend: { position: 'top', labels: { color: 'black' } }
                     },
                     scales: {
