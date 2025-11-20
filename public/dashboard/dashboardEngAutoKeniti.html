@@ -23,7 +23,7 @@
 
     <div class="flex flex-row w-full">
         <div
-            class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600 fixed top-0 left-0">
+            class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-350 fixed top-0 left-0">
             <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10">
             <div id="imagemUsuarioNavbar">
                 <div class="rounded-md w-20 h-20 mb-2"
@@ -71,33 +71,35 @@
             </div>
 
             <main class="card">
-
-                <div class="kpis">
-                    <div class="kpi">
-                        <span class="kpi-title">PIOR LOTE (CPU)</span>
-                        <h2 class="kpi-value" id="kpiCPUlote">Lote A048</h2>
-                        <span class="kpi-subtext">Mediana de <span class="kpi-valor" id="kpiCPU">88%</span> de uso</span>
+                <div class="kpi-unified-card">
+                    <h2 class="kpi-section-title">PIORES LOTES - MEDIANAS</h2>
+                    <div class="kpi-row">
+                    <div class="kpi-column">
+                        <span class="kpi-title-top">Uso da CPU</span>
+                        <h2 id="kpiCPUlote" class="kpi-batch-name">Lote 1</h2>
+                        <span class="kpi-subtext"><span id="kpiCPU" class="kpi-valor">v1%</span></span>
                     </div>
-                    <div class="kpi">
-                        <span class="kpi-title">PIOR LOTE (PROCESSOS)</span>
-                        <h2 class="kpi-value" id="kpiProcessoslote">Lote A012</h2>
-                        <span class="kpi-subtext">Mediana de <span class="kpi-valor" id="kpiProcessos">920</span> processos</span>
+                    <div class="kpi-column">
+                        <span class="kpi-title-top">Processos abertos</span>
+                        <h2 id="kpiProcessoslote" class="kpi-batch-name">Lote 2</h2>
+                        <span class="kpi-subtext"><span id="kpiProcessos" class="kpi-valor">v2</span></span>
                     </div>
-                    <div class="kpi">
-                        <span class="kpi-title">PIOR LOTE (USO DE DISCO)</span>
-                        <h2 class="kpi-value" id="kpiDiscolote">Lote A012</h2>
-                        <span class="kpi-subtext">Mediana de <span class="kpi-valor" id="kpiDisco">98%</span> de uso</span>
+                    <div class="kpi-column">
+                        <span class="kpi-title-top">Uso de disco</span>
+                        <h2 id="kpiDiscolote" class="kpi-batch-name">Lote 3</h2>
+                        <span class="kpi-subtext"><span id="kpiDisco" class="kpi-valor">v3%</span></span>
                     </div>
-                    <div class="kpi">
-                        <span class="kpi-title">PIOR LOTE (TEMP)</span>
-                        <h2 class="kpi-value" id="kpiTemplote">Lote A048</h2>
-                        <span class="kpi-subtext">Mediana de <span class="kpi-valor" id="kpiTemp">75°C</span></span>
+                    <div class="kpi-column">
+                        <span class="kpi-title-top">Temperatura CPU</span>
+                        <h2 id="kpiTemplote" class="kpi-batch-name">Lote 4</h2>
+                        <span class="kpi-subtext"><span id="kpiTemp" class="kpi-valor">v4°C</span></span>
+                    </div>
                     </div>
                 </div>
                 <section class="dashboard-card">
                     <div class="dashboard-card-header"
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h2>Análise Top 5 Piores Lotes</h2>
+                        <h2>Análise 5 Piores Lotes</h2>
                         <select id="escolhaVisu" class="escolhaVisu">
                             <option value="cpu">CPU</option>
                             <option value="temp">Temp</option>
@@ -173,10 +175,10 @@
         var kpiproce_lote = document.getElementById("kpiProcessoslote").innerHTML = "Lote 2";
         var kpidisc_lote = document.getElementById("kpiDiscolote").innerHTML = "Lote 3";
         var kpitemp_lote = document.getElementById("kpiTemplote").innerHTML = "Lote 4";
-        var kpicpu_valor = document.getElementById("kpiCPU").innerHTML = "v1";
+        var kpicpu_valor = document.getElementById("kpiCPU").innerHTML = "v1%";
         var kpiproce_valor = document.getElementById("kpiProcessos").innerHTML = "v2";
-        var kpidisc_valor = document.getElementById("kpiDisco").innerHTML = "v3";
-        var kpitemp_valor = document.getElementById("kpiTemp").innerHTML = "v4";
+        var kpidisc_valor = document.getElementById("kpiDisco").innerHTML = "v3%";
+        var kpitemp_valor = document.getElementById("kpiTemp").innerHTML = "v4°C";
 
         const COR_CONTEXTO = '#B0B0B0';
 
@@ -193,13 +195,16 @@
                     data: loteOriginal.data,
                     borderColor: corDesteLote,
                     backgroundColor: corDesteLote,
-                    fill: false
+                    fill: false,
+                    borderRadius: 6,
+                    categoryPercentage: 0.8,
+                    barPercentage: 0.85,
                 });
             });
 
             return datasetsFinais;
         }
-        
+
         function encontrarPiorLote(lotes) {
             let piorLoteLabel = null;
             let maiorMedia = -Infinity;
@@ -223,7 +228,7 @@
             cpu: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Visão Agregada: CPU (%) x Temp. CPU (°C)',
+                    titulo: 'Visão Pior Lote: CPU (%) x Temp. CPU (°C)',
                     cpu: [3, 5, 2, 4, 6, 3, 4],
                     temp: [5, 7, 9, 6, 8, 4, 5]
                 }
@@ -231,7 +236,7 @@
             temp: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Visão Agregada: Temp. CPU (°C) x CPU (%)',
+                    titulo: 'Visão Pior Lote: Temp. CPU (°C) x CPU (%)',
                     temp: [3, 5, 2, 4, 6, 3, 4],
                     cpu: [5, 7, 9, 6, 8, 4, 5]
                 }
@@ -239,7 +244,7 @@
             ram: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Visão Agregada: RAM (%) x Qtd. Média de Processos',
+                    titulo: 'Visão Pior Lote: RAM (%) x Qtd. Média de Processos',
                     ram: [3, 5, 2, 4, 6, 3, 4],
                     processos: [5, 7, 9, 6, 8, 4, 5]
                 }
@@ -269,11 +274,11 @@
                     titulo: 'Evolução Uso CPU',
                     eixoY: 'Uso CPU (%)',
                     lotes: [
-                        { label: 'Lote A048', data: [88, 85, 87, 82, 90, 88, 86], borderColor: 'red' },
-                        { label: 'Lote A012', data: [85, 82, 83, 80, 85, 84, 83], borderColor: 'red' },
-                        { label: 'Lote A031', data: [82, 80, 81, 79, 83, 82, 81], borderColor: 'red' },
-                        { label: 'Lote A009', data: [81, 79, 80, 78, 82, 80, 79], borderColor: 'red' },
-                        { label: 'Lote A055', data: [79, 78, 77, 76, 80, 79, 78], borderColor: 'red' }
+                        { label: 'Lote A048', data: [88, 85, 87, 82, 90, 88, 86], borderColor: '#0d4299' },
+                        { label: 'Lote A012', data: [85, 82, 83, 80, 85, 84, 83], borderColor: '#0d4299' },
+                        { label: 'Lote A031', data: [82, 80, 81, 79, 83, 82, 81], borderColor: '#0d4299' },
+                        { label: 'Lote A009', data: [81, 79, 80, 78, 82, 80, 79], borderColor: '#0d4299' },
+                        { label: 'Lote A055', data: [79, 78, 77, 76, 80, 79, 78], borderColor: '#0d4299' }
                     ]
                 }
             },
@@ -283,11 +288,11 @@
                     titulo: 'Evolução Temperatura',
                     eixoY: 'Temp. (°C)',
                     lotes: [
-                        { label: 'Lote A048', data: [75, 72, 77, 73, 75, 78, 76], borderColor: 'red' },
-                        { label: 'Lote A012', data: [68, 70, 69, 71, 68, 67, 70], borderColor: 'red' },
-                        { label: 'Lote A031', data: [72, 73, 71, 70, 74, 72, 73], borderColor: 'red' },
-                        { label: 'Lote A009', data: [65, 66, 64, 67, 68, 65, 66], borderColor: 'red' },
-                        { label: 'Lote A055', data: [66, 68, 67, 65, 69, 67, 68], borderColor: 'red' }
+                        { label: 'Lote A048', data: [75, 72, 77, 73, 75, 78, 76], borderColor: '#0d4299' },
+                        { label: 'Lote A012', data: [68, 70, 69, 71, 68, 67, 70], borderColor: '#0d4299' },
+                        { label: 'Lote A031', data: [72, 73, 71, 70, 74, 72, 73], borderColor: '#0d4299' },
+                        { label: 'Lote A009', data: [65, 66, 64, 67, 68, 65, 66], borderColor: '#0d4299' },
+                        { label: 'Lote A055', data: [66, 68, 67, 65, 69, 67, 68], borderColor: '#0d4299' }
                     ]
                 }
             },
@@ -297,11 +302,11 @@
                     titulo: 'Evolução RAM',
                     eixoY: 'Uso RAM (%)',
                     lotes: [
-                        { label: 'Lote A012', data: [72, 70, 71, 73, 75, 74, 72], borderColor: 'red' },
-                        { label: 'Lote A048', data: [70, 68, 69, 71, 72, 70, 71], borderColor: 'red' },
-                        { label: 'Lote A031', data: [65, 66, 64, 67, 68, 65, 66], borderColor: 'red' },
-                        { label: 'Lote A009', data: [40, 42, 41, 39, 43, 40, 41], borderColor: 'red' },
-                        { label: 'Lote A055', data: [38, 39, 37, 40, 41, 38, 39], borderColor: 'red' }
+                        { label: 'Lote A012', data: [72, 70, 71, 73, 75, 74, 72], borderColor: '#0d4299' },
+                        { label: 'Lote A048', data: [70, 68, 69, 71, 72, 70, 71], borderColor: '#0d4299' },
+                        { label: 'Lote A031', data: [65, 66, 64, 67, 68, 65, 66], borderColor: '#0d4299' },
+                        { label: 'Lote A009', data: [40, 42, 41, 39, 43, 40, 41], borderColor: '#0d4299' },
+                        { label: 'Lote A055', data: [38, 39, 37, 40, 41, 38, 39], borderColor: '#0d4299' }
                     ]
                 }
             },
@@ -311,25 +316,25 @@
                     titulo: 'Evolução Uso de Disco',
                     eixoY: 'Uso Disco (%)',
                     lotes: [
-                        { label: 'Lote A012', data: [98, 97, 98, 99, 98, 97, 98], borderColor: 'red' },
-                        { label: 'Lote A031', data: [95, 96, 94, 95, 96, 95, 94], borderColor: 'red' },
-                        { label: 'Lote A048', data: [50, 51, 49, 52, 50, 51, 50], borderColor: 'red' },
-                        { label: 'Lote A009', data: [30, 31, 29, 32, 30, 31, 30], borderColor: 'red' },
-                        { label: 'Lote A055', data: [25, 26, 24, 27, 25, 26, 25], borderColor: 'red' }
+                        { label: 'Lote A012', data: [98, 97, 98, 99, 98, 97, 98], borderColor: '#0d4299' },
+                        { label: 'Lote A031', data: [95, 96, 94, 95, 96, 95, 94], borderColor: '#0d4299' },
+                        { label: 'Lote A048', data: [50, 51, 49, 52, 50, 51, 50], borderColor: '#0d4299' },
+                        { label: 'Lote A009', data: [30, 31, 29, 32, 30, 31, 30], borderColor: '#0d4299' },
+                        { label: 'Lote A055', data: [25, 26, 24, 27, 25, 26, 25], borderColor: '#0d4299' }
                     ]
                 }
             },
             processo: {
                 semana: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução Média de Processos',
+                    titulo: 'Evolução de Processos',
                     eixoY: 'Qtd. Processos',
                     lotes: [
-                        { label: 'Lote A012', data: [300, 310, 290, 305, 295, 300, 310], borderColor: 'red' },
-                        { label: 'Lote A031', data: [300, 290, 310, 300, 305, 295, 300], borderColor: 'red' },
-                        { label: 'Lote A055', data: [300, 305, 295, 310, 290, 300, 305], borderColor: 'red' },
-                        { label: 'Lote A009', data: [230, 235, 225, 240, 230, 235, 225], borderColor: 'red' },
-                        { label: 'Lote A048', data: [120, 125, 115, 130, 120, 125, 115], borderColor: 'red' }
+                        { label: 'Lote A012', data: [300, 310, 290, 305, 295, 300, 310], borderColor: '#0d4299' },
+                        { label: 'Lote A031', data: [300, 290, 310, 300, 305, 295, 300], borderColor: '#0d4299' },
+                        { label: 'Lote A055', data: [300, 305, 295, 310, 290, 300, 305], borderColor: '#0d4299' },
+                        { label: 'Lote A009', data: [230, 235, 225, 240, 230, 235, 225], borderColor: '#0d4299' },
+                        { label: 'Lote A048', data: [120, 125, 115, 130, 120, 125, 115], borderColor: '#0d4299' }
                     ]
                 }
             }
@@ -525,15 +530,15 @@
                                     type: 'line',
                                     yMin: 85,
                                     yMax: 85,
-                                    borderColor: 'green',
+                                    borderColor: '#FFAE42',
                                     borderWidth: 2,
                                     borderDash: [10, 5],
                                     label: {
                                         display: true,
                                         content: 'Limite Ideal',
                                         position: 'end',
-                                        backgroundColor: 'rgba(0,0,0,0.5)',
-                                        color: 'white'
+                                        backgroundColor: '#FFAE42',
+                                        color: 'white',
                                     }
                                 }
                             }
@@ -581,7 +586,8 @@
                                 color: 'black',
                                 font: { size: 14 }
                             }
-                        }
+                        },
+                        x: { stacked: false, ticks: { color: 'black' } }
                     }
                 }
             });

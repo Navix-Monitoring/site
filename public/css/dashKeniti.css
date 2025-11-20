@@ -4,6 +4,10 @@
     font-family: "Inter";
 }
 
+body {
+    background-color: #f2f3f7;
+}
+
 .tituloLote {
     margin-left: 20px;
     font-size: 50px;
@@ -14,7 +18,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 40px;
+    gap: 10vh;
 }
 
 .selectData {
@@ -36,30 +40,54 @@
     transform: scale(1.01);
 }
 
-.kpis {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
+.kpi-section-title {
+    width: 100%;
+    max-width: 147vh;
+    margin: 0 auto 15px auto;
+    font-size: 20px;
+    font-weight: 700;
+    color: #575757;
+    text-align: center;
+    margin-bottom: 3vh;
 }
 
-.kpi {
+.kpi-unified-card {
+    display: flex;
+    width: 100%;
+    max-width: 147vh;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
+    padding: 20px 0;
+    margin: 0 auto 30px auto;
+    flex-direction: column;
+}
+
+.kpi-column {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    background-color: #F7F8FC;
-    border-radius: 10px;
-    color: #333;
-    padding: 20px;
     align-items: center;
-    width: 335px;
-    height: 150px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.589);
+    justify-content: center;
+    border-right: 1px solid #E5E7EB;
+    padding: 0 10px;
 }
 
-.kpi-title {
+.kpi-row {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #E5E7EB;
+    padding: 0 10px;
+}
+
+.kpi-column:last-child {
+    border-right: none;
+}
+
+.kpi-title-top {
     font-size: 16px;
     font-weight: bold;
     color: #575757;
@@ -67,11 +95,12 @@
     margin-bottom: 4px;
 }
 
-.kpi-value {
-    font-size: 32px;
-    font-weight: bold;
+.kpi-batch-name {
+    font-size: 36px;
+    font-weight: 800;
     color: #003566;
-    margin: 4px 0;
+    margin: 0;
+    line-height: 1.2;
 }
 
 .kpi-subtext {
@@ -81,6 +110,7 @@
 
 .kpi-valor {
     font-weight: bold;
+    font-size: 2.8vh;
 }
 
 .cabecalho {
@@ -226,8 +256,8 @@
     width: 70vh;
     height: 40vh;
     padding: 2vh;
-    background-color: #F7F8FC;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.589);
+    background-color: white;
+    box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
     margin-bottom: 1vh;
     margin-top: 2vh;
     border-radius: 10px;
@@ -258,23 +288,23 @@
 }
 
 .dashboard-card {
-    background-color: #F7F8FC;
+    background-color: white;
     border-radius: 10px;
     padding: 24px;
     margin-top: 25px;
-    width: 147vh; 
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.589);
-    height: auto; 
+    width: 147vh;
+    box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
+    height: auto;
     display: flex;
     flex-direction: column;
 }
 
 .chart-container-integrated {
     width: 100%;
-    height: 50vh;  
+    height: 50vh;
     display: block;
-    background-color: transparent; 
-    box-shadow: none; 
+    background-color: transparent;
+    box-shadow: none;
     padding: 0;
     margin: 0;
 }
@@ -353,9 +383,9 @@
 }
 
 .kpiData {
-    background-color: #fff;
     padding: 10px 20px;
     border-radius: 8px;
     text-align: center;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.589);
+    font-weight: 500;
+    width: 20vh;
 }
