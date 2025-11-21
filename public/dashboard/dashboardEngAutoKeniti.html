@@ -74,26 +74,26 @@
                 <div class="kpi-unified-card">
                     <h2 class="kpi-section-title">PIORES LOTES - MEDIANAS</h2>
                     <div class="kpi-row">
-                    <div class="kpi-column">
-                        <span class="kpi-title-top">Uso da CPU</span>
-                        <h2 id="kpiCPUlote" class="kpi-batch-name">Lote 1</h2>
-                        <span class="kpi-subtext"><span id="kpiCPU" class="kpi-valor">v1%</span></span>
-                    </div>
-                    <div class="kpi-column">
-                        <span class="kpi-title-top">Processos abertos</span>
-                        <h2 id="kpiProcessoslote" class="kpi-batch-name">Lote 2</h2>
-                        <span class="kpi-subtext"><span id="kpiProcessos" class="kpi-valor">v2</span></span>
-                    </div>
-                    <div class="kpi-column">
-                        <span class="kpi-title-top">Uso de disco</span>
-                        <h2 id="kpiDiscolote" class="kpi-batch-name">Lote 3</h2>
-                        <span class="kpi-subtext"><span id="kpiDisco" class="kpi-valor">v3%</span></span>
-                    </div>
-                    <div class="kpi-column">
-                        <span class="kpi-title-top">Temperatura CPU</span>
-                        <h2 id="kpiTemplote" class="kpi-batch-name">Lote 4</h2>
-                        <span class="kpi-subtext"><span id="kpiTemp" class="kpi-valor">v4°C</span></span>
-                    </div>
+                        <div class="kpi-column">
+                            <span class="kpi-title-top">Uso da CPU</span>
+                            <h2 id="kpiCPUlote" class="kpi-batch-name">Lote 1</h2>
+                            <span class="kpi-subtext"><span id="kpiCPU" class="kpi-valor">v1%</span></span>
+                        </div>
+                        <div class="kpi-column">
+                            <span class="kpi-title-top">Processos abertos</span>
+                            <h2 id="kpiProcessoslote" class="kpi-batch-name">Lote 2</h2>
+                            <span class="kpi-subtext"><span id="kpiProcessos" class="kpi-valor">v2</span></span>
+                        </div>
+                        <div class="kpi-column">
+                            <span class="kpi-title-top">Uso de disco</span>
+                            <h2 id="kpiDiscolote" class="kpi-batch-name">Lote 3</h2>
+                            <span class="kpi-subtext"><span id="kpiDisco" class="kpi-valor">v3%</span></span>
+                        </div>
+                        <div class="kpi-column">
+                            <span class="kpi-title-top">Temperatura CPU</span>
+                            <h2 id="kpiTemplote" class="kpi-batch-name">Lote 4</h2>
+                            <span class="kpi-subtext"><span id="kpiTemp" class="kpi-valor">v4°C</span></span>
+                        </div>
                     </div>
                 </div>
                 <section class="dashboard-card">
@@ -169,16 +169,45 @@
         }
     }
 
+
+    function atualizarCorKPI(valor, limite, elemento) {
+        const numero = Number(valor);
+
+        if (numero >= limite) {
+            elemento.style.color = "red";
+        } else if (numero >= limite * 0.85) {
+            elemento.style.color = "orange";
+        } else {
+            elemento.style.color = "green";
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
 
         var kpicpu_lote = document.getElementById("kpiCPUlote").innerHTML = "Lote 1";
         var kpiproce_lote = document.getElementById("kpiProcessoslote").innerHTML = "Lote 2";
         var kpidisc_lote = document.getElementById("kpiDiscolote").innerHTML = "Lote 3";
         var kpitemp_lote = document.getElementById("kpiTemplote").innerHTML = "Lote 4";
-        var kpicpu_valor = document.getElementById("kpiCPU").innerHTML = "v1%";
-        var kpiproce_valor = document.getElementById("kpiProcessos").innerHTML = "v2";
-        var kpidisc_valor = document.getElementById("kpiDisco").innerHTML = "v3%";
-        var kpitemp_valor = document.getElementById("kpiTemp").innerHTML = "v4°C";
+        var kpicpu_valor = document.getElementById("kpiCPU");
+        kpicpu_valor.innerHTML = "90%";
+        var kpiproce_valor = document.getElementById("kpiProcessos");
+        kpiproce_valor.innerHTML = "245";
+        var kpidisc_valor = document.getElementById("kpiDisco");
+        kpidisc_valor.innerHTML = "20%";
+        var kpitemp_valor = document.getElementById("kpiTemp");
+        kpitemp_valor.innerHTML = "71°C";
+        
+        const LIMITES = { cpu: 85, ram: 80, disco: 90, temp: 70, processo: 250 };
+
+        const numCPU = parseFloat(kpicpu_valor.innerHTML);
+        const numProc = parseFloat(kpiproce_valor.innerHTML);
+        const numDisco = parseFloat(kpidisc_valor.innerHTML);
+        const numTemp = parseFloat(kpitemp_valor.innerHTML);
+
+        atualizarCorKPI(numCPU, LIMITES.cpu, kpicpu_valor);
+        atualizarCorKPI(numProc, LIMITES.processo, kpiproce_valor);
+        atualizarCorKPI(numDisco, LIMITES.disco, kpidisc_valor);
+        atualizarCorKPI(numTemp, LIMITES.temp, kpitemp_valor);
 
         const COR_CONTEXTO = '#B0B0B0';
 
@@ -378,7 +407,6 @@
             }
         };
 
-        const LIMITES = { cpu: 85, ram: 80, disco: 90, temp: 70, processo: 250 };
 
         function atualizarGraficos() {
             const metrica = document.getElementById('escolhaVisu').value;
