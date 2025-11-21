@@ -1,62 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Latência</title>
-  <link rel="icon" href="../assets/navix-logo.jpg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard de Latência</title>
+
+  <link rel="icon" href="../assets/navix-logo.jpg" />
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
   <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
-  <script src="../js/sessao.js"></script>
-  <link rel="stylesheet" href="../css/dashboard.css">
-  <link rel="stylesheet" href="../css/dashCelina.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="../js/sessao.js"></script>
   <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
-  <script
-    src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot@4.3.0/dist/chartjs-chart-boxplot.min.js"></script>
+  <link rel="stylesheet" href="../css/dashCelina.css">
 </head>
 
-<body>
+<body class="bg-gray-100">
   <div class="flex flex-row w-full">
-    <!-- nav bar -->
+    <!-- NAVBAR -->
     <div
-      class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600 **fixed top-0 left-0**">
+      class="min-h-screen w-[250px] fixed top-0 left-0 flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600">
       <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10" />
+
       <div id="imagemUsuarioNavbar">
-        <div class="rounded-md w-20 h-20 mb-2" style="
-              background-image: url(../assets/img/foto-usuario.png);
-              background-size: cover;
-              background-repeat: no-repeat;
-              background-position: center;
-            "></div>
+        <div class="rounded-md w-20 h-20 mb-2"
+          style="background-image: url(../assets/img/foto-usuario.png); background-size: cover; background-repeat: no-repeat; background-position: center;">
+        </div>
       </div>
 
       <div id="nomeProfissao" class="text-center mb-6"></div>
 
       <div class="flex flex-col gap-4 w-[80%]">
         <a href="../perfil-visualizar.html"
-          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
-          Perfil
-        </a>
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">Perfil</a>
 
         <a onclick="redirecionar()"
-          class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium"
-          style="cursor: pointer;">
-          Dashboard
-        </a>
+          class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium cursor-pointer">Dashboard</a>
 
         <a href="../admin.html" id="adm-only"
-          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
-          Cadastrar Funcionários
-        </a>
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">Cadastrar
+          Funcionários</a>
 
         <a href="./cadastroVeiculos.html"
-          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
-          Gerenciar Frota
-        </a>
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">Gerenciar
+          Frota</a>
 
         <div class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
           onclick="limparSessao()">
@@ -68,127 +54,275 @@
     </div>
   </div>
 
-  <div class="container">
+  <!-- CONTEÚDO PRINCIPAL -->
+  <aside class="ml-[250px] p-6 h-[140px] border-b bg-white shadow-md">
+    <h1 class="text-2xl font-bold mb-4 text-blue-900">Dashboard de Latência</h1>
+    <p class="text-gray-700">Monitoramento de processos, gargalos e desempenho do sistema.</p>
+    <div class="flex justify-end text-xs gap-4 mb-1">
+      <span><span class="inline-block w-3 h-3 bg-red-600 mr-1"></span>Crítico</span>
+      <span><span class="inline-block w-3 h-3 bg-orange-500 mr-1"></span>Alerta</span>
+      <span><span class="inline-block w-3 h-3 bg-yellow-500 mr-1"></span>Neutro</span>
+      <span><span class="inline-block w-3 h-3 bg-green-600 mr-1"></span>Normal</span>
+    </div>
+  </aside>
 
-  </div>
+  <section class="ml-[250px] h-[850px] overflow-y-auto p-6 bg-gray-50">
 
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+      <div class="bg-white p-4 rounded-md shadow-md">
+        <h3 class="font-semibold text-gray-700">Processo com maior uso de CPU</h3>
+        <span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-[2px] rounded">
+          Chrome.exe
+        </span>
+        <p id="kpi_cpu" class="text-xl font-bold mt-2 text-blue-900">23%</p>
+      </div>
+
+      <div class="bg-white p-4 rounded-md shadow-md">
+        <h3 class="font-semibold text-gray-700">Maior variação de RAM</h3>
+        <span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-[2px] rounded">
+          Chrome.exe
+        </span>
+        <p id="kpi_ram" class="text-xl font-bold mt-2 text-blue-900">512MB</p>
+      </div>
+
+      <div class="bg-white p-4 rounded-md shadow-md">
+        <h3 class="font-semibold text-gray-700">Processo com maior tempo de vida</h3>
+        <span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-[2px] rounded">
+          Chrome.exe
+        </span>
+        <p id="kpi_vida" class="text-xl font-bold mt-2 text-blue-900">2h 13min</p>
+      </div>
+
+      <div class="bg-white p-4 rounded-md shadow-md kpi_gargalo flex items-center gap-4">
+        <div class="border-indicador w-2 rounded-full"></div>
+        <div>
+          <h3 class="font-semibold text-gray-700">Gargalos por dia</h3>
+          <div class="flex-col items-center gap-2 mt-1">
+            <span class="inline-block bg-red-100 text-red-700 text-xs px-2 py-[2px] rounded">
+              <span class="dotCriticidade"></span>
+              Crítico
+            </span>
+            <p id="kpi_gargalo" class="text-2xl font-bold text-blue-900">41</p>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    </div>
+
+    <!-- GRÁFICOS -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+
+      <!-- LISTA DE PROCESSOS -->
+      <div class="bg-white p-4 rounded-md shadow-md xl:col-span-2 flex-col">
+        <div class="flex justify-between items-center mb-2">
+
+          <h3 class="text-lg font-semibold">Lista de Processos
+            <span class="relative group cursor-pointer text-gray-500 text-sm bg-gray-200 px-1 rounded">i
+              <div class="absolute hidden group-hover:block bg-white shadow-md p-2 rounded text-xs left-6 top-0 w-32">
+                <p><span class="text-red-600 font-bold">■</span> Crítico</p>
+                <p><span class="text-orange-500 font-bold">■</span> Alerta</p>
+                <p><span class="text-yellow-500 font-bold">■</span>Neutro</p>
+                <p><span class="text-green-600 font-bold">■</span> Normal</p>
+              </div>
+          </h3>
+          <span class=" text-gray-600">Total: 27</span>
+        </div>
+        <div class="headerProcessos grid grid-cols-5">
+          <div class="inputPesquisa w-70">
+            <input type="text" class="border rounded-md pl-5 pr-4 py-2 w-full" id="processo" placeholder=" " required>
+            <label for="processo"> Nome do Processo <i class='bx  bx-search-alt'></i></label>
+          </div>
+          <div>
+            <select name="" id="" class="border rounded-md pl-5 pr-2 py-2">
+              <option value="">Criticidade</option>
+              <option value="">Crítico</option>
+              <option value="">Alerta</option>
+              <option value="">Neutro</option>
+              <option value="">Normal</option>
+            </select>
+          </div>
+          <div>
+            <select name="" id="" class="border rounded-md pl-5 pr-2 py-2">
+              <option value="">Métrica</option>
+              <option value="">CPU</option>
+              <option value="">RAM</option>
+              <option value="">Disco</option>
+              <option value="">Tempo de vida</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="tabela-header grid grid-cols-5 font-semibold text-sm mb-2">
+
+          <span>Nome</span>
+          <span>CPU (%)</span>
+          <span>RAM (MB)</span>
+          <span>Disco</span>
+          <span>Tempo de Vida</span>
+        </div>
+        <div class="processosLista">
+
+          <div class="card_processo" data-level="critico">
+            <span>chrome.exe</span>
+            <span>23%</span>
+            <span>512 MB</span>
+            <span>20 MB/s</span>
+            <span>2h 13min</span>
+          </div>
+
+          <div class="card_processo" data-level="alerta">
+            <span>chrome.exe</span>
+            <span>23%</span>
+            <span>512 MB</span>
+            <span>20 MB/s</span>
+            <span>2h 13min</span>
+          </div>
+
+          <div class="card_processo" data-level="neutro">
+            <span>chrome.exe</span>
+            <span>23%</span>
+            <span>512 MB</span>
+            <span>20 MB/s</span>
+            <span>2h 13min</span>
+          </div>
+
+          <div class="card_processo" data-level="normal">
+            <span>chrome.exe</span>
+            <span>23%</span>
+            <span>512 MB</span>
+            <span>20 MB/s</span>
+            <span>2h 13min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP 5 CPU-->
+      <div class="bg-white p-4 rounded-md shadow-md">
+        <h3 class="text-lg font-semibold mb-2">Top 5 CPU</h3>
+        <canvas id="graficoTopCPU"></canvas>
+        <p class="text-xs text-gray-500 -mt-2">Maior consumo de CPU entre os processos no período analisado.</p>
+
+      </div>
+
+      <div class="bg-white p-4 rounded-md shadow-md">
+        <h3 class="text-lg font-semibold mb-2">Variação de RAM (Top 3)</h3>
+        <canvas id="graficoRam"></canvas>
+      </div>
+
+      <div class="bg-white p-4 rounded-md shadow-md">
+        <h3 class="text-lg font-semibold mb-2">Comparação de Tempo de Vida</h3>
+        <canvas id="graficoVida"></canvas>
+      </div>
+
+      <div class="bg-white p-4 rounded-md shadow-md xl:col-span-2">
+        <h3 class="text-lg font-semibold mb-2">Ocorrência Geral de Gargalos</h3>
+        <canvas id="graficoGargalos"></canvas>
+      </div>
+
+      <div class="bg-white p-4 rounded-md shadow-md xl:col-span-2">
+        <h3 class="text-lg font-semibold mb-2">Processos com mais Gargalos</h3>
+        <canvas id="graficoTopGargalo"></canvas>
+      </div>
+
+      <div class="bg-white p-4 rounded-md shadow-md xl:col-span-2">
+        <h3 class="text-lg font-semibold mb-2">Previsão de Travamento</h3>
+        <canvas id="graficoPrevisao"></canvas>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+
+
+    function criarGrafico(id, tipo, labels, dados, cor, opcoesExtras = {}) {
+      const ctx = document.getElementById(id).getContext("2d");
+
+      const configPadrao = {
+        type: tipo,
+        data: {
+          labels: labels,
+          datasets: [{
+            label: id,
+            data: dados,
+            backgroundColor: cor || [
+              '#6ce5e8', '#41b8d5', '#2d8bba', '#182859', '#0c1b33'
+            ],
+            borderRadius: 8,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      };
+
+      // 👉 Permite sobrescrever qualquer coisa (inclusive datasets)
+      const configFinal = Object.assign({}, configPadrao, opcoesExtras);
+
+      new Chart(ctx, configFinal);
+    }
+
+
+    criarGrafico("graficoTopCPU", "bar", ["procA", "procB", "procC", "procD", "procE"], [80, 50, 40, 30, 20]);
+    criarGrafico(
+      "graficoRam",
+      "line",
+      ["t1", "t2", "t3", "t4", "t5"], // tempo no eixo X
+      [], // deixe vazio porque não será usado
+      undefined,
+      {
+        plugins: {
+          legend: { display: true }
+        },
+        elements: {
+          line: {
+            tension: 0.3
+          }
+        },
+        data: {
+          labels: ["t1", "t2", "t3", "t4", "t5"],
+          datasets: [
+            {
+              label: "Processo A",
+              data: [10, 30, 25, 40, 35],
+              borderColor: "#6ce5e8",
+              backgroundColor: "transparent",
+              borderWidth: 3
+            },
+            {
+              label: "Processo B",
+              data: [20, 22, 18, 30, 27],
+              borderColor: "#41b8d5",
+              backgroundColor: "transparent",
+              borderWidth: 3
+            },
+            {
+              label: "Processo C",
+              data: [15, 18, 22, 20, 25],
+              borderColor: "#2d8bba",
+              backgroundColor: "transparent",
+              borderWidth: 3
+            }
+          ]
+        }
+      }
+    );
+
+    criarGrafico("graficoVida", "bar", ["proc1", "proc2"], [300, 150]);
+    criarGrafico("graficoGargalos", "line", ["Seg", "Ter", "Qua"], [2, 4, 1]);
+    criarGrafico("graficoTopGargalo", "bar", ["A", "B", "C"], [10, 8, 3]);
+    criarGrafico("graficoPrevisao", "line", ["Hoje", "Amanhã"], [20, 35]);
+  </script>
 </body>
 
 </html>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-
-  const ctx1 = document.getElementById('tendenciaBarra');
-
-  new Chart(ctx1, {
-    type: 'bar',
-    data: {
-      labels: ['Visão Computacional', 'IA de Decisão', 'Direção', 'Sensores'],
-      datasets: [
-        {
-          label: 'CPU (ms)',
-          data: [62, 75, 41, 33],
-          backgroundColor: '#4A90E2'
-        },
-        {
-          label: 'RAM (ms)',
-          data: [28, 31, 18, 12],
-          backgroundColor: '#50E3C2'
-        },
-        {
-          label: 'Processos (ms)',
-          data: [70, 80, 45, 38],
-          backgroundColor: '#F5A623'
-        }
-      ]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Latência Média (ms)'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Módulos do Sistema'
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          display: true,
-          position: 'bottom'
-        },
-        title: {
-          display: true,
-          text: 'Comparativo de Latência por Módulo'
-        }
-      }
-    }
-  });
-
-  const ctx = document.getElementById('tendenciaLinha');
-
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['12:00', '12:05', '12:10', '12:15', '12:20'],
-      datasets: [
-        {
-          label: 'CPU Latência (ms)',
-          data: [40, 42, 46, 51, 47],
-          borderColor: '#4A90E2',
-          borderWidth: 2,
-          tension: 0.3,
-          fill: false
-        },
-        {
-          label: 'RAM Latência (ms)',
-          data: [20, 22, 24, 23, 25],
-          borderColor: '#50E3C2',
-          borderWidth: 2,
-          tension: 0.3,
-          fill: false
-        },
-        {
-          label: 'Processos (ms)',
-          data: [60, 65, 63, 68, 70],
-          borderColor: '#F5A623',
-          borderWidth: 2,
-          tension: 0.3,
-          fill: false
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Latência (ms)'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Tempo'
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          display: true,
-          position: 'bottom'
-        }
-      }
-    }
-  });
 </script>

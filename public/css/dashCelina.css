@@ -1,14 +1,102 @@
-.graficos{
-    margin: 50px;
-    padding: 50px;
+
+.kpi_gargalo {
+    border-left: #e11d48 solid 7px;
+}
+.dotCriticidade {
+    background-color: #e11d48;
 }
 
-.graficoTendencia{
-    margin: 0;
-    padding: 0;
-    width: 50vw;
+.inputPesquisa {
+    position: relative;
+    width: 250px;
 }
-.graficos{
+.inputPesquisa input{
+    transition: 0.2s;
+}
+
+
+.inputPesquisa input:focus {
+    outline: none;
+    border: solid 2px #182859;
+}
+
+.inputPesquisa label{
+    position: absolute;
+    left: 10px;
+    top: 12px;
+    color: #777;
+    background: white;
+    padding: 0 4px;
+    pointer-events: none;
+    transition: 0.2s ease-in-out;
+}
+
+.inputPesquisa input:focus + label, .inputPesquisa input:not(:placeholder-shown)+ label{
+    top: -8px;
+    font-size: 12px;
+    color: #2563eb;
+}
+
+.headerProcessos {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.processosLista {
+    align-self: center;
+    justify-self: center;
+    border-radius: 5px;
+    width: 100%;
+    padding: 7px;
+    border: 1px solid #18285933;
     display: flex;
     flex-direction: column;
+    gap: 10px;
+    overflow-y: scroll;
+    height: 250px;
+    max-height: 250px;
+}
+
+.tabela-header {
+    background: #f1f5f9;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.processosLista::-webkit-scrollbar {
+    width: 6px;
+}
+
+.processosLista::-webkit-scrollbar-thumb {
+    background: #182859;
+    border-radius: 10px;
+}
+
+.card_processo {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+    background-color: rgb(248, 248, 248);
+    border-radius: 5px;
+    box-shadow: 1px 2px 10px rgb(206, 206, 206);
+}
+
+.card_processo[data-level="critico"] {
+    border-left: 5px solid #e11d48; /* vermelho */
+}
+
+.card_processo[data-level="alerta"] {
+    border-left: 5px solid #f59e0b; /* laranja */
+}
+.card_processo[data-level="neutro"] {
+    border-left: 5px solid #f5d20b; /* laranja */
+}
+
+.card_processo[data-level="normal"] {
+    border-left: 5px solid #10b981; /* verde */
 }
