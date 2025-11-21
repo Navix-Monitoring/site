@@ -9,15 +9,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
     <script src="../js/sessao.js"></script>
-    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/dashboardGuilherme.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
     <script src="../js/usuario/verificadorCargo.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 </head>
 
-<body onload="carregarInformacoes(), simularValores(), verificadorCargo();">
+<body onload="verificadorCargo();">
 
     <div class="flex flex-row w-full">
         <div
@@ -59,7 +60,8 @@
             <div class="topoTitulo">
                 <h1 class="tituloLote" id="tituloLote">Modelo Keniti - 50 lotes</h1>
                 <select class="selectData" id="selectPeriodo">
-                    <option value="semana" selected>Semana</option>
+                    <option value="dia" selected>Dia</option>
+                    <option value="semana">Semana</option>
                     <option value="mes">Mês</option>
                     <option value="ano">Ano</option>
                 </select>
@@ -67,7 +69,7 @@
 
             <main class="card">
                 <div class="kpis">
-                    <div class="kpi">
+                    <div class="kpi baixo">
                         <p class="tituloKPI">Lotes em Baixo</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: green;">
@@ -78,7 +80,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="kpi">
+                    <div class="kpi neutro">
                         <p class="tituloKPI">Lotes em Neutro</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: yellow;">
@@ -89,7 +91,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="kpi">
+                    <div class="kpi alerta">
                         <p class="tituloKPI">Lotes em alerta</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: red;">
@@ -100,7 +102,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="kpi">
+                    <div class="kpi critico">
                         <p class="tituloKPI">Lotes em crítico</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: yellow;">
@@ -111,7 +113,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="kpi">
+                    <div class="kpi kpi-componentes">
                         <p class="tituloKPI">Componentes problemáticos</p><br>
                         <div class="ladinho">
                             <div class="alerta">
@@ -130,11 +132,12 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
                     <!-- GRÁFICO BARRAS -->
                     <div class="container-filho">
                         <div class="chart-container-alert p-4 h-full flex flex-col">
-                            <canvas id="alertasSemana" class="w-full h-full"></canvas>
+                            <div id="alertasSemana"></div>
                         </div>
                     </div>
 
@@ -172,22 +175,28 @@
                                 Comparativo - Mediana de alerta por Hardware
                             </h3>
                             <div class="flex-1">
-                                <canvas id="boxplotLote" class="w-full h-full"></canvas>
+                                <div id="tempAlertChart"></div>
+
                             </div>
                         </div>
                     </div>
 
-                    <!-- GRÁFICO COMPARACAO TOTALALERTAS -->
                     <div class="container-filho">
                         <div class="chart-container-alert p-4 h-full flex flex-col">
+
                             <h3 class="text-lg font-bold text-center mb-2 text-black text-[18px]">
                                 Comparativo - Alertas Totais
                             </h3>
+
+                            <p class="text-center text-gray-600 -mt-2 mb-2">Últimos 7 dias</p>
+
                             <div class="flex-1">
-                                <canvas id="tempAlertChart" class="w-full h-full"></canvas>
+                                <div id="comparativoAlertas"></div>
                             </div>
+
                         </div>
                     </div>
+
                 </div>
 
             </main>
@@ -195,308 +204,48 @@
     </div>
 
     <script src="../js/redirecionar.js"></script>
-
-    <!-- GRÁFICO BARRAS -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-
-            let alertasChart, boxplotChart, tempAlertChart;
-
-            // 2. Pegar os elementos do DOM
-            const selectPeriodo = document.getElementById('selectPeriodo');
-            const rankingTitulo = document.getElementById('rankingTitulo');
-            const rankingLista = document.getElementById('rankingLista');
-
-            const ctxBar = document.getElementById('alertasSemana');
-            const ctxBox = document.getElementById("boxplotLote");
-            const ctxTempAlert = document.getElementById('tempAlertChart').getContext('2d');
-
-            // 3. Função de atualização (como no seu primeiro arquivo)
-            function atualizarDashboard(periodo) {
-                let novosLabels;
-                // Dados Bar Chart
-                let d_bar_lote1, d_bar_lote2, d_bar_lote3, d_bar_lote4;
-                // Dados Line Chart
-                let d_line_temp, d_line_alertas;
-                // Dados Ranking
-                let novoTituloGrafico, novoTituloRanking, novoRankingHtml;
-
-                const labelsBoxplot = ['Lote A001', 'Lote A002', 'Lote A003', 'Lote A004'];
-
-                switch (periodo) {
-                    case 'mes':
-                        novosLabels = ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'];
-                        novoTituloGrafico = 'ALERTAS GERADOS (ÚLTIMO MÊS)';
-                        novoTituloRanking = 'RANKING DE LOTES (ÚLTIMO MÊS)';
-
-                        // Dados mocados Mês
-                        d_bar_lote1 = [25, 30, 22, 35];
-                        d_bar_lote2 = [15, 20, 18, 25];
-                        d_bar_lote3 = [40, 50, 45, 55];
-                        d_bar_lote4 = [30, 35, 28, 40];
-
-                        d_box_lote1 = { min: 20, q1: 25, median: 30, q3: 35, max: 40 };
-                        d_box_lote2 = { min: 10, q1: 15, median: 20, q3: 25, max: 30 };
-                        d_box_lote3 = { min: 35, q1: 40, median: 45, q3: 50, max: 60 };
-                        d_box_lote4 = { min: 5, q1: 10, median: 15, q3: 20, max: 25 };
-
-                        d_line_temp = [30, 32, 35, 33];
-                        d_line_alertas = [50, 65, 70, 60];
-
-                        novoRankingHtml = `
-                            <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
-                                <span class="font-bold text-base text-blue-900">1. LOTE A003</span>
-                                <span class="font-bold text-base text-blue-900">190 alertas</span>
-                            </li>
-                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                <span class="font-medium text-gray-800">2. LOTE A004</span>
-                                <span class="font-medium text-gray-800">133 alertas</span>
-                            </li>
-                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                <span class="font-medium text-gray-800">3. LOTE A001</span>
-                                <span class="font-medium text-gray-800">112 alertas</span>
-                            </li>
-                            <li class="flex justify-between items-center w-full p-3">
-                                <span class="font-medium text-gray-800">4. LOTE A002</span>
-                                <span class="font-medium text-gray-800">78 alertas</span>
-                            </li>`;
-                        break;
-
-                    case 'ano':
-                        novosLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-                        novoTituloGrafico = 'ALERTAS GERADOS (ÚLTIMO ANO)';
-                        novoTituloRanking = 'RANKING DE LOTES (ÚLTIMO ANO)';
-
-                        // Dados mocados Ano
-                        d_bar_lote1 = [100, 110, 105, 115, 120, 125, 110, 105, 115, 120, 125, 130];
-                        d_bar_lote2 = [80, 85, 90, 95, 100, 105, 90, 85, 95, 100, 105, 110];
-                        d_bar_lote3 = [150, 160, 155, 165, 170, 175, 160, 155, 165, 170, 175, 180];
-                        d_bar_lote4 = [120, 130, 125, 135, 140, 145, 130, 125, 135, 140, 145, 150];
-
-                        d_box_lote1 = { min: 90, q1: 100, median: 115, q3: 125, max: 135 };
-                        d_box_lote2 = { min: 70, q1: 80, median: 95, q3: 105, max: 115 };
-                        d_box_lote3 = { min: 140, q1: 150, median: 165, q3: 175, max: 185 };
-                        d_box_lote4 = { min: 110, q1: 120, median: 135, q3: 145, max: 155 };
-
-                        d_line_temp = [28, 29, 30, 31, 32, 33, 34, 33, 32, 31, 30, 29];
-                        d_line_alertas = [200, 220, 230, 250, 260, 270, 280, 270, 260, 250, 230, 220];
-
-                        novoRankingHtml = `
-                            <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
-                                <span class="font-bold text-base text-blue-900">1. LOTE A003</span>
-                                <span class="font-bold text-base text-blue-900">1980 alertas</span>
-                            </li>
-                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                <span class="font-medium text-gray-800">2. LOTE A004</span>
-                                <span class="font-medium text-gray-800">1620 alertas</span>
-                            </li>
-                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                <span class="font-medium text-gray-800">3. LOTE A001</span>
-                                <span class="font-medium text-gray-800">1380 alertas</span>
-                            </li>
-                            <li class="flex justify-between items-center w-full p-3">
-                                <span class="font-medium text-gray-800">4. LOTE A002</span>
-                                <span class="font-medium text-gray-800">1140 alertas</span>
-                            </li>`;
-                        break;
-
-                    case 'semana':
-                    default:
-                        novosLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-                        novoTituloGrafico = 'ALERTAS GERADOS (7 DIAS)';
-                        novoTituloRanking = 'RANKING DE LOTES (7 DIAS)';
-
-                        // Dados mocados Semana (originais)
-                        d_bar_lote1 = [5, 7, 9, 6, 8, 4, 5];
-                        d_bar_lote2 = [3, 5, 2, 4, 6, 3, 4];
-                        d_bar_lote3 = [12, 19, 8, 15, 10, 6, 9];
-                        d_bar_lote4 = [20, 12, 3, 9, 13, 1, 3];
-
-                        d_box_lote1 = { min: 2, q1: 5, median: 8, q3: 12, max: 15 };
-                        d_box_lote2 = { min: 1, q1: 3, median: 5, q3: 8, max: 11 };
-                        d_box_lote3 = { min: 4, q1: 8, median: 12, q3: 18, max: 21 };
-                        d_box_lote4 = { min: 0, q1: 2, median: 4, q3: 6, max: 10 };
-
-                        d_line_temp = [27, 31, 34, 36, 38, 33, 29];
-                        d_line_alertas = [4, 6, 11, 15, 19, 10, 5];
-
-                        novoRankingHtml = `
-                            <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
-                                <span class="font-bold text-base text-blue-900">1. LOTE A003</span>
-                                <span class="font-bold text-base text-blue-900">79 alertas</span>
-                            </li>
-                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                <span class="font-medium text-gray-800">2. LOTE A004</span>
-                                <span class="font-medium text-gray-800">61 alertas</span>
-                            </li>
-                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                <span class="font-medium text-gray-800">3. LOTE A001/span>
-                                <span class="font-medium text-gray-800">44 alertas</span>
-                            </li>
-                            <li class="flex justify-between items-center w-full p-3">
-                                <span class="font-medium text-gray-800">4. LOTE A002</span>
-                                <span class="font-medium text-gray-800">27 alertas</span>
-                            </li>`;
-                        break;
-                }
-
-                // 4. Atualizar o Gráfico de Barras (alertasSemana)
-                alertasChart.data.labels = novosLabels;
-                alertasChart.options.plugins.title.text = novoTituloGrafico;
-                alertasChart.data.datasets[0].data = d_bar_lote1;
-                alertasChart.data.datasets[1].data = d_bar_lote2;
-                alertasChart.data.datasets[2].data = d_bar_lote3;
-                alertasChart.data.datasets[3].data = d_bar_lote4;
-                alertasChart.update();
-
-                // 5. Atualizar o Boxplot (boxplotLote)
-                let cpu_ultimos7 = [45, 50, 55, 60, 52, 48, 46];
-                let cpu_semanaAtual = [40, 44, 58, 63, 57, 50, 47];
-
-                boxplotChart.data.labels = novosLabels; // dias ou semanas
-                boxplotChart.data.datasets[0].data = cpu_ultimos7;
-                boxplotChart.data.datasets[1].data = cpu_semanaAtual;
-                boxplotChart.update();
-
-
-
-                // 6. Atualizar o Gráfico de Linha (tempAlertChart)
-                tempAlertChart.data.labels = novosLabels;
-                tempAlertChart.data.datasets[0].data = d_line_temp;
-                tempAlertChart.data.datasets[1].data = d_line_alertas;
-                tempAlertChart.update();
-
-                // 7. Atualizar o Ranking
-                rankingTitulo.innerText = novoTituloRanking;
-                rankingLista.innerHTML = novoRankingHtml;
-            }
-
-            // 8. Inicializar os gráficos
-            alertasChart = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: [], // Inicia vazio, será preenchido
-                    datasets: [
-                        { label: 'Lote A001', data: [], backgroundColor: '#001D3D' },
-                        { label: 'Lote A002', data: [], backgroundColor: '#003566' },
-                        { label: 'Lote A003', data: [], backgroundColor: 'darkblue' },
-                        { label: 'Lote A004', data: [], backgroundColor: 'royalblue' }
-                    ]
-                },
-                options: { responsive: true, plugins: { title: { display: true, text: '' } }, scales: { x: { stacked: true }, y: { stacked: true } } }
-            });
-            boxplotChart = new Chart(ctxBox, {
-                type: 'line',
-                data: {
-                    labels: [], // Dias da semana serão colocados depois
-                    datasets: [
-                        {
-                            label: 'Últimos 7 dias (CPU)',
-                            data: [],
-                            borderColor: 'red',
-                            backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                            tension: 0.3,
-                            fill: true
-                        },
-                        {
-                            label: 'Semana Atual (CPU)',
-                            data: [],
-                            borderColor: 'blue',
-                            backgroundColor: 'rgba(0, 0, 255, 0.2)',
-                            tension: 0.3,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    interaction: { mode: 'index', intersect: false },
-                    stacked: false,
-                    plugins: {
-                        title: { display: true, text: 'Comparativo de Uso de CPU (%)' },
-                        legend: { position: 'bottom' }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            title: { display: true, text: 'Uso da CPU (%)' }
-                        },
-                        x: {
-                            title: { display: true, text: 'Dias' }
-                        }
-                    }
-                }
-            });
-
-
-
-            tempAlertChart = new Chart(ctxTempAlert, {
-                type: 'line',  // Mantém 'line'
-                data: {
-                    labels: [], // Inicia vazio
-                    datasets: [
-                        {
-                            label: 'Ultima Semana',
-                            data: [],
-                            borderColor: 'red',
-                            backgroundColor: 'rgba(255, 0, 0, 0.2)', // Cor de fundo da área (vermelho claro)
-                            tension: 0.3,
-                            yAxisID: 'y',
-                            fill: true  // Preenche a área sob a linha
-                        },
-                        {
-                            label: 'Semana Atual',
-                            data: [],
-                            borderColor: 'blue',
-                            backgroundColor: 'rgba(0, 0, 255, 0.2)', // Cor de fundo da área (azul claro)
-                            tension: 0.3,
-                            yAxisID: 'y1',
-                            fill: true  // Preenche a área sob a linha
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    interaction: { mode: 'index', intersect: false },
-                    stacked: false,
-                    plugins: { title: { display: true, text: 'Últimos 7 dias' } },
-                    scales: {
-                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Totais de alertas' } },
-                        y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Alertas' }, grid: { drawOnChartArea: false } }
-                    }
-                }
-            });
-
-
-            // 9. Adicionar o Event Listener
-            selectPeriodo.addEventListener('change', (e) => {
-                atualizarDashboard(e.target.value);
-            });
-
-            // 10. Chamar a função pela primeira vez para carregar os dados da 'semana'
-            atualizarDashboard('semana');
-
-            // 11. Chamar as funções do 'onload' original
-            if (typeof carregarInformacoes === 'function') carregarInformacoes();
-            if (typeof simularValores === 'function') simularValores();
-            if (typeof verificadorCargo === 'function') verificadorCargo();
-
-        });
-    </script>
+    <script src="../js/usuario/verificadorCargo.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var nomeEmpresa = sessionStorage.getItem("nome_ss");
-            var cargo = sessionStorage.getItem("cargo_ss");
+        document.addEventListener("DOMContentLoaded", () => {
 
-            var nomeProfissao = document.getElementById("nomeProfissao");
 
+            const nome = sessionStorage.getItem("nome_ss") || "Usuário";
+            const cargo = sessionStorage.getItem("cargo_ss") || "Não definido";
+
+            const nomeProfissao = document.getElementById("nomeProfissao");
             if (nomeProfissao) {
                 nomeProfissao.innerHTML = `
-                <p class="font-bold text-blue-900">${nomeEmpresa || "Usuário"}</p>
-                <p class="mb-4 text-blue-900">Cargo: ${cargo || "Não definido"}</p>
-            `;
+            <p class="font-bold text-blue-900">${nome}</p>
+            <p class="mb-4 text-blue-900">Cargo: ${cargo}</p>
+        `;
             }
+
+
+            if (typeof verificadorCargo === "function") verificadorCargo();
+            if (typeof carregarInformacoes === "function") carregarInformacoes();
+            if (typeof simularValores === "function") simularValores();
+
+
+            const select = document.getElementById("selectPeriodo");
+            let scriptDiaCarregado = false;
+
+            function carregarGraficoDia() {
+                if (scriptDiaCarregado) return;
+
+                let script = document.createElement("script");
+                script.src = "../js/dashboardGuilherme.js";
+                document.body.appendChild(script);
+
+                scriptDiaCarregado = true;
+            }
+
+
+            if (select.value === "dia") carregarGraficoDia();
+
+            select.addEventListener("change", () => {
+                if (select.value === "dia") carregarGraficoDia();
+            });
+
         });
     </script>
