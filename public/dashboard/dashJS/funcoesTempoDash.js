@@ -11,15 +11,35 @@ async function verificarDia() {
 
     let semana;
     let numeroDiaSemana = ontem.getDate();
+
     if (numeroDiaSemana <= 7) semana = 1;
     else if (numeroDiaSemana <= 15) semana = 2;
     else if (numeroDiaSemana <= 22) semana = 3;
     else semana = 4;
 
+    //Fazer double fetch e comparar com 11 dia antes do de ontem.
+    const dataAnteontem = new Date();
+    dataAnteontem.setDate(dataAnteontem.getDate() - 2);
+    const diaAnteontem = dataAnteontem.getDate();
+    const diaAnteOntemBR = dataAnteontem.toLocaleDateString("pt-BR")
+
+    const semanaOntem =
+        numeroDiaSemana <= 7 ? 1 :
+            numeroDiaSemana <= 15 ? 2 :
+                numeroDiaSemana <= 22 ? 3 : 4;
+
+    const semanaAnteontem =
+        diaAnteontem <= 7 ? 1 :
+            diaAnteontem <= 15 ? 2 :
+                diaAnteontem <= 22 ? 3 : 4;
+
     document.getElementById("select_ontem").innerHTML = `${ontemBR}`;
 
     try {
-        const resposta = await fetch(`/dashboard/diario/${ano}/${mes}/${semana}/${numeroDiaSemana}`);
+        const [resposta, resposta2] = await Promise.all([
+            fetch(`/dashboard/diario/${ano}/${mes}/${semanaOntem}/${numeroDiaSemana}`),
+            fetch(`/dashboard/diario/${ano}/${mes}/${semanaAnteontem}/${diaAnteontem}`),
+        ]);
 
         if (!resposta.ok) {
             console.error("Erro ao buscar:", await resposta.text());
@@ -28,7 +48,41 @@ async function verificarDia() {
 
         const json = await resposta.json();
 
-        // --- LOTES ---
+        const json2 = await resposta2.json();
+
+        //Variáveis para o anteontem
+
+        //Lotes dele
+        const lote1_2 = json2.find(d => d.lote === 1);
+        const lote2_2 = json2.find(d => d.lote === 2);
+        const lote3_2 = json2.find(d => d.lote === 3);
+        const lote4_2 = json2.find(d => d.lote === 4);
+        const lote5_2 = json2.find(d => d.lote === 5);
+        const lote6_2 = json2.find(d => d.lote === 6);
+
+        const somaCriticoAnteOntem = lote1_2.totalCritico + lote2_2.totalCritico + lote3_2.totalCritico +
+            lote4_2.totalCritico + lote5_2.totalCritico + lote6_2.totalCritico;
+
+            // --- SOMATÓRIOS POR HARDWARE ---
+        const somaCPU_2 =
+            lote1_2.cpuCritico + lote2_2.cpuCritico + lote3_2.cpuCritico +
+            lote4_2.cpuCritico + lote5_2.cpuCritico + lote6_2.cpuCritico;
+
+        const somaRAM_2 =
+            lote1_2.ramCritico + lote2_2.ramCritico + lote3_2.ramCritico +
+            lote4_2.ramCritico + lote5_2.ramCritico + lote6_2.ramCritico;
+
+        const somaDisco_2 =
+            lote1_2.discoCritico + lote2_2.discoCritico + lote3_2.discoCritico +
+            lote4_2.discoCritico + lote5_2.discoCritico + lote6_2.discoCritico;
+
+        const somaTemp_2 =
+            lote1_2.tempCritico + lote2_2.tempCritico + lote3_2.tempCritico +
+            lote4_2.tempCritico + lote5_2.tempCritico + lote6_2.tempCritico;
+
+
+        //Variáveis para o dia de ontem
+
         const lote1 = json.find(d => d.lote === 1);
         const lote2 = json.find(d => d.lote === 2);
         const lote3 = json.find(d => d.lote === 3);
@@ -60,7 +114,7 @@ async function verificarDia() {
         const somaTodosAlertas =
             somaBaixo + somaNeutro + somaAtencao + somaCritico;
 
-            document.getElementById("tituloLote").innerHTML = `Modelo NAV-M100 - 06 lotes - ${somaTodosAlertas} alertas`
+        document.getElementById("tituloLote").innerHTML = `Modelo NAV-M100 - 06 lotes - ${somaTodosAlertas} alertas`
 
         // --- SOMATÓRIOS POR HARDWARE ---
         const somaCPU =
@@ -124,7 +178,17 @@ async function verificarDia() {
         // Gráfico de barras com os alertas juntos por lote
 
         var alertasSemana = {
-            chart: { type: "bar", height: 350, stacked: true, toolbar: { show: false } },
+            chart: {
+                type: "bar",
+                height: 350,
+                stacked: true,
+                toolbar: { show: false }
+            },
+            plotOptions: {
+                bar: {
+                    barHeight: "90%"
+                }
+            },
 
             title: {
                 text: `ALERTAS CRÍTICOS GERADOS - ${ontemBR}`,
@@ -141,15 +205,15 @@ async function verificarDia() {
             ],
 
             series: [
-                { name: "Lote A001", data: [20, lote1.totalCritico] },
-                { name: "Lote A002", data: [19, lote2.totalCritico] },
-                { name: "Lote A003", data: [30, lote3.totalCritico] },
-                { name: "Lote A004", data: [20, lote4.totalCritico] },
-                { name: "Lote A005", data: [19, lote5.totalCritico] },
-                { name: "Lote A006", data: [50, lote6.totalCritico] }
+                { name: "Lote A001", data: [lote1_2.totalCritico, lote1.totalCritico] },
+                { name: "Lote A002", data: [lote2_2.totalCritico, lote2.totalCritico] },
+                { name: "Lote A003", data: [lote3_2.totalCritico, lote3.totalCritico] },
+                { name: "Lote A004", data: [lote4_2.totalCritico, lote4.totalCritico] },
+                { name: "Lote A005", data: [lote5_2.totalCritico, lote5.totalCritico] },
+                { name: "Lote A006", data: [lote6_2.totalCritico, lote6.totalCritico] }
             ],
 
-            xaxis: { categories: ["Dia anterior", `${ontemBR}`] }
+            xaxis: { categories: [`${diaAnteOntemBR}`, `${ontemBR}`] }
         };
 
         new ApexCharts(document.querySelector("#alertasSemana"), alertasSemana).render();
@@ -159,13 +223,19 @@ async function verificarDia() {
             chart: { type: "bar", height: 300 },
             stroke: { curve: "smooth", width: 3 },
             series: [
-                { name: "CPU", data: [10, 12] },
-                { name: "RAM", data: [8, 10] },
-                { name: "Disco", data: [3, 5] },
-                { name: "Temperatura", data: [35, 52] },
+                { name: "CPU", data: [`${somaCPU}`, `${somaCPU_2}`] },
+                { name: "RAM", data: [`${somaRAM}`, `${somaRAM_2}`] },
+                { name: "Disco", data: [`${somaDisco}`, `${somaDisco_2}`] },
+                { name: "Temperatura", data: [`${somaTemp}`, `${somaTemp_2}`] },
+            ],
+             colors: [
+                "#0a1a2f",
+                "#102f57",
+                "#1c47a1",
+                "#3d73ff",
             ],
             xaxis: {
-                categories: ["Seg", "Ter"]
+                categories: [diaAnteOntemBR, ontemBR]
             }
         };
 
@@ -178,7 +248,6 @@ async function verificarDia() {
         document.getElementById("tituloAlertasTotais").innerHTML = `Comparativo - Alertas Totais`;
         document.getElementById("subtituloAlertasTotais").innerHTML = `${ontemBR} x dia Anterior`;
 
-        const valorDiaAnterior = 60;
 
         var comparativoAlertas = {
             chart: { type: "bar", height: 330 },
@@ -189,11 +258,11 @@ async function verificarDia() {
             series: [
                 {
                     name: "Alertas Críticos",
-                    data: [valorDiaAnterior, somaCritico]
+                    data: [somaCriticoAnteOntem, somaCritico]
                 }
             ],
 
-            xaxis: { categories: ["Dia anterior", `${ontemBR}`] }
+            xaxis: { categories: [`${diaAnteOntemBR}`, `${ontemBR}`] }
         };
 
         new ApexCharts(document.querySelector("#comparativoAlertas"), comparativoAlertas).render();

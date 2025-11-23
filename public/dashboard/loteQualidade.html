@@ -61,7 +61,9 @@
             </a>
 
             <div class="topoTitulo">
-                <h1 class="tituloLote" id="tituloLote">Modelo NAV-M100 - 06 lotes</h1>
+                <h1 class="tituloLote" id="tituloLote">
+                    
+                </h1>
                 <select class="selectData" id="selectPeriodo">
                     <option value="dia" selected id="select_ontem">Dia</option>
                     <option value="semana">Semana</option>
@@ -149,7 +151,7 @@
                         <div class="chart-container-alert p-4 h-full flex flex-col">
                             <h3 class="text-lg font-bold text-center mb-4 text-black" style="font-size: 18px;"
                                 id="titulo_TopLotes">
-                                RANKING DE LOTES (7 DIAS)
+                                RANKING DE LOTES CRÍTICOS
                             </h3>
                             <ol class="list-none space-y-2 flex-grow" id="rankingLista">
                                 <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
@@ -190,7 +192,8 @@
                                 Comparativo - Alertas críticos totais por hardware
                             </h3>
                             <select
-                                style="align-self: center;border: 1px solid black;border-radius: 6px;text-align: center;">
+                                style="align-self: center;border: 1px solid black;border-radius: 6px;text-align: center;" disabled>
+                                <option></option>
                                 <option value="CPU">CPU</option>
                                 <option value="RAM">RAM</option>
                                 <option value="TEMP">TEMPERATURA DA CPU</option>
