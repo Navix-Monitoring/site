@@ -18,7 +18,7 @@
 
 </head>
 
-<body onload="verificadorCargo();">
+<body onload="verificadorCargo(); testarDiario();">
 
     <div class="flex flex-row w-full">
         <div
@@ -257,3 +257,29 @@
 
         });
     </script>
+
+    <script>
+   async function testarDiario() {
+    try {
+        const resposta = await fetch("/dashboard/diario/2025/11/3/22"); 
+        //       /ano /mes /semana /dia
+
+        console.log("Status da resposta:", resposta.status);
+
+        if (!resposta.ok) {
+            const erroTexto = await resposta.text();
+            console.error("Erro ao buscar:", erroTexto);
+            return;
+        }
+
+        const json = await resposta.json();
+        console.log("JSON recebido:", json);
+
+    } catch (erro) {
+        console.error("ERRO NO FETCH:", erro);
+    }
+}
+
+testarDiario(); 
+
+</script>
