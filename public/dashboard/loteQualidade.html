@@ -14,11 +14,13 @@
     <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
     <script src="../js/usuario/verificadorCargo.js"></script>
+    <script src="dashJS/funcoesTempoDash.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 
 </head>
 
-<body onload="verificadorCargo(); testarDiario();">
+<body onload="verificarDia(); verificarCargo();">
 
     <div class="flex flex-row w-full">
         <div
@@ -58,9 +60,9 @@
             </a>
 
             <div class="topoTitulo">
-                <h1 class="tituloLote" id="tituloLote">Modelo Keniti - 50 lotes</h1>
+                <h1 class="tituloLote" id="tituloLote">Modelo NAV-M100 - 06 lotes</h1>
                 <select class="selectData" id="selectPeriodo">
-                    <option value="dia" selected>Dia</option>
+                    <option value="dia" selected id="select_ontem">Dia</option>
                     <option value="semana">Semana</option>
                     <option value="mes">Mês</option>
                     <option value="ano">Ano</option>
@@ -144,33 +146,33 @@
                     <!-- RANKING LOTES -->
                     <div class="container-filho">
                         <div class="chart-container-alert p-4 h-full flex flex-col">
-                            <h3 class="text-lg font-bold text-center mb-4 text-black" style="font-size: 18px;">
+                            <h3 class="text-lg font-bold text-center mb-4 text-black" style="font-size: 18px;" id="titulo_TopLotes">
                                 RANKING DE LOTES (7 DIAS)
                             </h3>
                             <ol class="list-none space-y-2 flex-grow" id="rankingLista">
                                 <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
-                                    <span class="font-bold text-base text-blue-900">1. LOTE A003</span>
-                                    <span class="font-bold text-base text-blue-900">79 alertas</span>
+                                    <span class="font-bold text-base text-blue-900" id="numero_lote_top1">1. LOTE A003</span>
+                                    <span class="font-bold text-base text-blue-900" id="alertas_lote_top1">79 alertas</span>
                                 </li>
                                 <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                    <span class="font-medium text-gray-800">2. LOTE A004</span>
-                                    <span class="font-medium text-gray-800">61 alertas</span>
+                                    <span class="font-medium text-gray-800"id="numero_lote_top2">2. LOTE A004</span>
+                                    <span class="font-medium text-gray-800" id="alertas_lote_top2">61 alertas</span>
                                 </li>
                                 <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                    <span class="font-medium text-gray-800">3. LOTE A001</span>
-                                    <span class="font-medium text-gray-800">44 alertas</span>
+                                    <span class="font-medium text-gray-800"id="numero_lote_top3">3. LOTE A001</span>
+                                    <span class="font-medium text-gray-800" id="alertas_lote_top3">44 alertas</span>
                                 </li>
                                 <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                    <span class="font-medium text-gray-800">4. LOTE A002</span>
-                                    <span class="font-medium text-gray-800">27 alertas</span>
+                                    <span class="font-medium text-gray-800"id="numero_lote_top4">4. LOTE A002</span>
+                                    <span class="font-medium text-gray-800" id="alertas_lote_top4">27 alertas</span>
                                 </li>
                                 <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                    <span class="font-medium text-gray-800">4. LOTE A005</span>
-                                    <span class="font-medium text-gray-800">27 alertas</span>
+                                    <span class="font-medium text-gray-800"id="numero_lote_top5">5. LOTE A005</span>
+                                    <span class="font-medium text-gray-800" id="alertas_lote_top5">27 alertas</span>
                                 </li>
                                 <li class="flex justify-between items-center w-full p-3">
-                                    <span class="font-medium text-gray-800">4. LOTE A006</span>
-                                    <span class="font-medium text-gray-800">27 alertas</span>
+                                    <span class="font-medium text-gray-800"id="numero_lote_top6">6. LOTE A006</span>
+                                    <span class="font-medium text-gray-800" id="alertas_lote_top6">27 alertas</span>
                                 </li>
                             </ol>
                         </div>
@@ -212,8 +214,6 @@
     </div>
 
     <script src="../js/redirecionar.js"></script>
-    <script src="../js/usuario/verificadorCargo.js"></script>
-
     <script>
         document.addEventListener("DOMContentLoaded", () => {
 
@@ -237,49 +237,7 @@
 
             const select = document.getElementById("selectPeriodo");
             let scriptDiaCarregado = false;
-
-            function carregarGraficoDia() {
-                if (scriptDiaCarregado) return;
-
-                let script = document.createElement("script");
-                script.src = "../js/dashboardGuilherme.js";
-                document.body.appendChild(script);
-
-                scriptDiaCarregado = true;
-            }
-
-
-            if (select.value === "dia") carregarGraficoDia();
-
-            select.addEventListener("change", () => {
-                if (select.value === "dia") carregarGraficoDia();
-            });
-
         });
     </script>
 
-    <script>
-   async function testarDiario() {
-    try {
-        const resposta = await fetch("/dashboard/diario/2025/11/3/22"); 
-        //       /ano /mes /semana /dia
-
-        console.log("Status da resposta:", resposta.status);
-
-        if (!resposta.ok) {
-            const erroTexto = await resposta.text();
-            console.error("Erro ao buscar:", erroTexto);
-            return;
-        }
-
-        const json = await resposta.json();
-        console.log("JSON recebido:", json);
-
-    } catch (erro) {
-        console.error("ERRO NO FETCH:", erro);
-    }
-}
-
-testarDiario(); 
-
-</script>
+   
