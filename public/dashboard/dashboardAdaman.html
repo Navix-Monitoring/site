@@ -20,7 +20,7 @@
 
 <body onload="carregarInformacoes(), simularValores(),verificarCargo()">
     <!-- SIDEBAR -->
-    <div class="flex flex-row w-full">
+    <div class="flex min-h-screen relative">
         <div
             class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600 fixed top-0 left-0">
             <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10">
@@ -49,6 +49,14 @@
                     class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
                     Gerenciar Frota
                 </a>
+
+                <a href="https://navixsuporte.atlassian.net/jira/software/form/9d7593db-d676-44b4-a1f4-43762dea870c"
+                    target="_blank"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium ">
+                    Suporte
+                    <i class='bx  bx-message-dots-2'></i>
+                </a>
+
                 <div class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
                     onclick="limparSessao()">
                     <a href="../index.html" class="no-underline text-white">
@@ -58,131 +66,164 @@
             </div>
         </div>
 
-        <!-- CABEÇALHO -->
-        <div class="flex flex-col ml-[250px] w-full p-8">
-            <a class="btnVoltar" onclick="localStorage.clear(); redirecionar();">
-                <div style="margin-bottom: 20px; display: flex; align-items: center; font-size: 30px;">
-                    <i class='bx bx-arrow-left-stroke'></i>
-                    <h3>Voltar</h3>
-                </div>
-            </a>
+        <main class="flex-1 ml-64 p-8 lg:p-12 bg-slate-50 min-h-screen">
 
-            <div class="topoTitulo">
-                <h1 class="tituloLote">Bateria dos Modelos Gerais</h1>
-                <select class="selectData" id="selectPeriodo">
-                    <option value="semana" selected>Semana</option>
-                    <option value="mes">Mês</option>
-                    <option value="ano">Ano</option>
-                </select>
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                <div>
+                    <button class="flex items-center text-slate-500 hover:text-blue-600 transition-colors mb-2"
+                        onclick="localStorage.clear(); redirecionar();">
+                        <i class='bx bx-arrow-back mr-2'></i> Voltar
+                    </button>
+                    <h1 class="text-3xl font-bold text-slate-900">Bateria dos Modelos Gerais</h1>
+                    <p class="text-slate-500 mt-1">Monitoramento da saúde da frota</p>
+                </div>
+
+                <div class="flex items-center gap-4 bg-white p-2 rounded-lg shadow-sm border border-slate-200">
+                    <span class="text-sm text-slate-500 pl-2">Período:</span>
+                    <select
+                        class="bg-slate-100 text-slate-700 text-sm font-semibold py-2 px-4 rounded-md border-none outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                        id="selectPeriodo">
+                        <option value="semana" selected>Última Semana</option>
+                        <option value="mes">Último Mês</option>
+                        <option value="ano">Ano Atual</option>
+                    </select>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100 lg:col-span-1 h-full">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class='bx bxs-bell-ring text-amber-500'></i> Alertas Recentes
+                    </h2>
+
+                    <div class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
+                        <div
+                            class="flex items-start gap-3 p-3 bg-red-50 rounded-lg border-l-4 border-red-500 hover:shadow-md transition-shadow">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500 mt-1"></i>
+                            <div>
+                                <p class="text-sm font-bold text-red-800">Modelo LT-B72K</p>
+                                <p class="text-xs text-red-600">Crítico: Tensão fora do padrão</p>
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500 hover:shadow-md transition-shadow">
+                            <i class="fa-solid fa-circle-exclamation text-yellow-500 mt-1"></i>
+                            <div>
+                                <p class="text-sm font-bold text-yellow-800">Modelo LT-C19P</p>
+                                <p class="text-xs text-yellow-600">Atenção: Eficiência caiu 5%</p>
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border-l-4 border-orange-400 hover:shadow-md transition-shadow">
+                            <i class="fa-solid fa-temperature-high text-orange-500 mt-1"></i>
+                            <div>
+                                <p class="text-sm font-bold text-orange-800">Modelo LT-D58X</p>
+                                <p class="text-xs text-orange-600">Temp. acima de 40°C</p>
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border-l-4 border-orange-400 hover:shadow-md transition-shadow">
+                            <i class="fa-solid fa-bolt text-orange-500 mt-1"></i>
+                            <div>
+                                <p class="text-sm font-bold text-orange-800">Modelo LT-H56N</p>
+                                <p class="text-xs text-orange-600">Descarga rápida detectada</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <div
+                        class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-green-500 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-sm font-medium text-slate-500 uppercase">Saúde da Bateria</h3>
+                            <div class="p-2 bg-green-100 rounded-full text-green-600">
+                                <i class='bx bx-heart text-2xl'></i>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-3xl font-bold text-slate-800">95%</span>
+                            <span
+                                class="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full ml-2">Saudável</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">Média da frota atual</p>
+                    </div>
+
+                    <div
+                        class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-500 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-sm font-medium text-slate-500 uppercase">Capacidade (kWh)</h3>
+                            <div class="p-2 bg-blue-100 rounded-full text-blue-600">
+                                <i class='bx bxs-battery text-2xl'></i>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-3xl font-bold text-slate-800">70%</span>
+                            <span
+                                class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full ml-2">Normal</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">Média de carga restante</p>
+                    </div>
+
+                    <div
+                        class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-500 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-sm font-medium text-slate-500 uppercase">Temperatura Média</h3>
+                            <div class="p-2 bg-red-100 rounded-full text-red-600">
+                                <i class='bx bxs-thermometer text-2xl'></i>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-3xl font-bold text-slate-800">70°C</span>
+                            <span
+                                class="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full ml-2">Alerta</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">Pico registrado hoje</p>
+                    </div>
+                </div>
             </div>
 
-            <!-- RANKING -->
-            <main class="card">
-                
-                <div id="alertas" class="flex flex-col gap-4 mt-5 mb-10 bg-[#F7F8FC] p-[10px] rounded-lg">
-                    <div
-                        class="flex justify-between items-center bg-red-100 border-l-4 border-red-600 p-4 rounded-lg shadow-sm">
-                        <div>
-                            <p class="text-red-800 font-semibold text-lg">Modelo LT-B72K</p>
-                            <p class="text-red-700">Alerta crítico: eria fora do padrão</p>
-                        </div>
-                        <i class="fa-solid fa-triangle-exclamation text-red-600 text-2xl"></i>
-                    </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-                    <div
-                        class="flex justify-between items-center bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-lg shadow-sm">
-                        <div>
-                            <p class="text-yellow-800 font-semibold text-lg">Modelo LT-C19P</p>
-                            <p class="text-yellow-700">Atenção: Bateria merece atenção</p>
-                        </div>
-                        <i class="fa-solid fa-circle-exclamation text-yellow-600 text-2xl"></i>
-                    </div>
-
-                    <div
-                        class="flex justify-between items-center bg-orange-100 border-l-4 border-orange-500 p-4 rounded-lg shadow-sm">
-                        <div>
-                            <p class="text-orange-800 font-semibold text-lg">Modelo LT-D58X</p>
-                            <p class="text-orange-700">Aviso: temperatura da Bateria alta</p>
-                        </div>
-                        <i class="fa-solid fa-exclamation text-orange-600 text-2xl"></i>
-                    </div>
-
-                    <div
-                        class="flex justify-between items-center bg-orange-100 border-l-4 border-orange-500 p-4 rounded-lg shadow-sm">
-                        <div>
-                            <p class="text-orange-800 font-semibold text-lg">Modelo LT-H56N</p>
-                            <p class="text-orange-700">Aviso: Bateria alta</p>
-                        </div>
-                        <i class="fa-solid fa-exclamation text-orange-600 text-2xl"></i>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-l-4 border-blue-900 pl-2">Velocidade x
+                        Consumo</h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="velocidadeConsumo"></canvas>
                     </div>
                 </div>
 
-                <!-- KPIs -->
-                <div id="KPIS" class="kpis">
-                    <div class="kpi">
-                        <p class="tituloKPI">Estado de Saúde da Bateria</p> <br>
-                        <div class="ladinho">
-                            <div class="colour-ball" id="cpuColour" style="border-color: red;">
-                                <p id="NumeroKPICPU" class="valor">95%</p>
-                            </div>
-                            <div class="alerta">
-                                <p class="nvlRisco" id="tipoRiscoCPU">Risco: ALTO</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="kpi">
-                        <p class="tituloKPI">Capacidade de Carga Total (kWh)</p> <br>
-                        <div class="ladinho">
-                            <div class="colour-ball" id="discoColour" style="border-color: green;">
-                                <p id="NumeroKPIDISCO" class="valor">70%</p>
-                            </div>
-                            <div class="alerta">
-                                <p class="nvlRisco" id="tipoRiscoDISCO">Risco: BAIXO</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="kpi">
-                        <p class="tituloKPI">Temperatura da Bateria (°C):</p> <br>
-                        <div class="ladinho">
-                            <div class="colour-ball" id="temperaturaColour" style="border-color: green;">
-                                <p id="NumeroKPITEMPERATURA" class="valor">70°</p>
-                            </div>
-                            <div class="alerta">
-                                <p class="nvlRisco" id="tipoRiscoTEMPERATURA">Risco: BAIXO</p>
-                            </div>
-                        </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-l-4 border-blue-900 pl-2">Saúde da Bateria
+                        por Modelo</h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="saudeComputador"></canvas>
                     </div>
                 </div>
 
-                <!-- GRÁFICOS -->
-                <div class="container">
-                    <div class="container-filho">
-                        <div class="chart-container-alert">
-                            <canvas id="velocidadeConsumo"></canvas>
-                        </div>
-                    </div>
-                    <div class="container-filho">
-                        <div class="chart-container-alert">
-                            <canvas id="saudeComputador"></canvas>
-                        </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-l-4 border-amber-500 pl-2">Carga x
+                        Temperatura</h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="cargaTemperatura"></canvas>
                     </div>
                 </div>
 
-                <div class="container">
-                    <div class="container-filho">
-                        <div class="chart-container-alert">
-                            <canvas id="cargaTemperatura"></canvas>
-                        </div>
-                    </div>
-                    <div class="container-filho">
-                        <div class="chart-container-alert">
-                            <canvas id="distribuicaoTemperatura"></canvas>
-                        </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-l-4 border-cyan-500 pl-2">Distribuição de
+                        Temperatura Total</h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="distribuicaoTemperatura"></canvas>
                     </div>
                 </div>
 
-            </main>
-        </div>
+            </div>
+        </main>
     </div>
 </body>
 
@@ -204,58 +245,28 @@
         const ctx3 = document.getElementById('cargaTemperatura').getContext('2d');
         const ctx4 = document.getElementById('distribuicaoTemperatura').getContext('2d');
 
-        saudeComputadorChart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: ['Tesla T3', 'Tesla T4', 'Tesla T5', 'BYD 01', 'BYD 02', 'BYD 03', 'BYD 04'],
-                datasets: [
-                    {
-                        label: 'Bateria',
-                        data: [50, 70, 90, 60, 80, 40, 50],
-                        backgroundColor: '#001D3D'
-                    }
-                ]
+                datasets: [{
+                    label: 'Bateria',
+                    data: [50, 70, 90, 60, 80, 40, 50],
+                    backgroundColor: '#1e3a8a',
+                    borderRadius: 4
+                }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: 'black'
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'SAÚDE BATERIA X MODELO',
-                        color: 'black',
-                        font: { size: 18, weight: 'bold' }
-                    }
-                },
+                plugins: { legend: { display: false } },
                 scales: {
-                    x: {
-                        stacked: true,
-                        ticks: { color: 'black' },
-                        grid: { color: 'rgba(255,255,255,0.1)' }
-                    },
-                    y: {
-                        stacked: true,
-                        beginAtZero: true,
-                        ticks: { color: 'black' },
-                        grid: { color: 'black' },
-                        title: {
-                            display: true,
-                            text: 'Saúde da Bateria (Baixo - Alto)',
-                            color: 'black',
-                            font: { size: 14, }
-                        }
-                    }
+                    y: { beginAtZero: true, max: 100 }
                 }
             }
         });
 
-        velocidadeConsumoChart = new Chart(ctx2, {
+        new Chart(ctx2, {
             type: 'line',
             data: {
                 labels: ['Tesla T3', 'Tesla T4', 'Tesla T5', 'BYD 01', 'BYD 02', 'BYD 03', 'BYD 04'],
@@ -263,74 +274,44 @@
                     {
                         label: 'Velocidade (Km/h)',
                         data: [120, 150, 130, 110, 140, 100, 115],
-                        borderColor: '#00FF00',
+                        borderColor: '#22c55e',
                         fill: false,
-                        tension: 0.1,
+                        tension: 0.3,
                     },
                     {
-                        label: 'Consumo de Energia (%)',
+                        label: 'Consumo (%)',
                         data: [50, 70, 60, 65, 50, 80, 55],
-                        borderColor: '#FF6347',
+                        borderColor: '#ef4444',
                         fill: false,
-                        tension: 0.1,
+                        tension: 0.3,
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: 'black'
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Relação de Velocidade (Km/h) por Consumo de Energia',
-                        color: 'black',
-                        font: { size: 18, weight: 'bold' }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: 'black' },
-                        grid: { color: 'rgba(255,255,255,0.1)' }
-                    },
-                    y: {
-                        ticks: { color: 'black' },
-                        grid: { color: 'black' },
-                        title: {
-                            display: true,
-                            text: 'Valores (%) / Km/h',
-                            color: 'black',
-                            font: { size: 14 }
-                        }
-                    }
-                }
+                plugins: { legend: { position: 'top' } }
             }
         });
-
-        cargaTemperaturaChart = new Chart(ctx3, {
+        
+        new Chart(ctx3, {
             type: 'line',
             data: {
                 labels: ['Tesla T3', 'Tesla T4', 'Tesla T5', 'BYD 01', 'BYD 02', 'BYD 03', 'BYD 04'],
                 datasets: [
                     {
-                        label: 'Capacidade de Carga Total (kWh)',
+                        label: 'Capacidade (kWh)',
                         data: [75, 85, 95, 65, 70, 60, 80],
-                        borderColor: '#FFC300',
-                        backgroundColor: 'rgba(255, 195, 0, 0.2)',
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.2)',
                         fill: true,
-                        tension: 0.1,
+                        tension: 0.3,
                         yAxisID: 'y1'
                     },
                     {
-                        label: 'Temperatura da Bateria (°C)',
+                        label: 'Temp (°C)',
                         data: [25, 30, 28, 35, 27, 40, 32],
-                        borderColor: '#C70039',
-                        backgroundColor: 'rgba(199, 0, 57, 0.2)',
+                        borderColor: '#be123c',
                         fill: false,
                         tension: 0.1,
                         yAxisID: 'y2'
@@ -340,64 +321,35 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: 'black'
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'CAPACIDADE DE CARGA X TEMPERATURA DA BATERIA',
-                        color: 'black',
-                        font: { size: 18, weight: 'bold' }
-                    }
-                },
                 scales: {
-                    x: {
-                        ticks: { color: 'black' },
-                        grid: { color: 'rgba(255,255,255,0.1)' }
-                    },
-                    y1: {
-                        type: 'linear',
-                        position: 'left',
-                        ticks: { color: '#FFC300' },
-                        grid: { color: 'black' },
-                        title: {
-                            display: true,
-                            text: 'Capacidade (kWh)',
-                            color: '#FFC300',
-                            font: { size: 14 }
-                        }
-                    },
-                    y2: {
-                        type: 'linear',
-                        position: 'right',
-                        ticks: { color: '#C70039' },
-                        grid: { drawOnChartArea: false },
-                        title: {
-                            display: true,
-                            text: 'Temperatura (°C)',
-                            color: '#C70039',
-                            font: { size: 14 }
-                        }
-                    }
+                    y1: { type: 'linear', position: 'left' },
+                    y2: { type: 'linear', position: 'right', grid: { drawOnChartArea: false } }
                 }
             }
         });
 
-        distribuicaoTemperaturaChart = new Chart(ctx4, {
+        new Chart(ctx4, {
             type: 'bar',
             data: {
                 labels: ['10-15°C', '16-20°C', '21-25°C', '26-30°C', '31-35°C', '36-40°C', '41+°C'],
                 datasets: [
                     {
-                        label: 'Frequência de Ocorrência',
+                        label: 'Ocorrências',
                         data: [2, 8, 25, 40, 15, 6, 4],
-                        backgroundColor: '#00BFFF',
-                        borderColor: '#008B8B',
-                        borderWidth: 1
+                        backgroundColor: '#0ea5e9',
+                        barPercentage: 1.0,
+                        categoryPercentage: 1.0,
+                        order: 2
+                    },
+                    {
+                        type: 'line',
+                        label: 'Tendência',
+                        data: [2, 8, 25, 40, 15, 6, 4],
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        order: 1
                     }
                 ]
             },
@@ -405,39 +357,14 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    },
-                    title: {
-                        display: true,
-                        text: 'DISTRIBUIÇÃO DA TEMPERATURA DA BATERIA (HISTOGRAMA)',
-                        color: 'black',
-                        font: { size: 18, weight: 'bold' }
-                    }
+                    legend: { display: false }
                 },
                 scales: {
                     x: {
-                        barPercentage: 0.7,
-                        categoryPercentage: 0.6,
-
-                        ticks: { color: 'black' },
-                        grid: { display: false },
-                        title: {
-                            display: true,
-                            text: 'Faixas de Temperatura (°C)',
-                            color: 'black',
-                            font: { size: 14 }
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        ticks: { color: 'black' },
-                        grid: { color: 'black' },
-                        title: {
-                            display: true,
-                            text: 'Frequência de Ocorrência',
-                            color: 'black',
-                            font: { size: 14 }
+                        grid: {
+                            display: false,
+                            drawBorder: false,
+                            offset: false
                         }
                     }
                 }
