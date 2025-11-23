@@ -20,7 +20,8 @@
 
 </head>
 
-<body onload="verificarDia(); verificarCargo();">
+<body onload="verificarDia();verificarCargo();">
+    <!-- verificarDia(); -->
 
     <div class="flex flex-row w-full">
         <div
@@ -72,63 +73,63 @@
             <main class="card">
                 <div class="kpis">
                     <div class="kpi baixo">
-                        <p class="tituloKPI">Lotes em Baixo</p><br>
+                        <p class="tituloKPI">Alertas baixos</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: green;">
-                                <p class="valor">20%</p>
+                                <p class="valor" id="porcentagemBaixo">20%</p>
                             </div>
                             <div class="alerta">
-                                <p class="nvlRisco">10 lotes</p>
+                                <p class="nvlRisco" id="totalAlertaBaixoKPI">10 lotes</p>
                             </div>
                         </div>
                     </div>
                     <div class="kpi neutro">
-                        <p class="tituloKPI">Lotes em Neutro</p><br>
+                        <p class="tituloKPI">Alertas neutros</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: yellow;">
-                                <p class="valor">30%</p>
+                                <p class="valor" id="porcentagemNeutro">30%</p>
                             </div>
                             <div class="alerta">
-                                <p class="nvlRisco">20 lotes</p>
+                                <p class="nvlRisco" id="totalAlertaNeutroKPI">20 lotes</p>
                             </div>
                         </div>
                     </div>
                     <div class="kpi alerta">
-                        <p class="tituloKPI">Lotes em alerta</p><br>
+                        <p class="tituloKPI">Alertas de atenção</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: orange;">
-                                <p class="valor">40%</p>
+                                <p class="valor" id="porcentagemAtencao">40%</p>
                             </div>
                             <div class="alerta">
-                                <p class="nvlRisco">10 lotes</p>
+                                <p class="nvlRisco" id="totalAlertaAtencaoKPI">10 lotes</p>
                             </div>
                         </div>
                     </div>
                     <div class="kpi critico">
-                        <p class="tituloKPI">Lotes em crítico</p><br>
+                        <p class="tituloKPI">Alertas Críticos</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: red;">
-                                <p class="valor">10%</p>
+                                <p class="valor" id="porcentagemCritico">10%</p>
                             </div>
                             <div class="alerta">
-                                <p class="nvlRisco">10 lotes</p>
+                                <p class="nvlRisco" id="totalAlertaCriticoKPI">10 lotes</p>
                             </div>
                         </div>
                     </div>
                     <div class="kpi kpi-componentes">
-                        <p class="tituloKPI">Componentes problemáticos</p><br>
+                        <p class="tituloKPI">Alertas Críticos por componente</p><br>
                         <div class="ladinho">
                             <div class="alerta">
-                                <p class="nvlRisco">RAM 50%</p>
+                                <p class="nvlRisco" id="criticoRAM">RAM 50%</p>
                             </div>
                             <div class="alerta">
-                                <p class="nvlRisco">CPU 20%</p>
+                                <p class="nvlRisco" id="criticoCPU">CPU 20%</p>
                             </div>
                             <div class="alerta">
-                                <p class="nvlRisco">DISCO 10%</p>
+                                <p class="nvlRisco" id="criticoDISCO">DISCO 10%</p>
                             </div>
                             <div class="alerta">
-                                <p class="nvlRisco">TEMP 20%</p>
+                                <p class="nvlRisco" id="criticoTEMP">TEMP 20%</p>
                             </div>
                         </div>
                     </div>
@@ -146,32 +147,35 @@
                     <!-- RANKING LOTES -->
                     <div class="container-filho">
                         <div class="chart-container-alert p-4 h-full flex flex-col">
-                            <h3 class="text-lg font-bold text-center mb-4 text-black" style="font-size: 18px;" id="titulo_TopLotes">
+                            <h3 class="text-lg font-bold text-center mb-4 text-black" style="font-size: 18px;"
+                                id="titulo_TopLotes">
                                 RANKING DE LOTES (7 DIAS)
                             </h3>
                             <ol class="list-none space-y-2 flex-grow" id="rankingLista">
                                 <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
-                                    <span class="font-bold text-base text-blue-900" id="numero_lote_top1">1. LOTE A003</span>
-                                    <span class="font-bold text-base text-blue-900" id="alertas_lote_top1">79 alertas</span>
+                                    <span class="font-bold text-base text-blue-900" id="numero_lote_top1">1. LOTE
+                                        A003</span>
+                                    <span class="font-bold text-base text-blue-900" id="alertas_lote_top1">79
+                                        alertas</span>
                                 </li>
                                 <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                    <span class="font-medium text-gray-800"id="numero_lote_top2">2. LOTE A004</span>
+                                    <span class="font-medium text-gray-800" id="numero_lote_top2">2. LOTE A004</span>
                                     <span class="font-medium text-gray-800" id="alertas_lote_top2">61 alertas</span>
                                 </li>
                                 <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                    <span class="font-medium text-gray-800"id="numero_lote_top3">3. LOTE A001</span>
+                                    <span class="font-medium text-gray-800" id="numero_lote_top3">3. LOTE A001</span>
                                     <span class="font-medium text-gray-800" id="alertas_lote_top3">44 alertas</span>
                                 </li>
                                 <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                    <span class="font-medium text-gray-800"id="numero_lote_top4">4. LOTE A002</span>
+                                    <span class="font-medium text-gray-800" id="numero_lote_top4">4. LOTE A002</span>
                                     <span class="font-medium text-gray-800" id="alertas_lote_top4">27 alertas</span>
                                 </li>
                                 <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
-                                    <span class="font-medium text-gray-800"id="numero_lote_top5">5. LOTE A005</span>
+                                    <span class="font-medium text-gray-800" id="numero_lote_top5">5. LOTE A005</span>
                                     <span class="font-medium text-gray-800" id="alertas_lote_top5">27 alertas</span>
                                 </li>
                                 <li class="flex justify-between items-center w-full p-3">
-                                    <span class="font-medium text-gray-800"id="numero_lote_top6">6. LOTE A006</span>
+                                    <span class="font-medium text-gray-800" id="numero_lote_top6">6. LOTE A006</span>
                                     <span class="font-medium text-gray-800" id="alertas_lote_top6">27 alertas</span>
                                 </li>
                             </ol>
@@ -181,9 +185,17 @@
                     <!-- GRÁFICO DE COMPARACAO HARDWARE -->
                     <div class="container-filho">
                         <div class="chart-container-alert p-4 h-full flex flex-col">
-                            <h3 class="text-lg font-bold text-center mb-2 text-black text-[18px]">
-                                Comparativo - Mediana de alerta por Hardware
+                            <h3 class="text-lg font-bold text-center mb-2 text-black text-[18px]"
+                                id="titulo_AlertasTotais" itemid="tituloAlertasTotaisHardware">
+                                Comparativo - Alertas críticos totais por hardware
                             </h3>
+                            <select
+                                style="align-self: center;border: 1px solid black;border-radius: 6px;text-align: center;">
+                                <option value="CPU">CPU</option>
+                                <option value="RAM">RAM</option>
+                                <option value="TEMP">TEMPERATURA DA CPU</option>
+                                <option value="DISCO">DISCO</option>
+                            </select>
                             <div class="flex-1">
                                 <div id="tempAlertChart"></div>
 
@@ -194,11 +206,13 @@
                     <div class="container-filho">
                         <div class="chart-container-alert p-4 h-full flex flex-col">
 
-                            <h3 class="text-lg font-bold text-center mb-2 text-black text-[18px]">
-                                Comparativo - Alertas Totais
+                            <h3 class="text-lg font-bold text-center mb-2 text-black text-[18px]"
+                                id="tituloAlertasTotais">
+                                Comparativo - Alertas CríticosTotais
                             </h3>
 
-                            <p class="text-center text-gray-600 -mt-2 mb-2">Últimos 7 dias</p>
+                            <p class="text-center text-gray-600 -mt-2 mb-2" id="subtituloAlertasTotais">Últimos 7 dias
+                            </p>
 
                             <div class="flex-1">
                                 <div id="comparativoAlertas"></div>
@@ -239,5 +253,3 @@
             let scriptDiaCarregado = false;
         });
     </script>
-
-   
