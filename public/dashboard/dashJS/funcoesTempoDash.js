@@ -33,8 +33,8 @@ async function verificarDia() {
             diaAnteontem <= 15 ? 2 :
                 diaAnteontem <= 22 ? 3 : 4;
 
-    document.getElementById("select_ontem").innerHTML = `${ontemBR}`;
-
+    document.getElementById("select_ontem").innerHTML = `Data`;
+   // document.getElementById("date1").value = `${ontem.getFullYear()}-${ontem.getMonth()}-${ontem.get()}`}
     try {
         const [resposta, resposta2] = await Promise.all([
             fetch(`/dashboard/diario/${ano}/${mes}/${semanaOntem}/${numeroDiaSemana}`),
@@ -223,10 +223,10 @@ async function verificarDia() {
             chart: { type: "bar", height: 300 },
             stroke: { curve: "smooth", width: 3 },
             series: [
-                { name: "CPU", data: [`${somaCPU}`, `${somaCPU_2}`] },
-                { name: "RAM", data: [`${somaRAM}`, `${somaRAM_2}`] },
-                { name: "Disco", data: [`${somaDisco}`, `${somaDisco_2}`] },
-                { name: "Temperatura", data: [`${somaTemp}`, `${somaTemp_2}`] },
+                { name: "CPU", data: [`${somaCPU_2}`, `${somaCPU}`] },
+                { name: "RAM", data: [`${somaRAM_2}`, `${somaRAM}`] },
+                { name: "Disco", data: [`${somaDisco_2}`, `${somaDisco}`] },
+                { name: "Temperatura", data: [`${somaTemp_2}`, `${somaTemp}`] },
             ],
              colors: [
                 "#0a1a2f",

@@ -2,7 +2,7 @@ async function diario(req, res) {
     try {
         const { ano, mes, semana, dia } = req.params;
 
-        const url = `https://bucket-client-gnavix.s3.amazonaws.com/${ano}/${mes}/Semana${semana}/Relatorio-Final-${dia}-${mes}-${ano}.json`;
+        const url = `https://bucket-client-navix.s3.amazonaws.com/dashAlertas/${ano}/${mes}/Semana${semana}/Relatorio-Final-${dia}-${mes}-${ano}.json`;
 
         const response = await fetch(url);
 

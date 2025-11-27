@@ -60,9 +60,8 @@
                 </div>
             </a>
 
-            <div class="topoTitulo">
+            <div class="topoTitulo flex items-center gap-4"> 
                 <h1 class="tituloLote" id="tituloLote">
-                    
                 </h1>
                 <select class="selectData" id="selectPeriodo">
                     <option value="dia" selected id="select_ontem">Dia</option>
@@ -70,6 +69,10 @@
                     <option value="mes">Mês</option>
                     <option value="ano">Ano</option>
                 </select>
+                <div class="date-input-container">
+                    <input type="date" id="date1" value = "2025-11-27", class="date-input", min="2025-01-01", max="2025-12-31">
+
+                </div>
             </div>
 
             <main class="card">
@@ -192,7 +195,8 @@
                                 Comparativo - Alertas críticos totais por hardware
                             </h3>
                             <select
-                                style="align-self: center;border: 1px solid black;border-radius: 6px;text-align: center;" disabled>
+                                style="align-self: center;border: 1px solid black;border-radius: 6px;text-align: center;"
+                                disabled>
                                 <option></option>
                                 <option value="CPU">CPU</option>
                                 <option value="RAM">RAM</option>
