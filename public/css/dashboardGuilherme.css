@@ -2,14 +2,14 @@
 .tituloLote {
   margin-left: 20px;
   margin-right: 1rem; 
-  font-size: 50px;
+  font-size: 40px;
   width: 120vh;
 }
 
 .topoTitulo {
    display: flex;
     align-items: center; 
-    gap: 1rem; 
+    gap: 0.7rem; 
 }
 
 .selectData {
@@ -232,4 +232,8 @@ label {
     margin-bottom: 8px;
     color: #000000;
     font-weight: bold;
+}
+
+body{
+  overflow-x: hidden;
 }
