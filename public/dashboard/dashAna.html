@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engenheiro Qualidade</title>
+  <link rel="icon" href="../assets/navix-logo.jpg" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
+  <script src="../js/sessao.js"></script>
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href='https://cdn.boxicons.com/3.0.3/fonts/basic/boxicons.min.css' rel='stylesheet'>
+  <link href='https://cdn.boxicons.com/3.0.3/fonts/brands/boxicons-brands.min.css' rel='stylesheet'>
+
+
+
+</head>
+
+<body class="bg-gray-100">
+
+  <div class="flex flex-row w-full">
+    <!-- nav bar -->
+    <div
+      class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600 **fixed top-0 left-0**">
+      <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10" />
+      <div id="imagemUsuarioNavbar">
+        <div class="rounded-md w-20 h-20 mb-2" style="
+              background-image: url(../assets/img/foto-usuario.png);
+              background-size: cover;
+              background-repeat: no-repeat;
+              background-position: center;
+            "></div>
+      </div>
+
+      <div id="nomeProfissao" class="text-center mb-6"></div>
+
+      <div class="flex flex-col gap-4 w-[80%]">
+        <a href="../perfil-visualizar.html"
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+          Perfil
+        </a>
+
+        <a onclick="redirecionar()"
+          class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium"
+          style="cursor: pointer;">
+          Dashboard
+        </a>
+
+        <a href="../admin.html" id="adm-only"
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+          Cadastrar Funcionários
+        </a>
+
+        <a href="./cadastroVeiculos.html"
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+          Gerenciar Frota
+        </a>
+
+        <a href="https://navixsuporte.atlassian.net/jira/software/form/9d7593db-d676-44b4-a1f4-43762dea870c"
+          target="_blank"
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium ">
+          Suporte
+          <i class='bx  bx-message-dots-2'></i>
+        </a>
+
+        <div class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
+          onclick="limparSessao()">
+          <a href="../index.html" class="no-underline text-white">
+            <h3 class="m-0 p-0">Sair</h3>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <!-- section de graficos -->
+
+
+      <!--PAINEL DE KPIs E GRÁFICOS-->
+<div id="painelDashboard" class="ml-[250px] p-6">
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-3 gap-6 mb-6">
+
+        <div class="bg-white shadow-md p-6 rounded-lg text-center">
+            <h2 class="font-bold text-xl text-blue-900">Energia Usada</h2>
+            <p class="text-3xl font-bold text-blue-700" id="kpi_energia">09V</p>
+            <p class="text-gray-600 text-sm mt-2">Mostra quanto o hardware usou da bateria auxiliar.</p>
+        </div>
+
+        <div class="bg-white shadow-md p-6 rounded-lg text-center">
+            <h2 class="font-bold text-xl text-blue-900">Capacidade Atual</h2>
+            <p class="text-3xl font-bold text-blue-700" id="kpi_capacidade">12V</p>
+            <p class="text-gray-600 text-sm mt-2">Mostra a capacidade de volts atual da bateria auxiliar.</p>
+        </div>
+
+        <div class="bg-white shadow-md p-6 rounded-lg text-center">
+            <h2 class="font-bold text-xl text-blue-900">Nível de Estabilidade</h2>
+            <p class="text-3xl font-bold text-blue-700" id="kpi_estabilidade">80%</p>
+            <p class="text-gray-600 text-sm mt-2">Indica se o hardware está estável em geral.</p>
+        </div>
+
+    </div>
+
+    <!-- GRÁFICOS -->
+    <div class="grid grid-cols-2 gap-6">
+
+        <!-- Grafico 1 -->
+        <div class="bg-white shadow-md p-6 rounded-lg">
+            <h2 class="font-bold text-xl text-blue-900 mb-3">Consumo por Componente</h2>
+            <canvas id="graficoConsumo"></canvas>
+        </div>
+
+        <!-- Grafico 2 -->
+        <div class="bg-white shadow-md p-6 rounded-lg">
+            <h2 class="font-bold text-xl text-blue-900 mb-3">Correlação Energia x Desempenho</h2>
+
+            <!-- select do componente -->
+            <select id="selectComponente" class="border rounded-md px-3 py-2 mb-4"
+              onchange="atualizarCorrelacao()">
+              <option value="cpu">CPU</option>
+              <option value="ram">RAM</option>
+              <option value="rede">Rede</option>
+              <option value="disco">Disco</option>
+              </select>
+
+            <canvas id="graficoCorrelacao"></canvas>
+        </div>
+
+    </div>
+
+</div>
+<!-- fim do painel -->
+
+
+      <!-- Exemplos de cards -->
+      <section class="ml-[250px] h-[850px] overflow-y-auto rounded-md p-4 bg-white">
+        <div class="grid grid-cols-1 gap-4" id="lotes">
+          <div class="bg-blue-800 p-4 rounded-lg text-white">Lote 1</div>
+          <div class="bg-black p-4 rounded-lg text-white">Lote 2</div>
+          <div class="bg-blue-800 p-4 rounded-lg text-white">Lote 3</div>
+          <div class="bg-black p-4 rounded-lg text-white">Lote 4</div>
+          <div class="bg-blue-800 p-4 rounded-lg text-white">Lote 5</div>
+          <div class="bg-black p-4 rounded-lg text-white">Lote 6</div>
+          <div class="bg-blue-800 p-4 rounded-lg text-white">Lote 7</div>
+          <div class="bg-black p-4 rounded-lg text-white">Lote 8</div>
+        </div>
+      </section>
+    </div>
+    <div id="criarEditar"></div>
+  </div>
+</body>
+
+<script src="../js/dashboardEngenheiroQualidade.js"></script>
+<script src="../js/usuario/verificadorCargo.js"></script>
+
+<script>
+  // Esta função agora será chamada pelo listener abaixo
+  function carregarFotoUsuario() {
+    var imagemUsuarioNavbar = document.getElementById("imagemUsuarioNavbar");
+    if (imagemUsuarioNavbar) {
+      imagemUsuarioNavbar.innerHTML = `
+        <div class="rounded-md w-20 h-20 mb-2"
+          style="background-image: url(${sessionStorage.imagem}); background-size: cover; background-repeat: no-repeat; background-position: center;">
+        </div>
+      `;
+    }
+  }
+
+  // Espera o HTML carregar antes de executar qualquer script
+  document.addEventListener("DOMContentLoaded", function () {
+    // --- CHAMA AS FUNÇÕES DE INICIALIZAÇÃO ---
+    verificarCargo(); // SUA FUNÇÃO PARA ESCONDER O LINK!
+    carregarFotoUsuario(); // Função do seu script inline
+
+    // Chama a função que estava no 'onload'
+    if (typeof listarLotes === "function") {
+      listarLotes();
+    }
+
+    // --- PREENCHE OS DADOS DO USUÁRIO ---
+    // (Este código estava quebrado, pois rodava antes do 'nomeProfissao' existir)
+    var nomeEmpresa = sessionStorage.getItem("nome_ss");
+    var cargo = sessionStorage.getItem("cargo_ss");
+    var nomeProfissao = document.getElementById("nomeProfissao");
+
+    if (nomeProfissao) {
+      // Verifica se o elemento foi encontrado
+      nomeProfissao.innerHTML = `
+        <p class="font-bold text-blue-900">${nomeEmpresa}</p>
+        <p class="mb-4 text-blue-900">Cargo: ${cargo}</p>
+      `;
+    }
+  });
+</script>
+
+<script>
+    // ------ GRÁFICO 1: BARRAS ------
+    const ctx1 = document.getElementById("graficoConsumo").getContext("2d");
+
+    new Chart(ctx1, {
+        type: "bar",
+        data: {
+            labels: ["CPU", "RAM", "Processador", "Rede", "Disco"],
+            datasets: [{
+                label: "Energia usada (V)",
+                data: [4, 7, 6, 3, 5],
+                backgroundColor: ["#004e89", "#1a659e", "#2d8ebc", "#7fb3d5", "#cfe2f3"]
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                yAxes: [{
+                    ticks: { beginAtZero: true }
+                }]
+            }
+        }
+    });
+
+    // ------ GRÁFICO 2: LINHAS ------
+    const ctx2 = document.getElementById("graficoCorrelacao").getContext("2d");
+
+    new Chart(ctx2, {
+        type: "line",
+        data: {
+            labels: ["A", "B", "C", "D", "E", "F"],
+            datasets: [
+                {
+                    label: "Energia Usada",
+                    data: [3, 6, 4, 7, 5, 8],
+                    borderColor: "#d32f2f",
+                    borderWidth: 2,
+                    fill: false
+                },
+                {
+                    label: "Desempenho",
+                    data: [2, 5, 3, 6, 4, 7],
+                    borderColor: "#1976d2",
+                    borderWidth: 2,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>
+
+
+<script src="../js/redirecionar.js"></script>
+
+</html>
