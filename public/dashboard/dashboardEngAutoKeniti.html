@@ -136,376 +136,295 @@
 </html>
 <script src="../js/redirecionar.js"></script>
 <script>
+    const URL_JSON = "https://projeto-bucket-client.s3.us-east-1.amazonaws.com/Lotes/RelatorioGeral.json";
+    
+    const LIMITES = { cpu: 85, ram: 80, disco: 90, temp: 70, processo: 250 };
+
+    let DADOS_RELACAO = {};
+    let DADOS_EVOLUCAO = {};
+    let DADOS_CARGA = {};
 
     function atualizarDataHora() {
         const agora = new Date();
-        const dataHoraFormatada = agora.toLocaleString("pt-BR");
-        document.getElementById("dataHora").textContent = dataHoraFormatada;
+        document.getElementById("dataHora").textContent = agora.toLocaleString("pt-BR");
     }
 
-    atualizarDataHora();
-
+    function atualizarCorKPI(valor, limite, elemento) {
+        const numero = Number(valor);
+        if (numero >= limite) elemento.style.color = "red";
+        else if (numero >= limite * 0.85) elemento.style.color = "orange";
+        else elemento.style.color = "green";
+    }
 
     function carregarUsuarioSessao() {
         var imagemUsuarioNavbar = document.getElementById("imagemUsuarioNavbar");
         var fotoUrl = sessionStorage.getItem("imagem");
         if (imagemUsuarioNavbar && fotoUrl) {
-            imagemUsuarioNavbar.innerHTML = `
-            <div class="rounded-md w-20 h-20 mb-2"
-                style="background-image: url(${fotoUrl}); background-size: cover; background-repeat: no-repeat; background-position: center;">
-            </div>
-            `;
+            imagemUsuarioNavbar.innerHTML = `<div class="rounded-md w-20 h-20 mb-2" style="background-image: url(${fotoUrl}); background-size: cover; background-repeat: no-repeat; background-position: center;"></div>`;
         }
-
         var nomeEmpresa = sessionStorage.getItem("nome_ss");
         var cargo = sessionStorage.getItem("cargo_ss");
         var nomeProfissao = document.getElementById("nomeProfissao");
-
         if (nomeProfissao) {
-            nomeProfissao.innerHTML = `
-                <p class="font-bold text-blue-900">${nomeEmpresa || "Usuário"}</p>
-                <p class="mb-4 text-blue-900">Cargo: ${cargo || "Não definido"}</p>
-            `;
+            nomeProfissao.innerHTML = `<p class="font-bold text-blue-900">${nomeEmpresa || "Usuário"}</p><p class="mb-4 text-blue-900">Cargo: ${cargo || "Não definido"}</p>`;
         }
     }
 
+    const COR_CONTEXTO = '#B0B0B0';
 
-    function atualizarCorKPI(valor, limite, elemento) {
-        const numero = Number(valor);
+    function prepararDatasetsDestaque(lotes, piorLoteLabel) {
+        const datasetsFinais = [];
+        lotes.forEach(loteOriginal => {
+            const corDesteLote = (loteOriginal.label === piorLoteLabel) ? loteOriginal.borderColor : COR_CONTEXTO;
+            datasetsFinais.push({
+                label: loteOriginal.label,
+                data: loteOriginal.data,
+                borderColor: corDesteLote,
+                backgroundColor: corDesteLote,
+                fill: false,
+                borderRadius: 6,
+                categoryPercentage: 0.8,
+                barPercentage: 0.85,
+            });
+        });
+        return datasetsFinais;
+    }
 
-        if (numero >= limite) {
-            elemento.style.color = "red";
-        } else if (numero >= limite * 0.85) {
-            elemento.style.color = "orange";
-        } else {
-            elemento.style.color = "green";
+    function encontrarPiorLote(lotes) {
+        let piorLoteLabel = null;
+        let maiorMedia = -Infinity;
+        lotes.forEach(lote => {
+            let soma = 0;
+            for (let i = 0; i < lote.data.length; i++) soma += lote.data[i];
+            const media = soma / lote.data.length;
+            if (media > maiorMedia) {
+                maiorMedia = media;
+                piorLoteLabel = lote.label;
+            }
+        });
+        return piorLoteLabel;
+    }
+
+    let graficoRelacao, graficoCarga, graficoEvolucao;
+
+    function atualizarGraficos() {
+        const metrica = document.getElementById('escolhaVisu').value;
+        const containerCarga = document.getElementById('containerCarga');
+
+        // 1. Gráfico Relação
+        if (graficoRelacao && DADOS_RELACAO[metrica]) {
+            const dados = DADOS_RELACAO[metrica].semana;
+            graficoRelacao.data.labels = dados.labels;
+            graficoRelacao.options.plugins.title.text = dados.titulo;
+            
+            graficoRelacao.data.datasets = []; 
+            if (metrica === 'cpu') {
+                graficoRelacao.data.datasets.push({ label: 'CPU', data: dados.cpu, backgroundColor: 'blue', borderColor: 'blue', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Temperatura', data: dados.temp, backgroundColor: 'red', borderColor: 'red', fill: false });
+            } else if (metrica === 'temp') {
+                graficoRelacao.data.datasets.push({ label: 'Temperatura', data: dados.temp, backgroundColor: 'red', borderColor: 'red', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'CPU', data: dados.cpu, backgroundColor: 'blue', borderColor: 'blue', fill: false });
+            } else if (metrica === 'ram') {
+                graficoRelacao.data.datasets.push({ label: 'RAM', data: dados.ram, backgroundColor: 'green', borderColor: 'green', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'purple', borderColor: 'purple', fill: false });
+            } else if (metrica === 'disco') {
+                graficoRelacao.data.datasets.push({ label: 'Disco', data: dados.disco, backgroundColor: 'orange', borderColor: 'orange', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'purple', borderColor: 'purple', fill: false });
+            } else if (metrica === 'processo') {
+                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'purple', borderColor: 'purple', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Disco', data: dados.disco, backgroundColor: 'orange', borderColor: 'orange', fill: false });
+            }
+            graficoRelacao.update();
+        }
+
+        // 2. Gráfico Evolução (TOP 5)
+        if (graficoEvolucao && DADOS_EVOLUCAO[metrica]) {
+            const dados = DADOS_EVOLUCAO[metrica].semana;
+            const piorLoteLabel = encontrarPiorLote(dados.lotes);
+            const novosDatasets = prepararDatasetsDestaque(dados.lotes, piorLoteLabel);
+
+            graficoEvolucao.data.datasets = novosDatasets;
+            graficoEvolucao.data.labels = dados.labels;
+            graficoEvolucao.options.plugins.title.text = dados.titulo;
+            graficoEvolucao.options.scales.y.title.text = dados.eixoY;
+
+            const novoLimite = LIMITES[metrica] || 0;
+            if(graficoEvolucao.options.plugins.annotation && graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal) {
+                graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMin = novoLimite;
+                graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMax = novoLimite;
+            }
+            graficoEvolucao.update();
+        }
+
+        // 3. Gráfico Carga
+        if (graficoCarga && containerCarga && DADOS_CARGA[metrica]) {
+            const dados = DADOS_CARGA[metrica];
+            graficoCarga.data.labels = dados.labels;
+            graficoCarga.data.datasets[0].data = dados.data;
+            graficoCarga.options.plugins.title.text = dados.titulo;
+            containerCarga.style.display = 'block';
+            graficoCarga.update();
         }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        atualizarDataHora();
+        carregarUsuarioSessao();
 
-        var kpicpu_lote = document.getElementById("kpiCPUlote").innerHTML = "Lote 1";
-        var kpiproce_lote = document.getElementById("kpiProcessoslote").innerHTML = "Lote 2";
-        var kpidisc_lote = document.getElementById("kpiDiscolote").innerHTML = "Lote 3";
-        var kpitemp_lote = document.getElementById("kpiTemplote").innerHTML = "Lote 4";
-        var kpicpu_valor = document.getElementById("kpiCPU");
-        kpicpu_valor.innerHTML = "90%";
-        var kpiproce_valor = document.getElementById("kpiProcessos");
-        kpiproce_valor.innerHTML = "245";
-        var kpidisc_valor = document.getElementById("kpiDisco");
-        kpidisc_valor.innerHTML = "20%";
-        var kpitemp_valor = document.getElementById("kpiTemp");
-        kpitemp_valor.innerHTML = "71°C";
+        function calcularMedia(listaNumeros) {
+        let soma = 0;
+    
+        for (let i = 0; i < listaNumeros.length; i++) {
+            soma = soma + listaNumeros[i];
+        }
         
-        const LIMITES = { cpu: 85, ram: 80, disco: 90, temp: 70, processo: 250 };
+        return soma / listaNumeros.length;
+    }
 
-        const numCPU = parseFloat(kpicpu_valor.innerHTML);
-        const numProc = parseFloat(kpiproce_valor.innerHTML);
-        const numDisco = parseFloat(kpidisc_valor.innerHTML);
-        const numTemp = parseFloat(kpitemp_valor.innerHTML);
+        fetch(URL_JSON)
+            .then(resposta => resposta.json())
+            .then(jsonGeral => {
+                console.log("Dados baixados:", jsonGeral);
 
-        atualizarCorKPI(numCPU, LIMITES.cpu, kpicpu_valor);
-        atualizarCorKPI(numProc, LIMITES.processo, kpiproce_valor);
-        atualizarCorKPI(numDisco, LIMITES.disco, kpidisc_valor);
-        atualizarCorKPI(numTemp, LIMITES.temp, kpitemp_valor);
+                let listaLotesCPU = [], listaLotesRAM = [], listaLotesDisco = [], listaLotesTemp = [], listaLotesProc = [];
+                
+                let piorCpu = { nome: "", valor: -1, dados: [], relacao: [] };
+                let piorRam = { nome: "", valor: -1, dados: [], relacao: [] };
+                let piorDisco = { nome: "", valor: -1, dados: [], relacao: [] };
+                let piorTemp = { nome: "", valor: -1, dados: [], relacao: [] };
+                let piorProc = { nome: "", valor: -1, dados: [], relacao: [] };
 
-        const COR_CONTEXTO = '#B0B0B0';
+                const diasOrdem = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+                
+                jsonGeral.forEach(lote => {
+                    let nomeLote = "Lote " + lote.lote;
+                
+                    let dadosCpu = [], dadosRam = [], dadosDisco = [], dadosTemp = [], dadosProc = [];
 
-        function prepararDatasetsDestaque(lotes, piorLoteLabel) {
-            const datasetsFinais = [];
+                    diasOrdem.forEach(diaNome => {
+                        let diaEncontrado = null;
+                        for (let k = 0; k < lote.dias.length; k++) {
+                            if (lote.dias[k].diaSemana === diaNome) {
+                                diaEncontrado = lote.dias[k];
+                                break; 
+                            }
+                        }
 
-            lotes.forEach(loteOriginal => {
-                const corDesteLote = (loteOriginal.label === piorLoteLabel)
-                    ? loteOriginal.borderColor
-                    : COR_CONTEXTO;
+                        if(diaEncontrado) {
+                            dadosCpu.push(diaEncontrado.cpu);
+                            dadosRam.push(diaEncontrado.ram);
+                            dadosDisco.push(diaEncontrado.disco);
+                            dadosTemp.push(diaEncontrado.temperatura);
+                            dadosProc.push(diaEncontrado.processos);
+                        } else {
+                            dadosCpu.push(0); 
+                            dadosRam.push(0); 
+                            dadosDisco.push(0); 
+                            dadosTemp.push(0); 
+                            dadosProc.push(0);
+                        }
+                    });
 
-                datasetsFinais.push({
-                    label: loteOriginal.label,
-                    data: loteOriginal.data,
-                    borderColor: corDesteLote,
-                    backgroundColor: corDesteLote,
-                    fill: false,
-                    borderRadius: 6,
-                    categoryPercentage: 0.8,
-                    barPercentage: 0.85,
+                    listaLotesCPU.push({ label: nomeLote, data: dadosCpu, borderColor: '#0d4299' });
+                    listaLotesRAM.push({ label: nomeLote, data: dadosRam, borderColor: '#0d4299' });
+                    listaLotesDisco.push({ label: nomeLote, data: dadosDisco, borderColor: '#0d4299' });
+                    listaLotesTemp.push({ label: nomeLote, data: dadosTemp, borderColor: '#0d4299' });
+                    listaLotesProc.push({ label: nomeLote, data: dadosProc, borderColor: '#0d4299' });
+
+                    let mediaCpu = calcularMedia(dadosCpu); 
+                    if (mediaCpu > piorCpu.valor) {
+                        piorCpu = { nome: nomeLote, valor: mediaCpu, dados: dadosCpu, relacao: dadosTemp };
+                    }
+
+                    let mediaRam = calcularMedia(dadosRam);
+                    if (mediaRam > piorRam.valor) {
+                        piorRam = { nome: nomeLote, valor: mediaRam, dados: dadosRam, relacao: dadosProc };
+                    }
+
+                    let mediaDisco = calcularMedia(dadosDisco);
+                    if (mediaDisco > piorDisco.valor) {
+                        piorDisco = { nome: nomeLote, valor: mediaDisco, dados: dadosDisco, relacao: dadosProc };
+                    }
+
+                    let mediaTemp = calcularMedia(dadosTemp);
+                    if (mediaTemp > piorTemp.valor) {
+                        piorTemp = { nome: nomeLote, valor: mediaTemp, dados: dadosTemp, relacao: dadosCpu };
+                    }
+
+                    let mediaProc = calcularMedia(dadosProc);
+                    if (mediaProc > piorProc.valor) {
+                        piorProc = { nome: nomeLote, valor: mediaProc, dados: dadosProc, relacao: dadosDisco };
+                    }
                 });
-            });
 
-            return datasetsFinais;
-        }
-
-        function encontrarPiorLote(lotes) {
-            let piorLoteLabel = null;
-            let maiorMedia = -Infinity;
-
-            lotes.forEach(lote => {
-                let soma = 0;
-                for (let i = 0; i < lote.data.length; i++) {
-                    soma += lote.data[i];
+                function filtrarTop5(lista) {
+                    lista.sort(function(a, b) {
+                        let mediaA = calcularMedia(a.data);
+                        let mediaB = calcularMedia(b.data);
+                        return mediaB - mediaA; 
+                    });
+                    return lista.slice(0, 5);
                 }
-                const media = soma / lote.data.length;
 
-                if (media > maiorMedia) {
-                    maiorMedia = media;
-                    piorLoteLabel = lote.label;
-                }
-            });
-            return piorLoteLabel;
-        }
+                listaLotesCPU = filtrarTop5(listaLotesCPU);
+                listaLotesRAM = filtrarTop5(listaLotesRAM);
+                listaLotesDisco = filtrarTop5(listaLotesDisco);
+                listaLotesTemp = filtrarTop5(listaLotesTemp);
+                listaLotesProc = filtrarTop5(listaLotesProc);
 
-        const DADOS_RELACAO = {
-            cpu: {
-                semana: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Visão Pior Lote: CPU (%) x Temp. CPU (°C)',
-                    cpu: [3, 5, 2, 4, 6, 3, 4],
-                    temp: [5, 7, 9, 6, 8, 4, 5]
-                }
-            },
-            temp: {
-                semana: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Visão Pior Lote: Temp. CPU (°C) x CPU (%)',
-                    temp: [3, 5, 2, 4, 6, 3, 4],
-                    cpu: [5, 7, 9, 6, 8, 4, 5]
-                }
-            },
-            ram: {
-                semana: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Visão Pior Lote: RAM (%) x Qtd. Média de Processos',
-                    ram: [3, 5, 2, 4, 6, 3, 4],
-                    processos: [5, 7, 9, 6, 8, 4, 5]
-                }
-            },
-            disco: {
-                semana: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Visão Pior Lote: Disco (%) x Qtd. Média de Processos',
-                    disco: [3, 5, 2, 4, 6, 3, 4],
-                    processos: [5, 7, 9, 6, 8, 4, 5]
-                }
-            },
-            processo: {
-                semana: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Visão Pior Lote: Qtd. Média de Processos x Disco (%)',
-                    processos: [3, 5, 2, 4, 6, 3, 4],
-                    disco: [5, 7, 9, 6, 8, 4, 5]
-                }
-            }
-        };
+                document.getElementById("kpiCPUlote").innerText = piorCpu.nome;
+                document.getElementById("kpiCPU").innerText = Math.round(piorCpu.valor) + "%";
+                atualizarCorKPI(piorCpu.valor, LIMITES.cpu, document.getElementById("kpiCPU"));
 
-        const DADOS_EVOLUCAO = {
-            cpu: {
-                semana: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução Uso CPU',
-                    eixoY: 'Uso CPU (%)',
-                    lotes: [
-                        { label: 'Lote A048', data: [88, 85, 87, 82, 90, 88, 86], borderColor: '#0d4299' },
-                        { label: 'Lote A012', data: [85, 82, 83, 80, 85, 84, 83], borderColor: '#0d4299' },
-                        { label: 'Lote A031', data: [82, 80, 81, 79, 83, 82, 81], borderColor: '#0d4299' },
-                        { label: 'Lote A009', data: [81, 79, 80, 78, 82, 80, 79], borderColor: '#0d4299' },
-                        { label: 'Lote A055', data: [79, 78, 77, 76, 80, 79, 78], borderColor: '#0d4299' }
-                    ]
-                }
-            },
-            temp: {
-                semana: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução Temperatura',
-                    eixoY: 'Temp. (°C)',
-                    lotes: [
-                        { label: 'Lote A048', data: [75, 72, 77, 73, 75, 78, 76], borderColor: '#0d4299' },
-                        { label: 'Lote A012', data: [68, 70, 69, 71, 68, 67, 70], borderColor: '#0d4299' },
-                        { label: 'Lote A031', data: [72, 73, 71, 70, 74, 72, 73], borderColor: '#0d4299' },
-                        { label: 'Lote A009', data: [65, 66, 64, 67, 68, 65, 66], borderColor: '#0d4299' },
-                        { label: 'Lote A055', data: [66, 68, 67, 65, 69, 67, 68], borderColor: '#0d4299' }
-                    ]
-                }
-            },
-            ram: {
-                semana: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução RAM',
-                    eixoY: 'Uso RAM (%)',
-                    lotes: [
-                        { label: 'Lote A012', data: [72, 70, 71, 73, 75, 74, 72], borderColor: '#0d4299' },
-                        { label: 'Lote A048', data: [70, 68, 69, 71, 72, 70, 71], borderColor: '#0d4299' },
-                        { label: 'Lote A031', data: [65, 66, 64, 67, 68, 65, 66], borderColor: '#0d4299' },
-                        { label: 'Lote A009', data: [40, 42, 41, 39, 43, 40, 41], borderColor: '#0d4299' },
-                        { label: 'Lote A055', data: [38, 39, 37, 40, 41, 38, 39], borderColor: '#0d4299' }
-                    ]
-                }
-            },
-            disco: {
-                semana: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução Uso de Disco',
-                    eixoY: 'Uso Disco (%)',
-                    lotes: [
-                        { label: 'Lote A012', data: [98, 97, 98, 99, 98, 97, 98], borderColor: '#0d4299' },
-                        { label: 'Lote A031', data: [95, 96, 94, 95, 96, 95, 94], borderColor: '#0d4299' },
-                        { label: 'Lote A048', data: [50, 51, 49, 52, 50, 51, 50], borderColor: '#0d4299' },
-                        { label: 'Lote A009', data: [30, 31, 29, 32, 30, 31, 30], borderColor: '#0d4299' },
-                        { label: 'Lote A055', data: [25, 26, 24, 27, 25, 26, 25], borderColor: '#0d4299' }
-                    ]
-                }
-            },
-            processo: {
-                semana: {
-                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                    titulo: 'Evolução de Processos',
-                    eixoY: 'Qtd. Processos',
-                    lotes: [
-                        { label: 'Lote A012', data: [300, 310, 290, 305, 295, 300, 310], borderColor: '#0d4299' },
-                        { label: 'Lote A031', data: [300, 290, 310, 300, 305, 295, 300], borderColor: '#0d4299' },
-                        { label: 'Lote A055', data: [300, 305, 295, 310, 290, 300, 305], borderColor: '#0d4299' },
-                        { label: 'Lote A009', data: [230, 235, 225, 240, 230, 235, 225], borderColor: '#0d4299' },
-                        { label: 'Lote A048', data: [120, 125, 115, 130, 120, 125, 115], borderColor: '#0d4299' }
-                    ]
-                }
-            }
-        };
+                document.getElementById("kpiProcessoslote").innerText = piorProc.nome;
+                document.getElementById("kpiProcessos").innerText = Math.round(piorProc.valor);
+                atualizarCorKPI(piorProc.valor, LIMITES.processo, document.getElementById("kpiProcessos"));
 
-        const DADOS_CARGA = {
-            cpu: {
-                labels: ['CPU'],
-                data: [
-                    [10, 8, 3]
-                ],
-                titulo: 'Uso do Sistema Pior Lote - CPU'
-            },
-            ram: {
-                labels: ['RAM'],
-                data: [
-                    [9, 3, 7]
-                ],
-                titulo: 'Uso do Sistema Pior Lote - RAM'
-            },
-            disco: {
-                labels: ['Disco'],
-                data: [
-                    [12, 1, 6]
-                ],
-                titulo: 'Uso do Sistema Pior Lote - Disco'
-            },
-            temp: {
-                labels: ['Temperatura'],
-                data: [
-                    [60, 65, 70, 72, 78]
-                ],
-                titulo: 'Uso do Sistema Pior Lote - Temperatura'
-            },
-            processo: {
-                labels: ['Processos'],
-                data: [
-                    [150, 210, 240, 270, 310]
-                ],
-                titulo: 'Uso do Sistema Pior Lote - Processos'
-            }
-        };
+                document.getElementById("kpiDiscolote").innerText = piorDisco.nome;
+                document.getElementById("kpiDisco").innerText = Math.round(piorDisco.valor) + "%";
+                atualizarCorKPI(piorDisco.valor, LIMITES.disco, document.getElementById("kpiDisco"));
 
+                document.getElementById("kpiTemplote").innerText = piorTemp.nome;
+                document.getElementById("kpiTemp").innerText = Math.round(piorTemp.valor) + "°C";
+                atualizarCorKPI(piorTemp.valor, LIMITES.temp, document.getElementById("kpiTemp"));
 
-        function atualizarGraficos() {
-            const metrica = document.getElementById('escolhaVisu').value;
+                const labelsGrafico = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
 
-            const containerCarga = document.getElementById('containerCarga');
+                DADOS_EVOLUCAO = {
+                    cpu: { semana: { labels: labelsGrafico, titulo: 'Evolução Uso CPU (Top 5 Piores)', eixoY: 'Uso CPU (%)', lotes: listaLotesCPU } },
+                    ram: { semana: { labels: labelsGrafico, titulo: 'Evolução RAM (Top 5 Piores)', eixoY: 'Uso RAM (%)', lotes: listaLotesRAM } },
+                    disco: { semana: { labels: labelsGrafico, titulo: 'Evolução Uso de Disco (Top 5 Piores)', eixoY: 'Uso Disco (%)', lotes: listaLotesDisco } },
+                    temp: { semana: { labels: labelsGrafico, titulo: 'Evolução Temperatura (Top 5 Piores)', eixoY: 'Temp. (°C)', lotes: listaLotesTemp } },
+                    processo: { semana: { labels: labelsGrafico, titulo: 'Evolução de Processos (Top 5 Piores)', eixoY: 'Qtd. Processos', lotes: listaLotesProc } }
+                };
 
-            // Atualizando gráfico relacao
-            if (graficoRelacao) {
-                const dados = DADOS_RELACAO[metrica].semana;
+                DADOS_RELACAO = {
+                    cpu: { semana: { labels: labelsGrafico, titulo: 'Visão Pior Lote: CPU (%) x Temp', cpu: piorCpu.dados, temp: piorCpu.relacao } },
+                    temp: { semana: { labels: labelsGrafico, titulo: 'Visão Pior Lote: Temp x CPU', temp: piorTemp.dados, cpu: piorTemp.relacao } },
+                    ram: { semana: { labels: labelsGrafico, titulo: 'Visão Pior Lote: RAM x Processos', ram: piorRam.dados, processos: piorRam.relacao } },
+                    disco: { semana: { labels: labelsGrafico, titulo: 'Visão Pior Lote: Disco x Processos', disco: piorDisco.dados, processos: piorDisco.relacao } },
+                    processo: { semana: { labels: labelsGrafico, titulo: 'Visão Pior Lote: Processos x Disco', processos: piorProc.dados, disco: piorProc.relacao } }
+                };
 
-                graficoRelacao.data.labels = dados.labels;
-                graficoRelacao.options.plugins.title.text = dados.titulo;
+                DADOS_CARGA = {
+                    cpu: { labels: ['CPU'], data: [piorCpu.dados], titulo: `Uso do Sistema ${piorCpu.nome} - CPU` },
+                    ram: { labels: ['RAM'], data: [piorRam.dados], titulo: `Uso do Sistema ${piorRam.nome} - RAM` },
+                    disco: { labels: ['Disco'], data: [piorDisco.dados], titulo: `Uso do Sistema ${piorDisco.nome} - Disco` },
+                    temp: { labels: ['Temp'], data: [piorTemp.dados], titulo: `Uso do Sistema ${piorTemp.nome} - Temperatura` },
+                    processo: { labels: ['Procs'], data: [piorProc.dados], titulo: `Uso do Sistema ${piorProc.nome} - Processos` }
+                };
 
-                if (metrica === 'cpu') {
-                    graficoRelacao.data.datasets[0].label = 'CPU';
-                    graficoRelacao.data.datasets[0].data = dados.cpu;
-                    graficoRelacao.data.datasets[1].label = 'Temperatura';
-                    graficoRelacao.data.datasets[1].data = dados.temp;
-                } else if (metrica === 'temp') {
-                    graficoRelacao.data.datasets[0].label = 'Temperatura';
-                    graficoRelacao.data.datasets[0].data = dados.temp;
-                    graficoRelacao.data.datasets[1].label = 'CPU';
-                    graficoRelacao.data.datasets[1].data = dados.cpu;
-                } else if (metrica === 'ram') {
-                    graficoRelacao.data.datasets[0].label = 'RAM';
-                    graficoRelacao.data.datasets[0].data = dados.ram;
-                    graficoRelacao.data.datasets[1].label = 'Processos';
-                    graficoRelacao.data.datasets[1].data = dados.processos;
+                iniciarChartJS();
+            })
+            .catch(erro => console.error("Erro no fetch:", erro));
+    });
 
-                } else if (metrica === 'disco') {
-                    graficoRelacao.data.datasets[0].label = 'Disco';
-                    graficoRelacao.data.datasets[0].data = dados.disco;
-                    graficoRelacao.data.datasets[1].label = 'Processos';
-                    graficoRelacao.data.datasets[1].data = dados.processos;
-                } else if (metrica === 'processo') {
-                    graficoRelacao.data.datasets[0].label = 'Processos';
-                    graficoRelacao.data.datasets[0].data = dados.processos;
-                    graficoRelacao.data.datasets[1].label = 'Disco';
-                    graficoRelacao.data.datasets[1].data = dados.disco;
-                }
-                graficoRelacao.update();
-            }
-
-            // Atualizando gráfico Top 5
-            if (graficoEvolucao) {
-                if (DADOS_EVOLUCAO[metrica].semana) {
-                    const dados = DADOS_EVOLUCAO[metrica].semana;
-
-                    const piorLoteLabel = encontrarPiorLote(dados.lotes);
-                    const novosDatasets = prepararDatasetsDestaque(dados.lotes, piorLoteLabel);
-
-                    graficoEvolucao.data.datasets = novosDatasets;
-                    graficoEvolucao.data.labels = dados.labels;
-                    graficoEvolucao.options.plugins.title.text = dados.titulo;
-                    graficoEvolucao.options.scales.y.title.text = dados.eixoY;
-
-                    const novoLimite = LIMITES[metrica] || 0;
-                    graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMin = novoLimite;
-                    graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMax = novoLimite;
-
-                    graficoEvolucao.update();
-                } else {
-                    console.warn(`Dados não encontrados.`);
-                }
-            }
-
-            if (graficoCarga && containerCarga) {
-                const dados = DADOS_CARGA[metrica];
-
-                graficoCarga.data.labels = dados.labels;
-                graficoCarga.data.datasets[0].data = dados.data;
-                graficoCarga.options.plugins.title.text = dados.titulo;
-
-                containerCarga.style.display = 'block';
-                graficoCarga.update();
-            }
-            ordenarTabela(metrica);
-        }
-
-        const selectEvolucao = document.getElementById('escolhaVisu');
-
+    function iniciarChartJS() {
         const ctxRelacao = document.getElementById('relacao');
         const ctxCarga = document.getElementById('carga');
         const ctxEvolucao = document.getElementById('evolucao');
+        const selectEvolucao = document.getElementById('escolhaVisu');
 
-        let graficoRelacao;
-        let graficoCarga;
-        let graficoEvolucao;
-
-        carregarUsuarioSessao();
-
-        if (typeof verificarCargo === "function") {
-            verificarCargo();
-        }
-        if (typeof listarLotes === "function") {
-            listarLotes();
-        }
-
-        // Relação 
         if (ctxRelacao) {
             const dadosIniciais = DADOS_RELACAO.cpu.semana;
             graficoRelacao = new Chart(ctxRelacao, {
@@ -518,109 +437,47 @@
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top', labels: { color: 'black' } },
-                        title: { display: true, text: dadosIniciais.titulo, color: 'black', font: { size: 18, weight: 'bold' } }
-                    },
-                    scales: {
-                        x: { stacked: true, ticks: { color: 'black' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                        y: {
-                            stacked: true, beginAtZero: true, ticks: { color: 'black' }, grid: { color: 'black' },
-                            title: { display: true, text: 'Valor', color: 'black', font: { size: 14 } }
-                        }
-                    }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' }, title: { display: true, text: dadosIniciais.titulo, font: { size: 18 } } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
         }
 
-        // Evolução Top 5 
         if (ctxEvolucao) {
             const dadosIniciais = DADOS_EVOLUCAO.cpu.semana;
-
             const piorLoteLabelInicial = encontrarPiorLote(dadosIniciais.lotes);
             const datasetsIniciais = prepararDatasetsDestaque(dadosIniciais.lotes, piorLoteLabelInicial);
 
             graficoEvolucao = new Chart(ctxEvolucao, {
                 type: 'bar',
-                data: {
-                    labels: dadosIniciais.labels,
-                    datasets: datasetsIniciais
-                },
+                data: { labels: dadosIniciais.labels, datasets: datasetsIniciais },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: {
-                        annotation: {
-                            annotations: {
-                                linhaIdeal: {
-                                    type: 'line',
-                                    yMin: 85,
-                                    yMax: 85,
-                                    borderColor: '#FFAE42',
-                                    borderWidth: 2,
-                                    borderDash: [10, 5],
-                                    label: {
-                                        display: true,
-                                        content: 'Limite Ideal',
-                                        position: 'end',
-                                        backgroundColor: '#FFAE42',
-                                        color: 'white',
-                                    }
-                                }
-                            }
-                        },
-                        legend: { position: 'top', labels: { color: 'black' } },
-                        title: { display: true, text: dadosIniciais.titulo, color: 'black', font: { size: 18, weight: 'bold' } }
+                        annotation: { annotations: { linhaIdeal: { type: 'line', yMin: 85, yMax: 85, borderColor: '#FFAE42', borderWidth: 2, borderDash: [10, 5], label: { display: true, content: 'Limite Ideal' } } } },
+                        title: { display: true, text: dadosIniciais.titulo, font: { size: 18 } }
                     },
-                    scales: {
-                        x: { stacked: false, ticks: { color: 'black' }, grid: { color: 'transparent' } },
-                        y: {
-                            stacked: false, beginAtZero: true, ticks: { color: 'black' }, grid: { color: '#e9e9e9' },
-                            title: { display: true, text: dadosIniciais.eixoY, color: 'black', font: { size: 14 } }
-                        }
-                    }
+                    scales: { y: { title: { display: true, text: dadosIniciais.eixoY } } }
                 }
             });
         }
 
         if (ctxCarga) {
             const dadosIniciaisrelacao = DADOS_CARGA.cpu;
-
             graficoCarga = new Chart(ctxCarga, {
                 type: 'boxplot',
                 data: {
                     labels: dadosIniciaisrelacao.labels,
-                    datasets: [{
-                        label: 'Quartil',
-                        data: dadosIniciaisrelacao.data,
-                        backgroundColor: ['blue'],
-                        borderColor: ['black'],
-                        outlierBackgroundColor: 'red'
-                    }]
+                    datasets: [{ label: 'Quartil', data: dadosIniciaisrelacao.data, backgroundColor: ['blue'], borderColor: ['black'], outlierBackgroundColor: 'red' }]
                 },
                 options: {
                     indexAxis: 'x',
-                    plugins: {
-                        title: { display: true, text: 'Uso do Sistema Pior Lote - CPU', color: 'black', font: { size: 18, weight: 'bold' }, padding: { bottom: 20 } },
-                        legend: { position: 'top', labels: { color: 'black' } }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                color: 'black',
-                                font: { size: 14 }
-                            }
-                        },
-                        x: { stacked: false, ticks: { color: 'black' } }
-                    }
+                    plugins: { title: { display: true, text: dadosIniciaisrelacao.titulo, font: { size: 18 } } }
                 }
             });
         }
 
         selectEvolucao.addEventListener('change', atualizarGraficos);
-    });
+    }
 </script>
