@@ -399,11 +399,11 @@
                 };
 
                 DADOS_RELACAO = {
-                    cpu: { semana: { labels: labelsGrafico, titulo: 'Visão Pior Lote: CPU (%) x Temp', cpu: piorCpu.dados, temp: piorCpu.relacao } },
-                    temp: { semana: { labels: labelsGrafico, titulo: 'Visão Pior Lote: Temp x CPU', temp: piorTemp.dados, cpu: piorTemp.relacao } },
-                    ram: { semana: { labels: labelsGrafico, titulo: 'Visão Pior Lote: RAM x Processos', ram: piorRam.dados, processos: piorRam.relacao } },
-                    disco: { semana: { labels: labelsGrafico, titulo: 'Visão Pior Lote: Disco x Processos', disco: piorDisco.dados, processos: piorDisco.relacao } },
-                    processo: { semana: { labels: labelsGrafico, titulo: 'Visão Pior Lote: Processos x Disco', processos: piorProc.dados, disco: piorProc.relacao } }
+                    cpu: { semana: { labels: labelsGrafico, titulo: `Visão ${piorCpu.nome}: CPU (%) x Temp`, cpu: piorCpu.dados, temp: piorCpu.relacao } },
+                    temp: { semana: { labels: labelsGrafico, titulo: `Visão ${piorTemp.nome}: Temp x CPU`, temp: piorTemp.dados, cpu: piorTemp.relacao } },
+                    ram: { semana: { labels: labelsGrafico, titulo: `Visão ${piorRam.nome}: RAM x Processos`, ram: piorRam.dados, processos: piorRam.relacao } },
+                    disco: { semana: { labels: labelsGrafico, titulo: `Visão ${piorDisco.nome}: Disco x Processos`, disco: piorDisco.dados, processos: piorDisco.relacao } },
+                    processo: { semana: { labels: labelsGrafico, titulo: `Visão ${piorProc.nome}: Processos x Disco`, processos: piorProc.dados, disco: piorProc.relacao } }
                 };
 
                 DADOS_CARGA = {
