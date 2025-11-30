@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboar Bateria</title>
+    <link rel="icon" href="../assets/navix-logo.jpg">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
+    <script src="../js/sessao.js"></script>
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body onload="carregarInformacoes(), simularValores(),verificarCargo()">
+    <!-- SIDEBAR -->
+    <div class="flex min-h-screen relative">
+        <div
+            class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600 fixed top-0 left-0">
+            <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10">
+            <div id="imagemUsuarioNavbar">
+                <div class="rounded-md w-20 h-20 mb-2"
+                    style="background-image: url(../assets/img/foto-usuario.png); background-size: cover; background-repeat: no-repeat; background-position: center;">
+                </div>
+            </div>
+
+            <div id="nomeProfissao" class="text-center mb-6"></div>
+
+            <div class="flex flex-col gap-4 w-[80%]">
+                <a href="../perfil-visualizar.html"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+                    Perfil
+                </a>
+                <a
+                    class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+                    Dashboard
+                </a>
+                <a href="../admin.html" id="adm-only"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+                    Cadastrar Funcionários
+                </a>
+                <a href="./cadastroVeiculos.html"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+                    Gerenciar Frota
+                </a>
+
+                <a href="https://navixsuporte.atlassian.net/jira/software/form/9d7593db-d676-44b4-a1f4-43762dea870c"
+                    target="_blank"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium ">
+                    Suporte
+                    <i class='bx bx-message-dots-2'></i>
+                </a>
+
+                <div class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
+                    onclick="limparSessao()">
+                    <a href="../index.html" class="no-underline text-white">
+                        <h3 class="m-0 p-0">Sair</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <main class="flex-1 ml-64 p-8 lg:p-12 bg-slate-50 min-h-screen">
+
+            <!-- Header e Select -->
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                <div>
+                    <button class="flex items-center text-slate-500 hover:text-blue-600 transition-colors mb-2"
+                        onclick="localStorage.clear(); redirecionar();">
+                        <i class='bx bx-arrow-back mr-2'></i> Voltar
+                    </button>
+                    <h1 class="text-3xl font-bold text-slate-900">Bateria dos Modelos Gerais</h1>
+                    <p class="text-slate-500 mt-1">Monitoramento de saúde da frota</p>
+                </div>
+
+                <div class="flex items-center gap-4 bg-white p-2 rounded-lg shadow-sm border border-slate-200">
+                    <span class="text-sm text-slate-500 pl-2">Período:</span>
+                    <select
+                        class="bg-slate-100 text-slate-700 text-sm font-semibold py-2 px-4 rounded-md border-none outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                        id="selectPeriodo">
+                        <option value="semana" selected>Última Semana</option>
+                        <option value="mes">Último Mês</option>
+                        <option value="ano">Ano Atual</option>
+                    </select>
+                </div>
+            </header>
+
+            <!-- KPIs -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100 lg:col-span-1 h-full">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class='bx bxs-bell-ring text-amber-500'></i> Alertas Recentes
+                    </h2>
+
+                    <div class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar" id="listaAlertas">
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <div id="kpi-saude-card"
+                        class="bg-white p-6 rounded-xl shadow-lg border-t-4 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-sm font-medium text-slate-500 uppercase">Saúde da Bateria</h3>
+                            <div id="kpi-saude-icone-bg" class="p-2 rounded-full">
+                                <i id="kpi-saude-icone" class='bx bx-heart text-2xl'></i>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-3xl font-bold text-slate-800" id="kpi-saude-val">95%</span>
+                            <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full ml-2"
+                                id="kpi-saude-status">Saudável</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">Média da frota atual</p>
+                    </div>
+
+                    <div id="kpi-carga-card"
+                        class="bg-white p-6 rounded-xl shadow-lg border-t-4 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-sm font-medium text-slate-500 uppercase">Capacidade (kWh)</h3>
+                            <div id="kpi-carga-icone-bg" class="p-2 rounded-full">
+                                <i id="kpi-carga-icone" class='bx bxs-battery text-2xl'></i>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-3xl font-bold text-slate-800" id="kpi-carga-val">70%</span>
+                            <span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full ml-2"
+                                id="kpi-carga-status">Normal</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">Média de carga da frota atual</p>
+                    </div>
+
+                    <div id="kpi-temp-card"
+                        class="bg-white p-6 rounded-xl shadow-lg border-t-4 flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-sm font-medium text-slate-500 uppercase">Temperatura Média</h3>
+                            <div id="kpi-temp-icone-bg" class="p-2 rounded-full">
+                                <i id="kpi-temp-icone" class='bx bxs-thermometer text-2xl'></i>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-3xl font-bold text-slate-800" id="kpi-temp-val">70°C</span>
+                            <span class="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full ml-2"
+                                id="kpi-temp-status">Alerta</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">Pico registrado da frota atual</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-l-4 border-blue-900 pl-2">Velocidade x
+                        Consumo</h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="velocidadeConsumo"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-l-4 border-blue-900 pl-2">Nível da Saúde da
+                        Bateria
+                        por Modelo</h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="saudeComputador"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-l-4 border-amber-500 pl-2">Carga x
+                        Temperatura</h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="cargaTemperatura"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-l-4 border-cyan-500 pl-2">Distribuição de
+                        Temperatura Total</h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="distribuicaoTemperatura"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</body>
+
+<!-- Scripts principais da dash -->
+<script src="scriptDash/dashBateria.js"></script>
+<script src="scriptDash/dashBateriaUI.js"></script>
+
+<!-- SCRIPTS GERAIS -->
+<script src="../js/lote.js"></script>
+<script src="../js/usuario/verificadorCargo.js"></script>
+<script src="../js/redirecionar.js"></script>
+
+<script>
+    var nomeEmpresa = sessionStorage.getItem("nome_ss");
+    var cargo = sessionStorage.getItem("cargo_ss");
+    var emailEmpresa = sessionStorage.getItem("email_ss");
+
+    var nomeProfissao = document.getElementById("nomeProfissao");
+    var nomeEmpresaa = document.getElementById("nomeEmpresaa") || { innerHTML: '' };
+    var emailEmpresaEl = document.getElementById("emailEmpresa") || { innerHTML: '' };
+    var textoInicio = document.getElementById("textoInicio") || { innerHTML: '' };
+
+
+    if (nomeProfissao) {
+        nomeProfissao.innerHTML = `
+            <p class="font-bold text-blue-900">${nomeEmpresa}</p>
+            <p class="mb-4 text-blue-900">Cargo: ${cargo}</p>
+        `;
+    }
+
+    nomeEmpresaa.innerHTML = `<p class="text-blue-950">${nomeEmpresa}</p>`;
+    emailEmpresaEl.innerHTML = `<p class="text-blue-950">${emailEmpresa}</p>`;
+    textoInicio.innerHTML = `<p class="text-4xl font-semibold text-blue-950 mb-6">Olá, ${nomeEmpresa}</p>`;
+
+    function abrirTela() {
+        document.getElementById("telaAtualizar").style.display = "flex";
+    }
+
+    function fecharTela() {
+        document.getElementById("telaAtualizar").style.display = "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var nomeEmpresa = sessionStorage.getItem("nome_ss");
+        var cargo = sessionStorage.getItem("cargo_ss");
+        var nomeProfissao = document.getElementById("nomeProfissao");
+    });
+</script>
+
+</html>
