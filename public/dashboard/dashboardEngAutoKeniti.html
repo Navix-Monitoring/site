@@ -138,14 +138,7 @@
 <script>
     const URL_JSON = "https://bucket-client-navix.s3.us-east-1.amazonaws.com/dashMediana/2025/RelatorioGeral.json";
 
-    const LIMITES = {
-        cpu: { min: 20, neutro: 50, atencao: 75, critico: 90 },
-        temp: { min: 40, neutro: 60, atencao: 75, critico: 90 },
-        ram: { min: 30, neutro: 50, atencao: 75, critico: 80 },
-        disco: { min: 10, neutro: 20, atencao: 60, critico: 80 },
-        processo: { min: 0, neutro: 100, atencao: 200, critico: 250 }
-    };
-
+    let LIMITES = {};
     let DADOS_RELACAO = {};
     let DADOS_EVOLUCAO = {};
     let DADOS_CARGA = {};
@@ -156,6 +149,7 @@
     }
 
     function atualizarCorKPI(valor, limite, elemento) {
+        if (!limite) return;
         const numero = Number(valor);
         if (numero >= limite.critico) {
             elemento.style.color = "red";
@@ -277,10 +271,11 @@
             graficoEvolucao.options.plugins.title.text = dados.titulo;
             graficoEvolucao.options.scales.y.title.text = dados.eixoY;
 
-            const novoLimite = LIMITES[metrica] || 0;
+            const novoLimite = (LIMITES[metrica]) ? LIMITES[metrica].neutro : 0;
             if (graficoEvolucao.options.plugins.annotation && graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal) {
                 graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMin = novoLimite;
                 graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMax = novoLimite;
+                graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.label.content = 'Ideal';
             }
             graficoEvolucao.update();
         }
@@ -296,13 +291,59 @@
         }
     }
 
+    function carregarLimites() {
+        return fetch("/dashboard/limites", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        })
+            .then(function (resposta) {
+                if (resposta.ok) {
+                    return resposta.json();
+                } else {
+                    throw new Error("Houve um erro na API de limites!");
+                }
+            })
+            .then(function (listaBanco) {
+                console.log("Limites brutos do banco:", listaBanco);
+                const limitesFormatados = {};
+                listaBanco.forEach(function (item) {
+                    let chave = null;
+                    if (item.tipo === 'CPU') {
+                        if (item.unidadeMedida === 'TEMPERATURA') {
+                            chave = 'temp'
+                        } else if (item.unidadeMedida === "USO") {
+                            chave = 'cpu'
+                        } else {
+                            chave = 'processo';
+
+                        };
+                    }
+                    else if (item.tipo === 'RAM') chave = 'ram';
+                    else if (item.tipo === 'DISCO') chave = 'disco';
+                    if (chave) {
+                        limitesFormatados[chave] = {
+                            min: item.parametroMinimo,
+                            neutro: item.parametroNeutro,
+                            atencao: item.parametroAtencao,
+                            critico: item.parametroCritico
+                        };
+                    }
+                });
+
+                console.log("Limites formatados:", limitesFormatados);
+                return limitesFormatados;
+            });
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
         atualizarDataHora();
         carregarUsuarioSessao();
 
+        carregarLimites().then(function (limitesDoBanco) {
+            if (limitesDoBanco) LIMITES = limitesDoBanco;
 
-        fetch(URL_JSON)
+            return fetch(URL_JSON);
+        })
             .then(resposta => resposta.json())
             .then(jsonGeral => {
                 console.log("Dados baixados:", jsonGeral);
@@ -419,67 +460,67 @@
                 iniciarChartJS();
             })
             .catch(erro => console.error("Erro no fetch:", erro));
-    });
 
-    function iniciarChartJS() {
-        const ctxRelacao = document.getElementById('relacao');
-        const ctxCarga = document.getElementById('carga');
-        const ctxEvolucao = document.getElementById('evolucao');
-        const selectEvolucao = document.getElementById('escolhaVisu');
+        function iniciarChartJS() {
+            const ctxRelacao = document.getElementById('relacao');
+            const ctxCarga = document.getElementById('carga');
+            const ctxEvolucao = document.getElementById('evolucao');
+            const selectEvolucao = document.getElementById('escolhaVisu');
 
-        if (ctxRelacao) {
-            const dadosIniciais = DADOS_RELACAO.cpu.semana;
-            graficoRelacao = new Chart(ctxRelacao, {
-                type: 'line',
-                data: {
-                    labels: dadosIniciais.labels,
-                    datasets: [
-                        { label: 'CPU', data: dadosIniciais.cpu, backgroundColor: 'blue', borderColor: 'blue', fill: false },
-                        { label: 'Temperatura', data: dadosIniciais.temp, backgroundColor: 'red', borderColor: 'red', fill: false }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' }, title: { display: true, text: dadosIniciais.titulo, font: { size: 18 } } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-        }
-
-        if (ctxEvolucao) {
-            const dadosIniciais = DADOS_EVOLUCAO.cpu.semana;
-            const piorLoteLabelInicial = encontrarPiorLote(dadosIniciais.lotes);
-            const datasetsIniciais = prepararDatasetsDestaque(dadosIniciais.lotes, piorLoteLabelInicial);
-
-            graficoEvolucao = new Chart(ctxEvolucao, {
-                type: 'bar',
-                data: { labels: dadosIniciais.labels, datasets: datasetsIniciais },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        annotation: { annotations: { linhaIdeal: { type: 'line', yMin: 85, yMax: 85, borderColor: '#FFAE42', borderWidth: 2, borderDash: [10, 5], label: { display: true, content: 'Limite Ideal' } } } },
-                        title: { display: true, text: dadosIniciais.titulo, font: { size: 18 } }
+            if (ctxRelacao) {
+                const dadosIniciais = DADOS_RELACAO.cpu.semana;
+                graficoRelacao = new Chart(ctxRelacao, {
+                    type: 'line',
+                    data: {
+                        labels: dadosIniciais.labels,
+                        datasets: [
+                            { label: 'CPU', data: dadosIniciais.cpu, backgroundColor: 'blue', borderColor: 'blue', fill: false },
+                            { label: 'Temperatura', data: dadosIniciais.temp, backgroundColor: 'red', borderColor: 'red', fill: false }
+                        ]
                     },
-                    scales: { y: { title: { display: true, text: dadosIniciais.eixoY } } }
-                }
-            });
-        }
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' }, title: { display: true, text: dadosIniciais.titulo, font: { size: 18 } } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
 
-        if (ctxCarga) {
-            const dadosIniciaisrelacao = DADOS_CARGA.cpu;
-            graficoCarga = new Chart(ctxCarga, {
-                type: 'boxplot',
-                data: {
-                    labels: dadosIniciaisrelacao.labels,
-                    datasets: [{ label: 'Quartil', data: dadosIniciaisrelacao.data, backgroundColor: ['blue'], borderColor: ['black'], outlierBackgroundColor: 'red' }]
-                },
-                options: {
-                    indexAxis: 'x',
-                    plugins: { title: { display: true, text: dadosIniciaisrelacao.titulo, font: { size: 18 } } }
-                }
-            });
-        }
+            if (ctxEvolucao) {
+                const dadosIniciais = DADOS_EVOLUCAO.cpu.semana;
+                const piorLoteLabelInicial = encontrarPiorLote(dadosIniciais.lotes);
+                const datasetsIniciais = prepararDatasetsDestaque(dadosIniciais.lotes, piorLoteLabelInicial);
+                const limiteInicial = LIMITES?.cpu?.neutro ?? 85;
+                graficoEvolucao = new Chart(ctxEvolucao, {
+                    type: 'bar',
+                    data: { labels: dadosIniciais.labels, datasets: datasetsIniciais },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            annotation: { annotations: { linhaIdeal: { type: 'line', yMin: limiteInicial, yMax: limiteInicial, borderColor: '#FFAE42', borderWidth: 2, borderDash: [10, 5], label: { display: true, content: 'Limite Ideal' } } } },
+                            title: { display: true, text: dadosIniciais.titulo, font: { size: 18 } }
+                        },
+                        scales: { y: { title: { display: true, text: dadosIniciais.eixoY } } }
+                    }
+                });
+            }
 
-        selectEvolucao.addEventListener('change', atualizarGraficos);
-    }
+            if (ctxCarga) {
+                const dadosIniciaisrelacao = DADOS_CARGA.cpu;
+                graficoCarga = new Chart(ctxCarga, {
+                    type: 'boxplot',
+                    data: {
+                        labels: dadosIniciaisrelacao.labels,
+                        datasets: [{ label: 'Quartil', data: dadosIniciaisrelacao.data, backgroundColor: ['blue'], borderColor: ['black'], outlierBackgroundColor: 'red' }]
+                    },
+                    options: {
+                        indexAxis: 'x',
+                        plugins: { title: { display: true, text: dadosIniciaisrelacao.titulo, font: { size: 18 } } }
+                    }
+                });
+            }
+
+            selectEvolucao.addEventListener('change', atualizarGraficos);
+        }
+    });
 </script>

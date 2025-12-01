@@ -27,4 +27,8 @@ router.get("/filtroModelo/:idModelo", function (req, res) {
   dashboardControlller.filtroModelo(req, res);
 });
 
+router.get("/limites", function (req, res) {
+  dashboardControlller.buscarParametro(req, res); 
+});
+
 module.exports = router;
