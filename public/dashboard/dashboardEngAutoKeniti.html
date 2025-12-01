@@ -136,9 +136,15 @@
 </html>
 <script src="../js/redirecionar.js"></script>
 <script>
-    const URL_JSON = "https://projeto-bucket-client.s3.us-east-1.amazonaws.com/Lotes/RelatorioGeral.json";
-    
-    const LIMITES = { cpu: 85, ram: 80, disco: 90, temp: 70, processo: 250 };
+    const URL_JSON = "https://bucket-client-navix.s3.us-east-1.amazonaws.com/dashMediana/2025/RelatorioGeral.json";
+
+    const LIMITES = {
+        cpu: { min: 20, neutro: 50, atencao: 75, critico: 90 },
+        temp: { min: 40, neutro: 60, atencao: 75, critico: 90 },
+        ram: { min: 30, neutro: 50, atencao: 75, critico: 80 },
+        disco: { min: 10, neutro: 20, atencao: 60, critico: 80 },
+        processo: { min: 0, neutro: 100, atencao: 200, critico: 250 }
+    };
 
     let DADOS_RELACAO = {};
     let DADOS_EVOLUCAO = {};
@@ -151,9 +157,14 @@
 
     function atualizarCorKPI(valor, limite, elemento) {
         const numero = Number(valor);
-        if (numero >= limite) elemento.style.color = "red";
-        else if (numero >= limite * 0.85) elemento.style.color = "orange";
-        else elemento.style.color = "green";
+        if (numero >= limite.critico) {
+            elemento.style.color = "red";
+        }
+        else if (numero >= limite.atencao) {
+            elemento.style.color = "orange";
+        } else {
+            elemento.style.color = "green";
+        }
     }
 
     function carregarUsuarioSessao() {
@@ -216,8 +227,8 @@
             const dados = DADOS_RELACAO[metrica].semana;
             graficoRelacao.data.labels = dados.labels;
             graficoRelacao.options.plugins.title.text = dados.titulo;
-            
-            graficoRelacao.data.datasets = []; 
+
+            graficoRelacao.data.datasets = [];
             if (metrica === 'cpu') {
                 graficoRelacao.data.datasets.push({ label: 'CPU', data: dados.cpu, backgroundColor: 'blue', borderColor: 'blue', fill: false });
                 graficoRelacao.data.datasets.push({ label: 'Temperatura', data: dados.temp, backgroundColor: 'red', borderColor: 'red', fill: false });
@@ -249,7 +260,7 @@
             graficoEvolucao.options.scales.y.title.text = dados.eixoY;
 
             const novoLimite = LIMITES[metrica] || 0;
-            if(graficoEvolucao.options.plugins.annotation && graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal) {
+            if (graficoEvolucao.options.plugins.annotation && graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal) {
                 graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMin = novoLimite;
                 graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMax = novoLimite;
             }
@@ -272,14 +283,14 @@
         carregarUsuarioSessao();
 
         function calcularMedia(listaNumeros) {
-        let soma = 0;
-    
-        for (let i = 0; i < listaNumeros.length; i++) {
-            soma = soma + listaNumeros[i];
+            let soma = 0;
+
+            for (let i = 0; i < listaNumeros.length; i++) {
+                soma = soma + listaNumeros[i];
+            }
+
+            return soma / listaNumeros.length;
         }
-        
-        return soma / listaNumeros.length;
-    }
 
         fetch(URL_JSON)
             .then(resposta => resposta.json())
@@ -287,7 +298,7 @@
                 console.log("Dados baixados:", jsonGeral);
 
                 let listaLotesCPU = [], listaLotesRAM = [], listaLotesDisco = [], listaLotesTemp = [], listaLotesProc = [];
-                
+
                 let piorCpu = { nome: "", valor: -1, dados: [], relacao: [] };
                 let piorRam = { nome: "", valor: -1, dados: [], relacao: [] };
                 let piorDisco = { nome: "", valor: -1, dados: [], relacao: [] };
@@ -295,10 +306,10 @@
                 let piorProc = { nome: "", valor: -1, dados: [], relacao: [] };
 
                 const diasOrdem = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
-                
+
                 jsonGeral.forEach(lote => {
                     let nomeLote = "Lote " + lote.lote;
-                
+
                     let dadosCpu = [], dadosRam = [], dadosDisco = [], dadosTemp = [], dadosProc = [];
 
                     diasOrdem.forEach(diaNome => {
@@ -306,21 +317,21 @@
                         for (let k = 0; k < lote.dias.length; k++) {
                             if (lote.dias[k].diaSemana === diaNome) {
                                 diaEncontrado = lote.dias[k];
-                                break; 
+                                break;
                             }
                         }
 
-                        if(diaEncontrado) {
+                        if (diaEncontrado) {
                             dadosCpu.push(diaEncontrado.cpu);
                             dadosRam.push(diaEncontrado.ram);
                             dadosDisco.push(diaEncontrado.disco);
                             dadosTemp.push(diaEncontrado.temperatura);
                             dadosProc.push(diaEncontrado.processos);
                         } else {
-                            dadosCpu.push(0); 
-                            dadosRam.push(0); 
-                            dadosDisco.push(0); 
-                            dadosTemp.push(0); 
+                            dadosCpu.push(0);
+                            dadosRam.push(0);
+                            dadosDisco.push(0);
+                            dadosTemp.push(0);
                             dadosProc.push(0);
                         }
                     });
@@ -331,7 +342,7 @@
                     listaLotesTemp.push({ label: nomeLote, data: dadosTemp, borderColor: '#0d4299' });
                     listaLotesProc.push({ label: nomeLote, data: dadosProc, borderColor: '#0d4299' });
 
-                    let mediaCpu = calcularMedia(dadosCpu); 
+                    let mediaCpu = calcularMedia(dadosCpu);
                     if (mediaCpu > piorCpu.valor) {
                         piorCpu = { nome: nomeLote, valor: mediaCpu, dados: dadosCpu, relacao: dadosTemp };
                     }
@@ -358,10 +369,10 @@
                 });
 
                 function filtrarTop5(lista) {
-                    lista.sort(function(a, b) {
+                    lista.sort(function (a, b) {
                         let mediaA = calcularMedia(a.data);
                         let mediaB = calcularMedia(b.data);
-                        return mediaB - mediaA; 
+                        return mediaB - mediaA;
                     });
                     return lista.slice(0, 5);
                 }
