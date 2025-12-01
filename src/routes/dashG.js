@@ -7,4 +7,8 @@ router.get("/diario/:ano/:mes/:semana/:dia", (req, res) => {
     dashGController.diario(req, res);
 });
 
+router.get("/semanal/:nomeArquivo", (req, res) => {
+    dashGController.semanal(req, res);
+});
+
 module.exports = router;

@@ -1,3 +1,7 @@
+document.getElementById("select_hardware_comparacao").onchange = () =>
+({ CPU: compararCPU, RAM: compararRAM, TEMP: compararTEMP, DISCO: compararDisco }
+[select_hardware_comparacao.value]());
+
 function formatarData(date) {
     return date.toISOString().split("T")[0];
 }
@@ -8,13 +12,13 @@ function calcularSemana(dia) {
     if (dia <= 22) return 3;
     return 4;
 }
-    let chartAlertasSemana = null;
-    let chartHardware = null;
-    let chartComparativo = null;
+let chartAlertasSemana = null;
+let chartHardware = null;
+let chartComparativo = null;
 
 async function verificarDia() {
 
-    document.getElementById("select_hardware_comparacao").style = "display: none;"
+    document.getElementById("select_hardware_comparacao").style.display = "none"
 
 
     const hoje = new Date();

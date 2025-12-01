@@ -237,3 +237,7 @@ label {
 body{
   overflow-x: hidden;
 }
+
+.topoTitulo.right {
+    justify-content: flex-end !important;
+}

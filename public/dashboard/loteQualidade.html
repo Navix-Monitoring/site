@@ -66,9 +66,8 @@
                     <label>Período</label>
                     <select class="selectData" id="selectPeriodo">
                         <option value="dia" selected id="select_ontem">Dia</option>
-                        <option value="semana">Semana</option>
-                        <option value="mes">Mês</option>
-                        <option value="ano">Ano</option>
+                        <option value="semana">Últimos 7 dias</option>
+                        <option value="mes">Últimos 30 dias</option>
                     </select>
                 </div>
 
@@ -209,8 +208,7 @@
                             </h3>
                             <select
                                 style="align-self: center;border: 1px solid black;border-radius: 6px;text-align: center;"
-                                disabled id="select_hardware_comparacao">
-                                <option></option>
+                                 id="select_hardware_comparacao">
                                 <option value="CPU">CPU</option>
                                 <option value="RAM">RAM</option>
                                 <option value="TEMP">TEMPERATURA DA CPU</option>
@@ -248,10 +246,13 @@
     </div>
     <script src="dashJS/funcoesTempoDash.js"></script>
     <script src="../js/redirecionar.js"></script>
+    <script src="dashJS/dashSemana.js"></script>
     <script>
 
         document.getElementById("date1").addEventListener("change", verificarDia);
         document.getElementById("date2").addEventListener("change", verificarDia);
+
+        document.getElementById("selectPeriodo").onchange = () => ({ dia: verificarDia, semana: ultimos7dias }[selectPeriodo.value]());
 
 
         document.addEventListener("DOMContentLoaded", () => {
