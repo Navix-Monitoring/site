@@ -178,31 +178,14 @@ async function ultimos7dias() {
         }
 
         let series = [
-            { name: "Lote A001", data: dadosLotes[1] },
-            { name: "Lote A002", data: dadosLotes[2] },
-            { name: "Lote A003", data: dadosLotes[3] },
-            { name: "Lote A004", data: dadosLotes[4] },
-            { name: "Lote A005", data: dadosLotes[5] },
-            { name: "Lote A006", data: dadosLotes[6] },
+            { name: "Lote A001", data: dadosLotes[1].reverse() },
+            { name: "Lote A002", data: dadosLotes[2].reverse() },
+            { name: "Lote A003", data: dadosLotes[3].reverse() },
+            { name: "Lote A004", data: dadosLotes[4].reverse() },
+            { name: "Lote A005", data: dadosLotes[5].reverse() },
+            { name: "Lote A006", data: dadosLotes[6].reverse() },
         ];
 
-        const alertasSemana = {
-            chart: { type: "bar", height: 350, stacked: true, toolbar: { show: false } },
-            title: { text: "ALERTAS GERADOS (7 DIAS)", align: "center" },
-            plotOptions: { bar: { horizontal: false } },
-            xaxis: { categories: categorias },
-            series: series,
-            colors: ["#0a1a2f", "#102f57", "#1c47a1", "#3d73ff", "#253f6e", "#4f83d1"]
-        };
-
-        if (chartAlertasSemana) chartAlertasSemana.destroy();
-
-        chartAlertasSemana = new ApexCharts(
-            document.querySelector("#alertasSemana"),
-            alertasSemana
-        );
-
-        chartAlertasSemana.render();
 
         //Gráfico comparativo de hardware
 
@@ -255,6 +238,37 @@ async function ultimos7dias() {
 
         }
 
+        categorias.reverse();
+        somaCPUPorDia.reverse();
+        somaCPUPorDia2.reverse();
+        somaRAMPorDia.reverse();
+        somaRAMPorDia2.reverse();
+        somaDiscoPorDia.reverse();
+        somaDiscoPorDia2.reverse();
+        somaTempPorDia.reverse();
+        somaTempPorDia2.reverse();
+        somaAlertasCriticosPorDia.reverse();
+        somaAlertasCriticosPorDia2.reverse();
+
+        const alertasSemana = {
+            chart: { type: "bar", height: 350, stacked: true, toolbar: { show: false } },
+            tooltip: { enabled: false },
+            title: { text: "ALERTAS CRÍTICOS GERADOS (7 DIAS)", align: "center" },
+            plotOptions: { bar: { horizontal: false } },
+            xaxis: { categories: categorias },
+            series: series,
+            colors: ["#0a1a2f", "#102f57", "#1c47a1", "#3d73ff", "#253f6e", "#4f83d1"]
+        };
+
+        if (chartAlertasSemana) chartAlertasSemana.destroy();
+
+        chartAlertasSemana = new ApexCharts(
+            document.querySelector("#alertasSemana"),
+            alertasSemana
+        );
+
+        chartAlertasSemana.render();
+
 
 
         document.getElementById("select_hardware_comparacao").onchange =
@@ -269,17 +283,17 @@ async function ultimos7dias() {
 
         // Gráfico comparativo de alertas totais
 
-        document.getElementById("tituloAlertasTotais").innerHTML = `Comparativo - Alertas Totais`;
+        document.getElementById("tituloAlertasTotais").innerHTML = `COMPARATIVO - ALERTAS CRÍTICOS TOTAIS`;
         document.getElementById("subtituloAlertasTotais").innerHTML = `Semana atual x Semana passada`;
 
         var comparativoAlertas = {
-            chart: { type: "line", height: 330 },
+            chart: { type: "area", height: 330 },
             plotOptions: { bar: { horizontal: true, distributed: true } },
             colors: ["#3b82f6", "#0a1a2f"],
             series: [
-            { name: "Semana Atual (Total de Críticos)", data: somaAlertasCriticosPorDia },
-            { name: "Última Semana(Total de Críticos)", data: somaAlertasCriticosPorDia2 }
-        ],
+                { name: "Semana Atual (Total de Críticos)", data: somaAlertasCriticosPorDia },
+                { name: "Última Semana(Total de Críticos)", data: somaAlertasCriticosPorDia2 }
+            ],
             xaxis: { categories: categorias }
         };
 
@@ -310,8 +324,8 @@ function compararCPU() {
             { name: "Semana Atual (CPU)", data: somaCPUPorDia },
             { name: "Última Semana", data: somaCPUPorDia2 }
         ],
-        colors: ["#0a1a2f", "#3b82f6"],
-        xaxis: { categories: categorias}
+        colors: ["#3b82f6", "#0a1a2f"],
+        xaxis: { categories: categorias }
     };
 
     if (chartHardware) chartHardware.destroy();
@@ -336,8 +350,8 @@ function compararRAM() {
             { name: "Semana Atual (RAM)", data: somaRAMPorDia },
             { name: "Última Semana", data: somaRAMPorDia2 }
         ],
-        colors: ["#0a1a2f", "#3b82f6"],
-        xaxis: { categories: categorias}
+        colors: ["#3b82f6", "#0a1a2f"],
+        xaxis: { categories: categorias }
     };
 
     if (chartHardware) chartHardware.destroy();
@@ -361,7 +375,7 @@ function compararDisco() {
             { name: "Semana Atual (Disco)", data: somaDiscoPorDia },
             { name: "Última Semana", data: somaDiscoPorDia2 }
         ],
-        colors: ["#0a1a2f", "#3b82f6"],
+        colors: ["#3b82f6", "#0a1a2f"],
         xaxis: { categories: categorias }
     };
 
@@ -386,8 +400,8 @@ function compararTEMP() {
             { name: "Semana Atual (Disco)", data: somaTempPorDia },
             { name: "Última Semana", data: somaTempPorDia2 }
         ],
-        colors: ["#0a1a2f", "#3b82f6"],
-        xaxis: { categories: categorias}
+        colors: ["#3b82f6", "#0a1a2f"],
+        xaxis: { categories: categorias }
     };
 
     if (chartHardware) chartHardware.destroy();

@@ -199,7 +199,7 @@ async function verificarDia() {
                 { name: "Lote A005", data: [lote5_2.totalCritico, lote5.totalCritico] },
                 { name: "Lote A006", data: [lote6_2.totalCritico, lote6.totalCritico] }
             ],
-            xaxis: { categories: [diaAnteOntemBR, ontemBR] }
+            xaxis: { categories: [ontemBR,diaAnteOntemBR] }
         };
 
         if (chartAlertasSemana) chartAlertasSemana.destroy();
@@ -222,7 +222,7 @@ async function verificarDia() {
                 { name: "Temperatura", data: [`${somaTemp_2}`, `${somaTemp}`] },
             ],
             colors: ["#0a1a2f", "#102f57", "#1c47a1", "#3d73ff"],
-            xaxis: { categories: [diaAnteOntemBR, ontemBR] }
+            xaxis: { categories: [ontemBR,diaAnteOntemBR] }
         };
 
         if (chartHardware) chartHardware.destroy();
@@ -244,9 +244,9 @@ async function verificarDia() {
             colors: ["#3b82f6", "#0a1a2f"],
             series: [{
                 name: "Alertas Críticos",
-                data: [somaCriticoAnteOntem, somaCritico]
+                data: [somaCritico,somaCriticoAnteOntem]
             }],
-            xaxis: { categories: [diaAnteOntemBR, ontemBR] }
+            xaxis: { categories: [ontemBR,diaAnteOntemBR] }
         };
 
         if (chartComparativo) chartComparativo.destroy();
