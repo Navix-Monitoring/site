@@ -248,15 +248,13 @@ async function atualizarDashboard(periodoSelecionado) {
                 // Distribuição de Temperatura
                 const t = Number(d.TEMP);
 
-                if (t >= 10 && t <= 15) faixasTemp[0]++;
-                else if (t > 15 && t <= 20) faixasTemp[1]++;
-                else if (t > 20 && t <= 25) faixasTemp[2]++;
-                else if (t > 25 && t <= 30) faixasTemp[3]++;
-                else if (t > 30 && t <= 35) faixasTemp[4]++;
-                else if (t > 35 && t <= 40) faixasTemp[5]++;
-                else if (t > 40 && t <= 45) faixasTemp[6]++;
-                else if (t > 45 && t <= 50) faixasTemp[7]++;
-                else if (t > 50) faixasTemp[8]++;
+                if (t >= 10 && t <= 20) faixasTemp[0]++;
+                else if (t > 20 && t <= 30) faixasTemp[1]++;
+                else if (t > 30 && t <= 40) faixasTemp[2]++;
+                else if (t > 40 && t <= 50) faixasTemp[3]++;
+                else if (t > 50 && t <= 60) faixasTemp[4]++;
+                else if (t > 60 && t <= 70) faixasTemp[5]++;
+                else if (t > 70) faixasTemp[6]++;
             });
 
             // C. Agrupamento Dashboard (para KPIs e gráficos de Média)
