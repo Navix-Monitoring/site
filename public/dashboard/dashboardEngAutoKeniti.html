@@ -216,6 +216,24 @@
         return piorLoteLabel;
     }
 
+    function calcularMedia(listaNumeros) {
+        let soma = 0;
+
+        for (let i = 0; i < listaNumeros.length; i++) {
+            soma = soma + listaNumeros[i];
+        }
+
+        return soma / listaNumeros.length;
+    }
+
+    function verificarPior(piorAtual, nomeLote, dadosPrincipais, dadosRelacao) {
+        let media = calcularMedia(dadosPrincipais);
+        if (media > piorAtual.valor) {
+            return { nome: nomeLote, valor: media, dados: dadosPrincipais, relacao: dadosRelacao };
+        }
+        return piorAtual;
+    }
+
     let graficoRelacao, graficoCarga, graficoEvolucao;
 
     function atualizarGraficos() {
@@ -278,19 +296,11 @@
         }
     }
 
+
     document.addEventListener('DOMContentLoaded', () => {
         atualizarDataHora();
         carregarUsuarioSessao();
 
-        function calcularMedia(listaNumeros) {
-            let soma = 0;
-
-            for (let i = 0; i < listaNumeros.length; i++) {
-                soma = soma + listaNumeros[i];
-            }
-
-            return soma / listaNumeros.length;
-        }
 
         fetch(URL_JSON)
             .then(resposta => resposta.json())
@@ -342,30 +352,11 @@
                     listaLotesTemp.push({ label: nomeLote, data: dadosTemp, borderColor: '#0d4299' });
                     listaLotesProc.push({ label: nomeLote, data: dadosProc, borderColor: '#0d4299' });
 
-                    let mediaCpu = calcularMedia(dadosCpu);
-                    if (mediaCpu > piorCpu.valor) {
-                        piorCpu = { nome: nomeLote, valor: mediaCpu, dados: dadosCpu, relacao: dadosTemp };
-                    }
-
-                    let mediaRam = calcularMedia(dadosRam);
-                    if (mediaRam > piorRam.valor) {
-                        piorRam = { nome: nomeLote, valor: mediaRam, dados: dadosRam, relacao: dadosProc };
-                    }
-
-                    let mediaDisco = calcularMedia(dadosDisco);
-                    if (mediaDisco > piorDisco.valor) {
-                        piorDisco = { nome: nomeLote, valor: mediaDisco, dados: dadosDisco, relacao: dadosProc };
-                    }
-
-                    let mediaTemp = calcularMedia(dadosTemp);
-                    if (mediaTemp > piorTemp.valor) {
-                        piorTemp = { nome: nomeLote, valor: mediaTemp, dados: dadosTemp, relacao: dadosCpu };
-                    }
-
-                    let mediaProc = calcularMedia(dadosProc);
-                    if (mediaProc > piorProc.valor) {
-                        piorProc = { nome: nomeLote, valor: mediaProc, dados: dadosProc, relacao: dadosDisco };
-                    }
+                    piorCpu = verificarPior(piorCpu, nomeLote, dadosCpu, dadosTemp);
+                    piorRam = verificarPior(piorRam, nomeLote, dadosRam, dadosProc);
+                    piorDisco = verificarPior(piorDisco, nomeLote, dadosDisco, dadosProc);
+                    piorTemp = verificarPior(piorTemp, nomeLote, dadosTemp, dadosCpu);
+                    piorProc = verificarPior(piorProc, nomeLote, dadosProc, dadosDisco);
                 });
 
                 function filtrarTop5(lista) {
