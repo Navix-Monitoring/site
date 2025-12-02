@@ -16,6 +16,7 @@
 </head>
 
 <body class="bg-gray-100 flex" onload="carregarInformacoes(), verificarCargo()">
+  <!-- Tela Atualizar -->
   <div class="w-full min-h-screen fixed inset-0 z-10 flex flex-col justify-center items-center bg-black/50"
     style="display: none" id="telaAtualizar">
     <div
@@ -99,12 +100,6 @@
         Perfil
       </a>
 
-      <a onclick="redirecionar()"
-        class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium func-only"
-        style="cursor: pointer;">
-        Dashboard
-      </a>
-
       <a href="../admin.html" id="adm-only"
         class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
         Cadastrar Funcionários
@@ -114,10 +109,11 @@
         class=" func-only w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium ">
         Gerenciar Frota
       </a>
-      <a href="https://navixsuporte.atlassian.net/jira/software/form/9d7593db-d676-44b4-a1f4-43762dea870c" target="_blank"
+      <a href="https://navixsuporte.atlassian.net/jira/software/form/9d7593db-d676-44b4-a1f4-43762dea870c"
+        target="_blank"
         class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium ">
         Suporte
-        <i class='bx  bx-message-dots-2'></i> 
+        <i class='bx  bx-message-dots-2'></i>
       </a>
       <div class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
         onclick="limparSessao()">
@@ -153,59 +149,22 @@
     <div class="bg-slate-100 rounded-xl p-8 mt-8 shadow-lg">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
-          <i class="fa-solid fa-bell text-3xl text-blue-900 animate-pulse"></i>
-          <p class="text-blue-950 font-bold text-3xl tracking-wide">Alertas</p>
-        </div>
-        <span class="text-sm text-blue-800 bg-blue-200 px-3 py-1 rounded-full font-semibold">
-          5 alertas ativos
-        </span>
-      </div>
-
-      <div id="alertas" class="flex flex-col gap-4">
-        <div class="flex justify-between items-center bg-red-100 border-l-4 border-red-600 p-4 rounded-lg shadow-sm">
-          <div>
-            <p class="text-red-800 font-semibold text-lg">Lote LT-B72K</p>
-            <p class="text-red-700">Alerta crítico: mediana CPU fora do padrão</p>
-          </div>
-          <i class="fa-solid fa-triangle-exclamation text-red-600 text-2xl"></i>
-        </div>
-
-        <div
-          class="flex justify-between items-center bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-lg shadow-sm">
-          <div>
-            <p class="text-yellow-800 font-semibold text-lg">Lote LT-C19P</p>
-            <p class="text-yellow-700">Atenção: Mediana de CPU merece atenção</p>
-          </div>
-          <i class="fa-solid fa-circle-exclamation text-yellow-600 text-2xl"></i>
-        </div>
-
-        <div
-          class="flex justify-between items-center bg-orange-100 border-l-4 border-orange-500 p-4 rounded-lg shadow-sm">
-          <div>
-            <p class="text-orange-800 font-semibold text-lg">Lote LT-D58X</p>
-            <p class="text-orange-700">Aviso: Mediana de temperatura da CPU alta</p>
-          </div>
-          <i class="fa-solid fa-exclamation text-orange-600 text-2xl"></i>
-        </div>
-
-        <div
-          class="flex justify-between items-center bg-orange-100 border-l-4 border-orange-500 p-4 rounded-lg shadow-sm">
-          <div>
-            <p class="text-orange-800 font-semibold text-lg">Lote LT-H56N</p>
-            <p class="text-orange-700">Aviso: Mediana de CPU alta</p>
-          </div>
-          <i class="fa-solid fa-exclamation text-orange-600 text-2xl"></i>
+          <i class="fa-solid fa-gauge text-3xl text-blue-900"></i>
+          <p class="text-blue-950 font-bold text-3xl tracking-wide">Dashboards</p>
         </div>
       </div>
+
+      <div id="alertas" class="flex flex-col gap-4"></div>
     </div>
 
   </div>
 </body>
 <script src="./js/usuario/verificadorCargo.js"></script>
-
-</html>
 <script src="../js/redirecionar.js"></script>
+
 <script>
+  var nomeEmpresa = sessionStorage.getItem("nome_ss");
+  var cargo = sessionStorage.getItem("cargo_ss");
   var nomeEmpresa = sessionStorage.getItem("nome_ss");
   var cargo = sessionStorage.getItem("cargo_ss");
   var emailEmpresa = sessionStorage.getItem("email_ss");
@@ -215,27 +174,84 @@
   var emailEmpresaEl = document.getElementById("emailEmpresa");
   var textoInicio = document.getElementById("textoInicio");
 
+  // Exibir nome e cargo na navbar
   nomeProfissao.innerHTML = `
     <p class="font-bold text-blue-900">${nomeEmpresa}</p>
     <p class="mb-4 text-blue-900">Cargo: ${cargo}</p>
   `;
 
-  nomeEmpresaa.innerHTML = `<p class="text-blue-950">${nomeEmpresa}</p>`;
-  emailEmpresaEl.innerHTML = `<p class="text-blue-950">${emailEmpresa}</p>`;
-
+  // Exibir saudação
   textoInicio.innerHTML = `<p class="text-4xl font-semibold text-blue-950 mb-6">Olá, ${nomeEmpresa}</p>`;
 
-  function abrirTela() {
-    document.getElementById("telaAtualizar").style.display = "flex";
-  }
+  // Exibir nome e email na seção de informações
+  nomeEmpresaa.innerHTML = `<p class="text-blue-900">${nomeEmpresa}</p>`;
+  emailEmpresaEl.innerHTML = `<p class="text-blue-900">${emailEmpresa}</p>`;
 
-  function fecharTela() {
-    document.getElementById("telaAtualizar").style.display = "none";
-  }
-
+  // Renderização dinâmica dos dashboards
   document.addEventListener("DOMContentLoaded", function () {
-    var nomeEmpresa = sessionStorage.getItem("nome_ss");
     var cargo = sessionStorage.getItem("cargo_ss");
-    var nomeProfissao = document.getElementById("nomeProfissao");
+    var alertasDiv = document.getElementById("alertas");
+
+    alertasDiv.innerHTML = "";
+
+    if (cargo === "Engenheiro automotivo") {
+      alertasDiv.innerHTML += `
+        <a href="./dashboard/saude.html" 
+           class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
+          <div>
+            <p class="text-black font-semibold text-lg">Dashboard Saúde</p>
+            <p class="text-black">Descrição: xxxxxx</p>
+          </div>
+        </a>
+      `;
+      alertasDiv.innerHTML += `
+        <a href="./dashboard/dashboardBateria.html" 
+           class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
+          <div>
+            <p class="text-black font-semibold text-lg">Dashboard Bateria</p>
+            <p class="text-black">Descrição: xxxxxx</p>
+          </div>
+        </a>
+      `;
+      alertasDiv.innerHTML += `
+        <a href="./dashboard/processos.html" 
+           class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
+          <div>
+            <p class="text-black font-semibold text-lg">Dashboard Processos</p>
+            <p class="text-black">Descrição: xxxxxx</p>
+          </div>
+        </a>
+      `;
+    } else if (cargo === "Engenheiro de qualidade") {
+      alertasDiv.innerHTML += `
+        <a href="./dashboard/frota.html" 
+           class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
+          <div>
+            <p class="text-black font-semibold text-lg">Dashboard Previsão</p>
+            <p class="text-black">Descrição: xxxxx</p>
+          </div>
+        </a>
+      `;
+      alertasDiv.innerHTML += `
+        <a href="./dashboard/entregas.html" 
+           class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
+          <div>
+            <p class="text-black font-semibold text-lg">Dashboard Medianas</p>
+            <p class="text-black">Descrição: xxxxxxx</p>
+          </div>
+        </a>
+      `;
+      alertasDiv.innerHTML += `
+        <a href="./dashboard/clientes.html" 
+           class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
+          <div>
+            <p class="text-black font-semibold text-lg">Dashboard Alertas</p>
+            <p class="text-black">Descrição: xxxxxxxx</p>
+          </div>
+        </a>
+      `;
+    }
   });
 </script>
+
+</html>
