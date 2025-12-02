@@ -215,7 +215,11 @@
           cpuCritico *= 0.5;
           ramCritico *= 0.5;
           discoCritico *= 0.5;
-          let saudeGeral = 100 - (cpuCritico + ramCritico + discoCritico)
+          let saudeGeral = 100 - (cpuCritico + ramCritico + discoCritico);
+          console.log('saude geral', saudeGeral)
+          let saudeCpu = 100 - cpuCritico;
+          let saudeRam = 100 - ramCritico;
+          let saudeDisco = 100 - discoCritico;
           var gaugeOptions = {
             series: [saudeGeral],
             chart: {
@@ -240,6 +244,21 @@
             colors: ["#F7D917"]
           };
 
+          new Chart(document.getElementById('componentComparisonChart'), {
+            type: 'bar',
+            data: {
+              labels: ['CPU', 'RAM', 'Disco'],
+              datasets: [{
+                label: 'Saúde (%)',
+                data: [saudeCpu, saudeRam, saudeDisco],
+                backgroundColor: ['#1e40af', '#2563eb', '#3b82f6']
+              }]
+            },
+            options: {
+              scales: { y: { beginAtZero: true, max: 100 } }
+            }
+          });
+
           new ApexCharts(document.querySelector("#gaugeChart"), gaugeOptions).render();
         });
     }
@@ -251,24 +270,10 @@
   /* ===========================
      1) GAUGE - APEXCHARTS
      =========================== */
-  
+
   /* ===========================
      2) COMPARAÇÃO - BARRAS
      =========================== */
-  new Chart(document.getElementById('componentComparisonChart'), {
-    type: 'bar',
-    data: {
-      labels: ['CPU', 'RAM', 'Disco'],
-      datasets: [{
-        label: 'Saúde (%)',
-        data: [85, 60, 90],
-        backgroundColor: ['#1e40af', '#2563eb', '#3b82f6']
-      }]
-    },
-    options: {
-      scales: { y: { beginAtZero: true, max: 100 } }
-    }
-  });
 
   /* ===========================
      3) EVOLUÇÃO - LINHA (CPU, RAM, DISCO)
