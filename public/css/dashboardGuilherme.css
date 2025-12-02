@@ -1,9 +1,9 @@
 
 .tituloLote {
   margin-left: 20px;
-  margin-right: 1rem; 
   font-size: 40px;
-  width: 120vh;
+  width: auto;         
+  flex-grow: 1;       
 }
 
 .topoTitulo {
@@ -48,7 +48,7 @@
 
 .kpi {
     position: relative;
-    border-radius: 20px;
+    border-radius: 10px;
     width: 14.2vw;
     padding: 20px;
     background: white;
@@ -68,7 +68,7 @@
     left: 0;
     width: 100%;
     height: 8px;    
-    border-radius: 20px 20px 0 0;
+    border-radius: 25px 25px 0 0;
 }
 
 .kpi.baixo::before { background: green; } 
@@ -118,8 +118,9 @@
 
 
 .chart-container-alert {
-  width: 80vh;    
-  height: 45vh;  
+   width: 100%;         
+  max-width: 720px;     
+  height: 450px;   
   padding: 2vh;
   background-color: #F7F8FC;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.58);
@@ -209,7 +210,7 @@
 .date-input {
     padding: 10px 15px; 
     font-size: 16px;
-    border: 2px solid #ccc; 
+    border: #172556 solid 2px; 
     border-radius: 8px; 
     outline: none; 
     cursor: pointer;

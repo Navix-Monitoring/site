@@ -18,6 +18,12 @@ let chartComparativo = null;
 
 async function verificarDia() {
 
+     document.getElementById("input1").style.display = "block"
+    document.getElementById("input2").style.display = "block"
+
+
+    document.getElementById("select_periodo").style.alignSelf = "flex-end"
+
     document.getElementById("select_hardware_comparacao").style.display = "none"
 
 

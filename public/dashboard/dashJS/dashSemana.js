@@ -5,6 +5,12 @@ document.getElementById("select_hardware_comparacao").onchange = null;
 
 async function ultimos7dias() {
 
+    document.getElementById("input1").style.display = "none"
+    document.getElementById("input2").style.display = "none"
+
+
+    document.getElementById("select_periodo").style.alignSelf = "flex-end"
+
     if (chartHardware) {
         chartHardware.destroy();
         chartHardware = null;

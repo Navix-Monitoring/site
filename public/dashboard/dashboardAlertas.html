@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col ml-[250px] w-full p-8">
+        <div class="flex flex-col ml-[250px] w-full p-2">
             <a class="btnVoltar" onclick="localStorage.clear(); redirecionar();">
                 <div style="margin-bottom: 20px; display: flex; align-items: center; font-size: 30px;">
                     <i class='bx bx-arrow-left-stroke'></i>
@@ -62,7 +62,7 @@
 
                 <h1 class="tituloLote" id="tituloLote"></h1>
 
-                <div>
+                <div id="select_periodo">
                     <label>Período</label>
                     <select class="selectData" id="selectPeriodo">
                         <option value="dia" selected id="select_ontem">Dia</option>
@@ -73,13 +73,13 @@
 
 
                 <!-- Data de 'ontem' -->
-                <div class="date-input-container">
-                    <label for="date1">Selecionar data</label>
+                <div class="date-input-container" id="input1" style="text-align: start;">
+                    <label for="date1">Data principal</label>
                     <input type="date" id="date1" class="date-input" min="2025-01-01" max="2025-12-31">
                 </div>
 
                 <!-- Data de ante-ontem -->
-                <div class="date-input-container" id="input2">
+                <div class="date-input-container" id="input2" style="text-align: start;">
                     <label for="date2">Comparar com</label>
                     <input type="date" id="date2" class="date-input" min="2025-01-01" max="2025-12-31">
                 </div>
