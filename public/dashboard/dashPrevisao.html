@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Predição de Frota - Navix</title>
+    <link rel="icon" href="./assets/navix-logo.jpg" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script
+      src="https://kit.fontawesome.com/6921956092.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://cdn.boxicons.com/fonts/basic/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="../js/redirecionar.js"></script>
+    <link rel="stylesheet" href="../css/dashboard.css" />
+    <style>
+      .card-metric {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        border-left: 4px solid transparent;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .navix-select {
+        background-color: transparent;
+        border-bottom: 2px solid #1e3a8a;
+        font-weight: bold;
+        color: #1e3a8a;
+        padding: 5px;
+        outline: none;
+        cursor: pointer;
+      }
+      .legend-item {
+        cursor: pointer;
+        transition: opacity 0.3s;
+        user-select: none;
+      }
+      .legend-item:hover {
+        opacity: 0.7;
+      }
+      .legend-hidden {
+        opacity: 0.3 !important;
+        text-decoration: line-through;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <div class="flex flex-row w-full">
+      <div
+        class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-350 fixed top-0 left-0 z-50"
+      >
+        <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10" />
+        <div id="imagemUsuarioNavbar">
+          <div
+            class="rounded-md w-20 h-20 mb-2"
+            style="
+              background-image: url(../assets/img/foto-usuario.png);
+              background-size: cover;
+              background-repeat: no-repeat;
+              background-position: center;
+            "
+          ></div>
+        </div>
+        <div id="nomeProfissao" class="text-center mb-6"></div>
+        <div class="flex flex-col gap-4 w-[80%]">
+          <a
+            href="../perfil-visualizar.html"
+            class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium"
+            >Perfil</a
+          >
+          <a
+            class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium"
+            >Dashboard</a
+          >
+          <a
+            href="../admin.html"
+            id="adm-only"
+            class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium"
+            >Cadastrar Funcionários</a
+          >
+          <a
+            href="./cadastroVeiculos.html"
+            class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium"
+            >Gerenciar Frota</a
+          >
+          <div
+            class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
+            onclick="limparSessao()"
+          >
+            <a href="../index.html" class="no-underline text-white"
+              ><h3 class="m-0 p-0">Sair</h3></a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col ml-[250px] w-full p-8">
+        <a
+          class="btnVoltar cursor-pointer text-gray-600 hover:text-blue-900 mb-6 inline-flex items-center"
+          onclick="localStorage.clear(); window.history.back();"
+        >
+          <i class="bx bx-arrow-left-stroke text-3xl mr-2"></i>
+          <h3 class="text-xl font-bold m-0">Voltar</h3>
+        </a>
+
+        <div
+          class="flex justify-between items-end mb-8 bg-white p-6 rounded-lg shadow-sm"
+        >
+          <div>
+            <h1 class="text-2xl font-bold text-gray-800">
+              Predição de Frota (Multi-Lote)
+            </h1>
+            <p class="text-gray-500 mt-1 text-sm">
+              Comparativo de tendência de falhas entre todos os lotes.
+            </p>
+          </div>
+          <div class="flex gap-6 items-end">
+            <div class="flex flex-col text-right">
+              <span class="text-xs text-gray-400 font-bold mb-1">PERÍODO</span>
+              <span
+                class="text-lg font-bold text-amber-600 border-b-2 border-amber-600 pb-1"
+                >Diário (14 dias)</span
+              >
+            </div>
+            <div class="flex flex-col text-right">
+              <span class="text-xs text-gray-400 font-bold mb-1"
+                >COMPONENTE</span
+              >
+              <select
+                id="selComponente"
+                class="navix-select"
+                onchange="atualizarDashboard()"
+              >
+                <option value="cpu" selected>CPU</option>
+                <option value="ram">RAM</option>
+                <option value="disco">Disco</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="boxAlerta"
+          class="bg-gray-100 border border-gray-400 text-gray-700 px-4 py-3 rounded relative mb-8"
+        >
+          <strong class="font-bold"
+            ><i class="bx bx-info-circle"></i> Status:</strong
+          >
+          <span class="block sm:inline" id="textoAlerta"
+            >Carregando dados...</span
+          >
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="card-metric border-l-green-500">
+            <p class="text-gray-500 text-xs font-bold uppercase">
+              Lotes Seguros
+            </p>
+            <h2 class="text-4xl font-bold text-gray-800 mt-2" id="kpiSeguros">
+              --
+            </h2>
+            <p class="text-xs text-green-600 mt-2">Dentro da normalidade</p>
+          </div>
+          <div class="card-metric border-l-red-500">
+            <p class="text-gray-500 text-xs font-bold uppercase">
+              Lotes em Risco
+            </p>
+            <h2 class="text-3xl font-bold text-red-600 mt-2" id="kpiCriticos">
+              --
+            </h2>
+            <p class="text-xs text-gray-500 mt-2">Previsão de falha crítica</p>
+          </div>
+          <div class="card-metric border-l-blue-500">
+            <p class="text-gray-500 text-xs font-bold uppercase">
+              Pior Tendência
+            </p>
+            <h2 class="text-4xl font-bold text-gray-800 mt-2" id="kpiPiorLote">
+              --
+            </h2>
+            <p class="text-xs text-gray-500 mt-2">Degradação mais acelerada</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[500px] mb-6">
+          <div
+            class="col-span-2 bg-white p-6 rounded-lg shadow-sm flex flex-col"
+          >
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="font-bold text-gray-700 text-lg" id="tituloGrafico">
+                Projeção Comparativa
+              </h3>
+              <div class="flex items-center gap-2 text-xs flex-wrap">
+                <div
+                  class="legend-item flex items-center"
+                  onclick="alternarLote(0)"
+                  id="leg-0"
+                >
+                  <span class="w-3 h-3 bg-[#020617] rounded-full mr-1"></span
+                  >A001
+                </div>
+                <div
+                  class="legend-item flex items-center"
+                  onclick="alternarLote(1)"
+                  id="leg-1"
+                >
+                  <span class="w-3 h-3 bg-[#1e3a8a] rounded-full mr-1"></span
+                  >A002
+                </div>
+                <div
+                  class="legend-item flex items-center"
+                  onclick="alternarLote(2)"
+                  id="leg-2"
+                >
+                  <span class="w-3 h-3 bg-[#2563eb] rounded-full mr-1"></span
+                  >A003
+                </div>
+                <div
+                  class="legend-item flex items-center"
+                  onclick="alternarLote(3)"
+                  id="leg-3"
+                >
+                  <span class="w-3 h-3 bg-[#3b82f6] rounded-full mr-1"></span
+                  >A004
+                </div>
+                <div
+                  class="legend-item flex items-center"
+                  onclick="alternarLote(4)"
+                  id="leg-4"
+                >
+                  <span class="w-3 h-3 bg-[#60a5fa] rounded-full mr-1"></span
+                  >A005
+                </div>
+                <div
+                  class="legend-item flex items-center"
+                  onclick="alternarLote(5)"
+                  id="leg-5"
+                >
+                  <span class="w-3 h-3 bg-[#93c5fd] rounded-full mr-1"></span
+                  >A006
+                </div>
+                <div
+                  class="flex items-center ml-2 border-l pl-2 border-gray-300 cursor-default"
+                >
+                  <span
+                    class="w-6 h-0 border-t-2 border-dashed border-gray-500 mr-1"
+                  ></span
+                  >Previsão
+                </div>
+                <div class="flex items-center ml-2 cursor-default">
+                  <span class="w-6 h-0.5 bg-[#b91c1c] mr-1"></span>Limite (>90%)
+                </div>
+              </div>
+            </div>
+            <div class="relative flex-1 w-full">
+              <canvas id="chartMultiLine"></canvas>
+            </div>
+          </div>
+
+          <div
+            class="col-span-1 bg-white p-6 rounded-lg shadow-sm flex flex-col justify-between"
+          >
+            <div>
+              <h3 class="font-bold text-gray-700 mb-2">
+                Ranking de Urgência (RUL)
+              </h3>
+              <p class="text-xs text-gray-500 mb-4">
+                Tempo estimado até atingir o limite.
+              </p>
+              <div class="relative w-full h-[300px]">
+                <canvas id="chartRul"></canvas>
+              </div>
+            </div>
+            <button
+              id="btnRecall"
+              class="w-full mt-4 bg-red-700 text-white font-bold py-3 rounded shadow-md hover:bg-red-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              onclick="alert('Ordem de Recall gerada com sucesso!')"
+            >
+              <i class="bx bx-error-circle mr-2"></i> GERAR RELATÓRIO DE RECALL
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 h-[300px] mb-10">
+          <div class="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+            <h3 class="font-bold text-gray-700 mb-2">
+              Velocidade de Degradação Comparativa (Slope)
+            </h3>
+            <p class="text-xs text-gray-500 mb-4" id="descSlope">
+              O quanto o uso sobe por unidade de tempo.
+            </p>
+            <div class="relative flex-1 w-full">
+              <canvas id="chartSlope"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const JSON_URL =
+        "https://bucket-client-navix.s3.us-east-1.amazonaws.com/dashPrevisao/dadosPrevisao.json";
+      const tonsAzul = [
+        "#020617",
+        "#1e3a8a",
+        "#2563eb",
+        "#3b82f6",
+        "#60a5fa",
+        "#93c5fd",
+      ];
+      let frotaDados = {};
+      let chartMultiLine, chartRul, chartSlope;
+
+      async function carregarDados() {
+        try {
+          const response = await fetch(JSON_URL, { cache: "no-store" });
+          if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+          frotaDados = await response.json();
+          document.getElementById("textoAlerta").innerText =
+            "Dados da frota atualizados.";
+          document.getElementById("boxAlerta").className =
+            "bg-blue-50 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-8";
+          atualizarDashboard();
+        } catch (error) {
+          document.getElementById("textoAlerta").innerHTML =
+            "<span class='text-red-600'>Erro ao carregar dados. Verifique se a ETL Java rodou e salvou o JSON.</span>";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof carregarUsuarioSessao === "function")
+          carregarUsuarioSessao();
+        inicializarGraficos();
+        carregarDados();
+      });
+
+      function alternarLote(index) {
+        if (!chartMultiLine) return;
+        const meta = chartMultiLine.getDatasetMeta(index);
+        meta.hidden =
+          meta.hidden === null
+            ? !chartMultiLine.data.datasets[index].hidden
+            : null;
+        const legItem = document.getElementById(`leg-${index}`);
+        if (meta.hidden) legItem.classList.add("legend-hidden");
+        else legItem.classList.remove("legend-hidden");
+        chartMultiLine.update();
+      }
+
+      function atualizarDashboard() {
+        const comp = document.getElementById("selComponente").value;
+
+        if (!frotaDados[comp] || !frotaDados[comp]["semana"]) {
+          return;
+        }
+
+        let dados = frotaDados[comp]["semana"];
+
+        document.getElementById("kpiSeguros").innerText = dados.kpis.seguros;
+        document.getElementById("kpiCriticos").innerText = dados.kpis.criticos;
+        document.getElementById("kpiPiorLote").innerText = dados.kpis.pior;
+        document.getElementById(
+          "tituloGrafico"
+        ).innerText = `Projeção Comparativa (${comp.toUpperCase()})`;
+        document.getElementById(
+          "descSlope"
+        ).innerText = `Taxa de crescimento de uso (por dia).`;
+
+        const boxAlerta = document.getElementById("boxAlerta");
+        const btnRecall = document.getElementById("btnRecall");
+
+        if (dados.kpis.criticos > 0) {
+          boxAlerta.className =
+            "bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-8";
+          document.getElementById(
+            "textoAlerta"
+          ).innerHTML = `<strong>ATENÇÃO:</strong> ${dados.kpis.criticos} lote(s) com previsão de falha crítica (>90%). Foco em <strong>${dados.kpis.pior}</strong>.`;
+          btnRecall.disabled = false;
+          btnRecall.classList.remove("bg-gray-400", "cursor-not-allowed");
+          btnRecall.classList.add("bg-red-700", "hover:bg-red-800");
+        } else {
+          boxAlerta.className =
+            "bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-8";
+          document.getElementById("textoAlerta").innerText =
+            "Toda a frota opera dentro dos limites de segurança.";
+          btnRecall.disabled = true;
+          btnRecall.classList.remove("bg-red-700", "hover:bg-red-800");
+          btnRecall.classList.add("bg-gray-400", "cursor-not-allowed");
+        }
+
+        chartMultiLine.data.labels = dados.labels;
+        chartMultiLine.data.datasets = dados.series.map((serie, index) => {
+          const corAzulDoLote = tonsAzul[index % tonsAzul.length];
+          return {
+            label: serie.label,
+            data: serie.data,
+            borderWidth: 2,
+            tension: 0.4,
+            backgroundColor: corAzulDoLote,
+            borderColor: corAzulDoLote,
+            pointBackgroundColor: corAzulDoLote,
+            pointBorderColor: "#fff",
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            segment: {
+              borderDash: (ctx) =>
+                ctx.p0.parsed.x >= dados.pontoCorte ? [4, 4] : undefined,
+            },
+          };
+        });
+
+        for (let i = 0; i < 6; i++) {
+          const leg = document.getElementById(`leg-${i}`);
+          if (leg) leg.classList.remove("legend-hidden");
+        }
+        chartMultiLine.update();
+
+        chartRul.data.labels = dados.rulLabels;
+        chartRul.data.datasets[0].data = dados.rul;
+        chartRul.data.datasets[0].backgroundColor = dados.rul.map((val) =>
+          val < 5 ? "#b91c1c" : "#1e40af"
+        );
+        chartRul.update();
+
+        chartSlope.data.labels = dados.slopeLabels;
+        chartSlope.data.datasets[0].data = dados.slopeData;
+        chartSlope.data.datasets[0].backgroundColor = dados.slopeData.map(
+          (sl) => (sl >= 2.0 ? "#b91c1c" : "#3b82f6")
+        );
+        chartSlope.update();
+      }
+
+      function inicializarGraficos() {
+        const ctxMulti = document
+          .getElementById("chartMultiLine")
+          .getContext("2d");
+        chartMultiLine = new Chart(ctxMulti, {
+          type: "line",
+          data: { labels: [], datasets: [] },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            layout: { padding: { top: 20, right: 20, left: 10, bottom: 10 } },
+            plugins: {
+              legend: { display: false },
+              annotation: {
+                annotations: {
+                  line1: {
+                    type: "line",
+                    yMin: 90,
+                    yMax: 90,
+                    borderColor: "#b91c1c",
+                    borderWidth: 3,
+                    borderDash: [6, 4],
+                  },
+                },
+              },
+              tooltip: {
+                usePointStyle: true,
+                callbacks: {
+                  labelColor: function (context) {
+                    return {
+                      borderColor: context.dataset.borderColor,
+                      backgroundColor: context.dataset.backgroundColor,
+                      borderWidth: 2,
+                      borderRadius: 2,
+                    };
+                  },
+                },
+              },
+            },
+            scales: { y: { min: 0, suggestedMax: 105 } },
+          },
+        });
+
+        const ctxRul = document.getElementById("chartRul").getContext("2d");
+        chartRul = new Chart(ctxRul, {
+          type: "bar",
+          data: {
+            labels: [],
+            datasets: [{ label: "Dias Restantes", data: [], borderRadius: 4 }],
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { title: { display: true, text: "Dias Restantes" } } },
+          },
+        });
+
+        const ctxSlope = document.getElementById("chartSlope").getContext("2d");
+        chartSlope = new Chart(ctxSlope, {
+          type: "bar",
+          data: {
+            labels: [],
+            datasets: [
+              { label: "Taxa de Crescimento", data: [], borderRadius: 4 },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { title: { display: true, text: "Taxa de Crescimento" } },
+            },
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
