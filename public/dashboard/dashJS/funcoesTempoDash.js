@@ -192,12 +192,12 @@ async function verificarDia() {
             title: { text: `ALERTAS CRÍTICOS GERADOS - ${ontemBR}`, align: "center" },
             colors: ["#0a1a2f", "#102f57", "#1c47a1", "#3d73ff", "#253f6e", "#4f83d1"],
             series: [
-                { name: "Lote A001", data: [lote1_2.totalCritico, lote1.totalCritico] },
-                { name: "Lote A002", data: [lote2_2.totalCritico, lote2.totalCritico] },
-                { name: "Lote A003", data: [lote3_2.totalCritico, lote3.totalCritico] },
-                { name: "Lote A004", data: [lote4_2.totalCritico, lote4.totalCritico] },
-                { name: "Lote A005", data: [lote5_2.totalCritico, lote5.totalCritico] },
-                { name: "Lote A006", data: [lote6_2.totalCritico, lote6.totalCritico] }
+                { name: "Lote A001", data: [lote1.totalCritico, lote1_2.totalCritico] },
+                { name: "Lote A002", data: [lote2.totalCritico, lote2_2.totalCritico] },
+                { name: "Lote A003", data: [lote3.totalCritico, lote3_2.totalCritico] },
+                { name: "Lote A004", data: [lote4.totalCritico, lote4_2.totalCritico] },
+                { name: "Lote A005", data: [lote5.totalCritico, lote5_2.totalCritico] },
+                { name: "Lote A006", data: [lote6.totalCritico, lote6_2.totalCritico] }
             ],
             xaxis: { categories: [ontemBR,diaAnteOntemBR] }
         };
@@ -216,10 +216,10 @@ async function verificarDia() {
             chart: { type: "bar", height: 300 },
             stroke: { curve: "smooth", width: 3 },
             series: [
-                { name: "CPU", data: [`${somaCPU_2}`, `${somaCPU}`] },
-                { name: "RAM", data: [`${somaRAM_2}`, `${somaRAM}`] },
-                { name: "Disco", data: [`${somaDisco_2}`, `${somaDisco}`] },
-                { name: "Temperatura", data: [`${somaTemp_2}`, `${somaTemp}`] },
+                { name: "CPU", data: [`${somaCPU}`, `${somaCPU_2}`] },
+                { name: "RAM", data: [`${somaRAM}`, `${somaRAM_2}`] },
+                { name: "Disco", data: [`${somaDisco}`, `${somaDisco_2}`] },
+                { name: "Temperatura", data: [`${somaTemp}`, `${somaTemp_2}`] },
             ],
             colors: ["#0a1a2f", "#102f57", "#1c47a1", "#3d73ff"],
             xaxis: { categories: [ontemBR,diaAnteOntemBR] }
