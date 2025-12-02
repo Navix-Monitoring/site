@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lote</title>
+    <link rel="icon" href="./assets/navix-logo.jpg">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
+    <script src="../js/sessao.js"></script>
+    <link rel="stylesheet" href="../css/dashboardGuilherme.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
+    <script src="../js/usuario/verificadorCargo.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+
+</head>
+
+<body onload="verificarDia();verificarCargo();">
+
+    <div class="flex flex-row w-full">
+        <div
+            class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600 fixed top-0 left-0">
+            <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10">
+            <div id="imagemUsuarioNavbar">
+                <div class="rounded-md w-20 h-20 mb-2"
+                    style="background-image: url(../assets/img/foto-usuario.png); background-size: cover; background-repeat: no-repeat; background-position: center;">
+                </div>
+            </div>
+
+            <div id="nomeProfissao" class="text-center mb-6"></div>
+
+            <div class="flex flex-col gap-4 w-[80%]">
+                <a href="../perfil-visualizar.html"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">Perfil</a>
+                <a
+                    class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">Dashboard</a>
+                <a href="./cadastroVeiculos.html"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">Gerenciar
+                    Frota</a>
+                <div class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
+                    onclick="limparSessao()">
+                    <a href="../index.html" class="no-underline text-white">
+                        <h3 class="m-0 p-0">Sair</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col ml-[250px] w-full p-8">
+            <a class="btnVoltar" onclick="localStorage.clear(); redirecionar();">
+                <div style="margin-bottom: 20px; display: flex; align-items: center; font-size: 30px;">
+                    <i class='bx bx-arrow-left-stroke'></i>
+                    <h3>Voltar</h3>
+                </div>
+            </a>
+
+            <div class="topoTitulo flex items-center">
+
+                <h1 class="tituloLote" id="tituloLote"></h1>
+
+                <div>
+                    <label>Período</label>
+                    <select class="selectData" id="selectPeriodo">
+                        <option value="dia" selected id="select_ontem">Dia</option>
+                        <option value="semana">Últimos 7 dias</option>
+                        <option value="mes">Últimos 30 dias</option>
+                    </select>
+                </div>
+
+
+                <!-- Data de 'ontem' -->
+                <div class="date-input-container">
+                    <label for="date1">Selecionar data</label>
+                    <input type="date" id="date1" class="date-input" min="2025-01-01" max="2025-12-31">
+                </div>
+
+                <!-- Data de ante-ontem -->
+                <div class="date-input-container" id="input2">
+                    <label for="date2">Comparar com</label>
+                    <input type="date" id="date2" class="date-input" min="2025-01-01" max="2025-12-31">
+                </div>
+
+            </div>
+
+
+            <main class="card">
+                <div class="kpis">
+                    <div class="kpi baixo">
+                        <p class="tituloKPI">Alertas baixos</p><br>
+                        <div class="ladinho">
+                            <div class="colour-ball" style="border-color: green;">
+                                <p class="valor" id="porcentagemBaixo">20%</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco" id="totalAlertaBaixoKPI">10 lotes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi neutro">
+                        <p class="tituloKPI">Alertas neutros</p><br>
+                        <div class="ladinho">
+                            <div class="colour-ball" style="border-color: yellow;">
+                                <p class="valor" id="porcentagemNeutro">30%</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco" id="totalAlertaNeutroKPI">20 lotes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi alerta">
+                        <p class="tituloKPI">Alertas de atenção</p><br>
+                        <div class="ladinho">
+                            <div class="colour-ball" style="border-color: orange;">
+                                <p class="valor" id="porcentagemAtencao">40%</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco" id="totalAlertaAtencaoKPI">10 lotes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi critico">
+                        <p class="tituloKPI">Alertas Críticos</p><br>
+                        <div class="ladinho">
+                            <div class="colour-ball" style="border-color: red;">
+                                <p class="valor" id="porcentagemCritico">10%</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco" id="totalAlertaCriticoKPI">10 lotes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi kpi-componentes">
+                        <p class="tituloKPI">Alertas Críticos por componente</p><br>
+                        <div class="ladinho">
+                            <div class="alerta">
+                                <p class="nvlRisco" id="criticoRAM">RAM 50%</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco" id="criticoCPU">CPU 20%</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco" id="criticoDISCO">DISCO 10%</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco" id="criticoTEMP">TEMP 20%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- GRÁFICO BARRAS -->
+                    <div class="container-filho">
+                        <div class="chart-container-alert p-4 h-full flex flex-col">
+                            <div id="alertasSemana"></div>
+                        </div>
+                    </div>
+
+                    <!-- RANKING LOTES -->
+                    <div class="container-filho">
+                        <div class="chart-container-alert p-4 h-full flex flex-col">
+                            <h3 class="text-lg font-bold text-center mb-4 text-black" style="font-size: 18px;"
+                                id="titulo_TopLotes">
+                                RANKING DE ALERTAS CRÍTICOS POR LOTE
+                            </h3>
+                            <ol class="list-none space-y-2 flex-grow" id="rankingLista">
+                                <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
+                                    <span class="font-bold text-base text-blue-900" id="numero_lote_top1">1. LOTE
+                                        A003</span>
+                                    <span class="font-bold text-base text-blue-900" id="alertas_lote_top1">79
+                                        alertas</span>
+                                </li>
+                                <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                    <span class="font-medium text-gray-800" id="numero_lote_top2">2. LOTE A004</span>
+                                    <span class="font-medium text-gray-800" id="alertas_lote_top2">61 alertas</span>
+                                </li>
+                                <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                    <span class="font-medium text-gray-800" id="numero_lote_top3">3. LOTE A001</span>
+                                    <span class="font-medium text-gray-800" id="alertas_lote_top3">44 alertas</span>
+                                </li>
+                                <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                    <span class="font-medium text-gray-800" id="numero_lote_top4">4. LOTE A002</span>
+                                    <span class="font-medium text-gray-800" id="alertas_lote_top4">27 alertas</span>
+                                </li>
+                                <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                    <span class="font-medium text-gray-800" id="numero_lote_top5">5. LOTE A005</span>
+                                    <span class="font-medium text-gray-800" id="alertas_lote_top5">27 alertas</span>
+                                </li>
+                                <li class="flex justify-between items-center w-full p-3">
+                                    <span class="font-medium text-gray-800" id="numero_lote_top6">6. LOTE A006</span>
+                                    <span class="font-medium text-gray-800" id="alertas_lote_top6">27 alertas</span>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- GRÁFICO DE COMPARACAO HARDWARE -->
+                    <div class="container-filho">
+                        <div class="chart-container-alert p-4 h-full flex flex-col">
+                            <h3 class="text-lg font-bold text-center mb-2 text-black text-[18px]"
+                                id="titulo_AlertasTotais" itemid="tituloAlertasTotaisHardware">
+                                COMPARATIVO - ALERTAS CRÍTICOS TOTAIS POR HARDWARE
+                            </h3>
+                            <select
+                                style="align-self: center;border: 1px solid black;border-radius: 6px;text-align: center;"
+                                 id="select_hardware_comparacao">
+                                <option value="CPU">CPU</option>
+                                <option value="RAM">RAM</option>
+                                <option value="TEMP">TEMPERATURA DA CPU</option>
+                                <option value="DISCO">DISCO</option>
+                            </select>
+                            <div class="flex-1">
+                                <div id="tempAlertChart"></div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-filho">
+                        <div class="chart-container-alert p-4 h-full flex flex-col">
+
+                            <h3 class="text-lg font-bold text-center mb-2 text-black text-[18px]"
+                                id="tituloAlertasTotais">
+                                Comparativo - Alertas CríticosTotais
+                            </h3>
+
+                            <p class="text-center text-gray-600 -mt-2 mb-2" id="subtituloAlertasTotais">Últimos 7 dias
+                            </p>
+
+                            <div class="flex-1">
+                                <div id="comparativoAlertas"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </main>
+        </div>
+    </div>
+    <script src="dashJS/funcoesTempoDash.js"></script>
+    <script src="../js/redirecionar.js"></script>
+    <script src="dashJS/dashSemana.js"></script>
+    <script>
+
+        document.getElementById("date1").addEventListener("change", verificarDia);
+        document.getElementById("date2").addEventListener("change", verificarDia);
+
+        document.getElementById("selectPeriodo").onchange = () => ({ dia: verificarDia, semana: ultimos7dias }[selectPeriodo.value]());
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+
+            const nome = sessionStorage.getItem("nome_ss") || "Usuário";
+            const cargo = sessionStorage.getItem("cargo_ss") || "Não definido";
+
+            const nomeProfissao = document.getElementById("nomeProfissao");
+            if (nomeProfissao) {
+                nomeProfissao.innerHTML = `
+            <p class="font-bold text-blue-900">${nome}</p>
+            <p class="mb-4 text-blue-900">Cargo: ${cargo}</p>
+        `;
+            }
+
+
+            if (typeof verificadorCargo === "function") verificadorCargo();
+            if (typeof carregarInformacoes === "function") carregarInformacoes();
+            if (typeof simularValores === "function") simularValores();
+
+
+            const select = document.getElementById("selectPeriodo");
+            let scriptDiaCarregado = false;
+        });
+    </script>

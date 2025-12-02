@@ -8,7 +8,7 @@ function validarSessao() {
   } else {
     window.location = "../login.html";
   }
-}
+};
 
 export function alerta(titulo, texto, icone) {
   Swal.fire({

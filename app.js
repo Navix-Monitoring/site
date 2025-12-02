@@ -20,6 +20,7 @@ var usuarioRouter = require("./src/routes/usuarios");
 var empresaRouter = require("./src/routes/empresa");
 var dashboardRouter = require("./src/routes/dashboard");
 var cadastroVeiculos = require("./src/routes/cadastroVeiculos")
+var dashGRouter = require("./src/routes/dashG");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -32,6 +33,7 @@ app.use("/usuarios", usuarioRouter);
 app.use("/empresa", empresaRouter);
 app.use("/dashboard", dashboardRouter);
 app.use("/cadastroVeiculos", cadastroVeiculos);
+app.use("/dashboard", dashGRouter);
 
 app.listen(PORTA_APP, function () {
     console.log(`                                                                                               
