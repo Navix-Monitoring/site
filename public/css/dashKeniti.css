@@ -1,0 +1,391 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+* {
+    font-family: "Inter";
+}
+
+body {
+    background-color: #f2f3f7;
+}
+
+.tituloLote {
+    margin-left: 20px;
+    font-size: 50px;
+    width: 120vh;
+}
+
+.topoTitulo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10vh;
+}
+
+.selectData {
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.589);
+    cursor: pointer;
+}
+
+.btnVoltar {
+    width: fit-content;
+    display: flex;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btnVoltar:hover {
+    transform: scale(1.01);
+}
+
+.kpi-section-title {
+    width: 100%;
+    max-width: 147vh;
+    margin: 0 auto 15px auto;
+    font-size: 20px;
+    font-weight: 700;
+    color: #575757;
+    text-align: center;
+    margin-bottom: 3vh;
+}
+
+.kpi-unified-card {
+    display: flex;
+    width: 100%;
+    max-width: 147vh;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
+    padding: 20px 0;
+    margin: 0 auto 30px auto;
+    flex-direction: column;
+}
+
+.kpi-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #E5E7EB;
+    padding: 0 10px;
+}
+
+.kpi-row {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #E5E7EB;
+    padding: 0 10px;
+}
+
+.kpi-column:last-child {
+    border-right: none;
+}
+
+.kpi-title-top {
+    font-size: 16px;
+    font-weight: bold;
+    color: #575757;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.kpi-batch-name {
+    font-size: 36px;
+    font-weight: 800;
+    color: #003566;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.kpi-subtext {
+    font-size: 22px;
+    color: #575757;
+}
+
+.kpi-valor {
+    font-weight: bold;
+    font-size: 2.8vh;
+}
+
+.cabecalho {
+    display: grid;
+    grid-template-columns: 150px 200px 130px 150px 200px 100px;
+    align-items: center;
+}
+
+.botoes {
+    display: grid;
+    grid-template-columns: 100px 100px;
+}
+
+.cards-lotes {
+    display: grid;
+    grid-template-columns: 150px 200px 150px 50px 320px 100px 100px;
+    align-items: center;
+}
+
+.cards-modelos {
+    display: grid;
+    grid-template-columns: 150px 200px 170px 100px 200px 100px;
+}
+
+.processos {
+    font-size: 10px;
+}
+
+.tituloKPI {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.colour-ball {
+    height: 75px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    justify-content: center;
+    width: 75px;
+    border-radius: 100%;
+    border: 4.5px solid;
+}
+
+.valor {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.alerta {
+    display: flex;
+}
+
+.ladinho {
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.editarLote {
+    justify-self: center;
+    align-self: center;
+}
+
+.card {
+    margin: 10px;
+    border-radius: 10px;
+    padding: 20px;
+    height: fit-content;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bolinha {
+    background-color: red;
+    border-radius: 100%;
+    margin-top: 2.5px;
+    width: 12px;
+    height: 12px;
+}
+
+.chart {
+    width: 100px;
+    height: 100px;
+}
+
+.graficos {
+    display: flex;
+    margin-top: 5vh;
+    height: fit-content;
+    gap: 7vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.container-grafico {
+    width: 70vh;
+    height: 40vh;
+    padding: 2vh;
+    background-color: #F7F8FC;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.589);
+    margin-bottom: 1vh;
+    margin-top: 2vh;
+    border-radius: 10px;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: fit-content;
+    margin-top: 2vh;
+    gap: 7vh;
+}
+
+.container-filho {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.nvlRisco {
+    font-weight: bold;
+}
+
+.chart-container {
+    width: 147vh;
+    height: 50vh;
+    padding: 2vh;
+    background-color: #F7F8FC;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.589);
+    margin-bottom: 1vh;
+    border-radius: 10px;
+}
+
+.chart-container-alert {
+    width: 70vh;
+    height: 40vh;
+    padding: 2vh;
+    background-color: white;
+    box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
+    margin-bottom: 1vh;
+    margin-top: 2vh;
+    border-radius: 10px;
+}
+
+.carrossel {
+    display: flex;
+    gap: 0.5vh;
+    align-items: center;
+}
+
+.carrossel-btn {
+    font-size: 3vh;
+    cursor: pointer;
+    border: none;
+    background-color: none;
+    color: black;
+}
+
+.titulo {
+    border: 1.5px black solid;
+    background-color: white;
+    width: fit-content;
+    font-size: 2vh;
+    font-weight: 700;
+    padding: 0.4vh;
+    border-radius: 10px;
+}
+
+.dashboard-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 24px;
+    margin-top: 25px;
+    width: 147vh;
+    box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container-integrated {
+    width: 100%;
+    height: 50vh;
+    display: block;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dashboard-card-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+}
+
+.heatmap-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.heatmap-table th {
+    padding: 12px 16px;
+    background-color: #fcfcfc;
+    color: #6B7280;
+    font-weight: 600;
+    border-bottom: 2px solid #E5E7EB;
+    text-align: left;
+}
+
+.heatmap-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #E5E7EB;
+    font-weight: 500;
+}
+
+.heatmap-table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.heatmap-table tbody tr:hover {
+    background-color: #EFF6FF;
+    cursor: pointer;
+}
+
+.heatmap-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.heatmap-table th:first-child,
+.heatmap-table td:first-child {
+    text-align: left;
+    font-weight: 700;
+    color: #333;
+}
+
+.heatmap-table th:not(:first-child),
+.heatmap-table td:not(:first-child) {
+    text-align: center;
+}
+
+.heatmap-table tbody tr.lote-destaque {
+    opacity: 1;
+    background-color: #ffe3df;
+    font-weight: 600;
+}
+
+.escolhaVisu {
+    margin-bottom: 10px;
+    width: 9vh;
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.589);
+    cursor: pointer;
+}
+
+.topicoGraf {
+    display: flex;
+    justify-content: space-between;
+}
+
+.kpiData {
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    width: 25vh;
+}

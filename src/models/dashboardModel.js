@@ -1,6 +1,6 @@
 var database = require("../database/config");
 
-function listar(id){
+function listar(id) {
     console.log("Acessei o dashboard model - listando os lotes...")
 
     const instrucaoSql = `SELECT 
@@ -15,48 +15,48 @@ LEFT JOIN veiculo AS v ON v.fkLote = l.id
 LEFT JOIN modelo AS m ON v.fkModelo = m.id
 WHERE l.fkEmpresa = ${id};`
 
-    console.log("Executando a instrução de listar lotes:\n"+instrucaoSql)
+    console.log("Executando a instrução de listar lotes:\n" + instrucaoSql)
     return database.executar(instrucaoSql);
 }
 
-function listarModelos(){
+function listarModelos() {
     console.log("Acessei o dashboard model - listando os modelos...")
     const instrucaoSql = `
     SELECT * FROM modelo;
     `
-    console.log("Executando a instrução de listar modelos:\n"+instrucaoSql)
+    console.log("Executando a instrução de listar modelos:\n" + instrucaoSql)
     return database.executar(instrucaoSql);
 }
 
-function buscarLoteparaEditar(id){
-console.log("Acessei o dashboard model - buscando o lote para poder editar...")
+function buscarLoteparaEditar(id) {
+    console.log("Acessei o dashboard model - buscando o lote para poder editar...")
 
-const instrucaoSql = 
-`
+    const instrucaoSql =
+        `
 SELECT * FROM lote WHERE id = ${id};
 `
-return database.executar(instrucaoSql)
+    return database.executar(instrucaoSql)
 
 }
 
-function editarLote(codigolote,datafabricacao,qtd_veiculos, idLote){
+function editarLote(codigolote, datafabricacao, qtd_veiculos, idLote) {
     console.log("Acessei o dashboard model - editando lote...")
 
-    const instrucaoSql = 
-    `
+    const instrucaoSql =
+        `
      UPDATE lote 
         SET codigo_lote = '${codigolote}',
         data_fabricacao = '${datafabricacao}'
         WHERE id = ${idLote};
     `
-    console.log("Executando a instrução SQL:\n"+ instrucaoSql)
-    return database.executar(instrucaoSql)  
+    console.log("Executando a instrução SQL:\n" + instrucaoSql)
+    return database.executar(instrucaoSql)
 }
 
-function buscarLote(id){
+function buscarLote(id) {
     console.log("Acessei o  dashboard model - buscando o lote...")
 
-    const instrucaoSql=`
+    const instrucaoSql = `
     SELECT 
     l.id AS idLote,
     l.codigo_lote,
@@ -73,10 +73,10 @@ function buscarLote(id){
     GROUP BY l.id, l.codigo_lote, l.data_fabricacao, l.fkEmpresa, l.status;
 `
     return database.executar(instrucaoSql);
-    
+
 }
 
-function filtroModelo(id){
+function filtroModelo(id) {
     console.log("")
     const instrucaoSql = `
     SELECT 
@@ -96,11 +96,26 @@ function filtroModelo(id){
 
 }
 
+function buscarParametro() {
+    console.log("Acessei o dashboard model - buscando parametro...")
+
+    const instrucaoSql =
+        `
+SELECT p.fkModelo, p.unidadeMedida, p.parametroMinimo, p.parametroNeutro, p.parametroAtencao, p.parametroCritico, h.tipo 
+FROM parametroHardware p
+INNER JOIN hardware h ON h.id = p.fkHardware
+WHERE fkModelo = 1;
+`
+    return database.executar(instrucaoSql)
+
+}
+
 module.exports = {
-listar,
-listarModelos,
-buscarLote,
-filtroModelo,
-buscarLoteparaEditar,
-editarLote
+    listar,
+    listarModelos,
+    buscarLote,
+    filtroModelo,
+    buscarLoteparaEditar,
+    editarLote,
+    buscarParametro
 }

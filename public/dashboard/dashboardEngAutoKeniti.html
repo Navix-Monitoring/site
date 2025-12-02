@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lote</title>
+    <link rel="icon" href="../assets/navix-logo.jpg">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../css/dashKeniti.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+    <script src="../js/sessao.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot@4.2.3/dist/chartjs-chart-boxplot.min.js"></script>
+</head>
+
+<body>
+
+    <div class="flex flex-row w-full">
+        <div
+            class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-350 fixed top-0 left-0">
+            <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10">
+            <div id="imagemUsuarioNavbar">
+                <div class="rounded-md w-20 h-20 mb-2"
+                    style="background-image: url(../assets/img/foto-usuario.png); background-size: cover; background-repeat: no-repeat; background-position: center;">
+                </div>
+            </div>
+            <div id="nomeProfissao" class="text-center mb-6"></div>
+            <div class="flex flex-col gap-4 w-[80%]">
+                <a href="../perfil-visualizar.html"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+                    Perfil
+                </a>
+                <a
+                    class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+                    Dashboard
+                </a>
+                <a href="../admin.html" id="adm-only"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+                    Cadastrar Funcionários
+                </a>
+                <a href="./cadastroVeiculos.html"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+                    Gerenciar Frota
+                </a>
+                <div class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
+                    onclick="limparSessao()">
+                    <a href="../index.html" class="no-underline text-white">
+                        <h3 class="m-0 p-0">Sair</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col ml-[250px] w-full p-8">
+            <a class="btnVoltar" onclick="localStorage.clear(); redirecionar();">
+                <div style="margin-bottom: 20px; display: flex; align-items: center; font-size: 30px;">
+                    <i class='bx bx-arrow-left-stroke'></i>
+                    <h3>Voltar</h3>
+                </div>
+            </a>
+
+            <div class="topoTitulo">
+                <h1 class="tituloLote" id="tituloLote">Análise de Desempenho - Modelo Keniti</h1>
+                <div class="kpiData">Última Atualização: <span id="dataHora"></span></div>
+            </div>
+
+            <main class="card">
+                <div class="kpi-unified-card">
+                    <h2 class="kpi-section-title">PIORES LOTES - MEDIANAS</h2>
+                    <div class="kpi-row">
+                        <div class="kpi-column">
+                            <span class="kpi-title-top">Uso da CPU</span>
+                            <h2 id="kpiCPUlote" class="kpi-batch-name">Lote 1</h2>
+                            <span class="kpi-subtext"><span id="kpiCPU" class="kpi-valor">v1%</span></span>
+                        </div>
+                        <div class="kpi-column">
+                            <span class="kpi-title-top">Processos abertos</span>
+                            <h2 id="kpiProcessoslote" class="kpi-batch-name">Lote 2</h2>
+                            <span class="kpi-subtext"><span id="kpiProcessos" class="kpi-valor">v2</span></span>
+                        </div>
+                        <div class="kpi-column">
+                            <span class="kpi-title-top">Uso de disco</span>
+                            <h2 id="kpiDiscolote" class="kpi-batch-name">Lote 3</h2>
+                            <span class="kpi-subtext"><span id="kpiDisco" class="kpi-valor">v3%</span></span>
+                        </div>
+                        <div class="kpi-column">
+                            <span class="kpi-title-top">Temperatura CPU</span>
+                            <h2 id="kpiTemplote" class="kpi-batch-name">Lote 4</h2>
+                            <span class="kpi-subtext"><span id="kpiTemp" class="kpi-valor">v4°C</span></span>
+                        </div>
+                    </div>
+                </div>
+                <section class="dashboard-card">
+                    <div class="dashboard-card-header"
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h2>Análise 5 Piores Lotes</h2>
+                        <select id="escolhaVisu" class="escolhaVisu">
+                            <option value="cpu">CPU</option>
+                            <option value="temp">Temp</option>
+                            <option value="ram">RAM</option>
+                            <option value="disco">Disco</option>
+                            <option value="processo">Processo</option>
+                        </select>
+                    </div>
+
+                    <div class="chart-container-integrated">
+                        <canvas id="evolucao"></canvas>
+                    </div>
+
+                </section>
+
+                <div class="container">
+                    <div class="container-filho">
+                        <div class="chart-container-alert">
+                            <canvas id="relacao"></canvas>
+                        </div>
+                    </div>
+                    <div class="container-filho" id="containerCarga">
+                        <div class="chart-container-alert">
+                            <canvas id="carga"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../js/redirecionar.js"></script>
+<script>
+    const URL_JSON = "https://bucket-client-navix.s3.us-east-1.amazonaws.com/dashMediana/2025/RelatorioGeral.json";
+
+    let LIMITES = {};
+    let DADOS_RELACAO = {};
+    let DADOS_EVOLUCAO = {};
+    let DADOS_CARGA = {};
+
+    function atualizarDataHora() {
+        const agora = new Date();
+        document.getElementById("dataHora").textContent = agora.toLocaleString("pt-BR");
+    }
+
+    function atualizarCorKPI(valor, limite, elemento) {
+        if (!limite) return;
+        const numero = Number(valor);
+        if (numero >= limite.critico) {
+            elemento.style.color = "red";
+        }
+        else if (numero >= limite.atencao) {
+            elemento.style.color = "orange";
+        } else {
+            elemento.style.color = "green";
+        }
+    }
+
+    function carregarUsuarioSessao() {
+        var imagemUsuarioNavbar = document.getElementById("imagemUsuarioNavbar");
+        var fotoUrl = sessionStorage.getItem("imagem");
+        if (imagemUsuarioNavbar && fotoUrl) {
+            imagemUsuarioNavbar.innerHTML = `<div class="rounded-md w-20 h-20 mb-2" style="background-image: url(${fotoUrl}); background-size: cover; background-repeat: no-repeat; background-position: center;"></div>`;
+        }
+        var nomeEmpresa = sessionStorage.getItem("nome_ss");
+        var cargo = sessionStorage.getItem("cargo_ss");
+        var nomeProfissao = document.getElementById("nomeProfissao");
+        if (nomeProfissao) {
+            nomeProfissao.innerHTML = `<p class="font-bold text-blue-900">${nomeEmpresa || "Usuário"}</p><p class="mb-4 text-blue-900">Cargo: ${cargo || "Não definido"}</p>`;
+        }
+    }
+
+    const COR_CONTEXTO = '#B0B0B0';
+
+    function prepararDatasetsDestaque(lotes, piorLoteLabel) {
+        const datasetsFinais = [];
+        lotes.forEach(loteOriginal => {
+            const corDesteLote = (loteOriginal.label === piorLoteLabel) ? loteOriginal.borderColor : COR_CONTEXTO;
+            datasetsFinais.push({
+                label: loteOriginal.label,
+                data: loteOriginal.data,
+                borderColor: corDesteLote,
+                backgroundColor: corDesteLote,
+                fill: false,
+                borderRadius: 6,
+                categoryPercentage: 0.8,
+                barPercentage: 0.85,
+            });
+        });
+        return datasetsFinais;
+    }
+
+    function encontrarPiorLote(lotes) {
+        let piorLoteLabel = null;
+        let maiorMedia = -Infinity;
+        lotes.forEach(lote => {
+            let soma = 0;
+            for (let i = 0; i < lote.data.length; i++) soma += lote.data[i];
+            const media = soma / lote.data.length;
+            if (media > maiorMedia) {
+                maiorMedia = media;
+                piorLoteLabel = lote.label;
+            }
+        });
+        return piorLoteLabel;
+    }
+
+    function calcularMedia(listaNumeros) {
+        let soma = 0;
+
+        for (let i = 0; i < listaNumeros.length; i++) {
+            soma = soma + listaNumeros[i];
+        }
+
+        return soma / listaNumeros.length;
+    }
+
+    function verificarPior(piorAtual, nomeLote, dadosPrincipais, dadosRelacao) {
+        let media = calcularMedia(dadosPrincipais);
+        if (media > piorAtual.valor) {
+            return { nome: nomeLote, valor: media, dados: dadosPrincipais, relacao: dadosRelacao };
+        }
+        return piorAtual;
+    }
+
+    let graficoRelacao, graficoCarga, graficoEvolucao;
+
+    function atualizarGraficos() {
+        const metrica = document.getElementById('escolhaVisu').value;
+        const containerCarga = document.getElementById('containerCarga');
+
+        // 1. Gráfico Relação
+        if (graficoRelacao && DADOS_RELACAO[metrica]) {
+            const dados = DADOS_RELACAO[metrica].semana;
+            graficoRelacao.data.labels = dados.labels;
+            graficoRelacao.options.plugins.title.text = dados.titulo;
+
+            graficoRelacao.data.datasets = [];
+            if (metrica === 'cpu') {
+                graficoRelacao.data.datasets.push({ label: 'CPU', data: dados.cpu, backgroundColor: 'blue', borderColor: 'blue', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Temperatura', data: dados.temp, backgroundColor: 'red', borderColor: 'red', fill: false });
+            } else if (metrica === 'temp') {
+                graficoRelacao.data.datasets.push({ label: 'Temperatura', data: dados.temp, backgroundColor: 'red', borderColor: 'red', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'CPU', data: dados.cpu, backgroundColor: 'blue', borderColor: 'blue', fill: false });
+            } else if (metrica === 'ram') {
+                graficoRelacao.data.datasets.push({ label: 'RAM', data: dados.ram, backgroundColor: 'green', borderColor: 'green', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'purple', borderColor: 'purple', fill: false });
+            } else if (metrica === 'disco') {
+                graficoRelacao.data.datasets.push({ label: 'Disco', data: dados.disco, backgroundColor: 'orange', borderColor: 'orange', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'purple', borderColor: 'purple', fill: false });
+            } else if (metrica === 'processo') {
+                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'purple', borderColor: 'purple', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Disco', data: dados.disco, backgroundColor: 'orange', borderColor: 'orange', fill: false });
+            }
+            graficoRelacao.update();
+        }
+
+        // 2. Gráfico Evolução (TOP 5)
+        if (graficoEvolucao && DADOS_EVOLUCAO[metrica]) {
+            const dados = DADOS_EVOLUCAO[metrica].semana;
+            const piorLoteLabel = encontrarPiorLote(dados.lotes);
+            const novosDatasets = prepararDatasetsDestaque(dados.lotes, piorLoteLabel);
+
+            graficoEvolucao.data.datasets = novosDatasets;
+            graficoEvolucao.data.labels = dados.labels;
+            graficoEvolucao.options.plugins.title.text = dados.titulo;
+            graficoEvolucao.options.scales.y.title.text = dados.eixoY;
+
+            const novoLimite = (LIMITES[metrica]) ? LIMITES[metrica].neutro : 0;
+            if (graficoEvolucao.options.plugins.annotation && graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal) {
+                graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMin = novoLimite;
+                graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMax = novoLimite;
+                graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.label.content = 'Ideal';
+            }
+            graficoEvolucao.update();
+        }
+
+        // 3. Gráfico Carga
+        if (graficoCarga && containerCarga && DADOS_CARGA[metrica]) {
+            const dados = DADOS_CARGA[metrica];
+            graficoCarga.data.labels = dados.labels;
+            graficoCarga.data.datasets[0].data = dados.data;
+            graficoCarga.options.plugins.title.text = dados.titulo;
+            containerCarga.style.display = 'block';
+            graficoCarga.update();
+        }
+    }
+
+    function carregarLimites() {
+        return fetch("/dashboard/limites", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        })
+            .then(function (resposta) {
+                if (resposta.ok) {
+                    return resposta.json();
+                } else {
+                    throw new Error("Houve um erro na API de limites!");
+                }
+            })
+            .then(function (listaBanco) {
+                console.log("Limites brutos do banco:", listaBanco);
+                const limitesFormatados = {};
+                listaBanco.forEach(function (item) {
+                    let chave = null;
+                    if (item.tipo === 'CPU') {
+                        if (item.unidadeMedida === 'TEMPERATURA') {
+                            chave = 'temp'
+                        } else if (item.unidadeMedida === "USO") {
+                            chave = 'cpu'
+                        } else {
+                            chave = 'processo';
+
+                        };
+                    }
+                    else if (item.tipo === 'RAM') chave = 'ram';
+                    else if (item.tipo === 'DISCO') chave = 'disco';
+                    if (chave) {
+                        limitesFormatados[chave] = {
+                            min: item.parametroMinimo,
+                            neutro: item.parametroNeutro,
+                            atencao: item.parametroAtencao,
+                            critico: item.parametroCritico
+                        };
+                    }
+                });
+
+                console.log("Limites formatados:", limitesFormatados);
+                return limitesFormatados;
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        atualizarDataHora();
+        carregarUsuarioSessao();
+
+        carregarLimites().then(function (limitesDoBanco) {
+            if (limitesDoBanco) LIMITES = limitesDoBanco;
+
+            return fetch(URL_JSON);
+        })
+            .then(resposta => resposta.json())
+            .then(jsonGeral => {
+                console.log("Dados baixados:", jsonGeral);
+
+                let listaLotesCPU = [], listaLotesRAM = [], listaLotesDisco = [], listaLotesTemp = [], listaLotesProc = [];
+
+                let piorCpu = { nome: "", valor: -1, dados: [], relacao: [] };
+                let piorRam = { nome: "", valor: -1, dados: [], relacao: [] };
+                let piorDisco = { nome: "", valor: -1, dados: [], relacao: [] };
+                let piorTemp = { nome: "", valor: -1, dados: [], relacao: [] };
+                let piorProc = { nome: "", valor: -1, dados: [], relacao: [] };
+
+                const diasOrdem = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+
+                jsonGeral.forEach(lote => {
+                    let nomeLote = "Lote " + lote.lote;
+
+                    let dadosCpu = [], dadosRam = [], dadosDisco = [], dadosTemp = [], dadosProc = [];
+
+                    diasOrdem.forEach(diaNome => {
+                        let diaEncontrado = null;
+                        for (let k = 0; k < lote.dias.length; k++) {
+                            if (lote.dias[k].diaSemana === diaNome) {
+                                diaEncontrado = lote.dias[k];
+                                break;
+                            }
+                        }
+
+                        if (diaEncontrado) {
+                            dadosCpu.push(diaEncontrado.cpu);
+                            dadosRam.push(diaEncontrado.ram);
+                            dadosDisco.push(diaEncontrado.disco);
+                            dadosTemp.push(diaEncontrado.temperatura);
+                            dadosProc.push(diaEncontrado.processos);
+                        } else {
+                            dadosCpu.push(0);
+                            dadosRam.push(0);
+                            dadosDisco.push(0);
+                            dadosTemp.push(0);
+                            dadosProc.push(0);
+                        }
+                    });
+
+                    listaLotesCPU.push({ label: nomeLote, data: dadosCpu, borderColor: '#0d4299' });
+                    listaLotesRAM.push({ label: nomeLote, data: dadosRam, borderColor: '#0d4299' });
+                    listaLotesDisco.push({ label: nomeLote, data: dadosDisco, borderColor: '#0d4299' });
+                    listaLotesTemp.push({ label: nomeLote, data: dadosTemp, borderColor: '#0d4299' });
+                    listaLotesProc.push({ label: nomeLote, data: dadosProc, borderColor: '#0d4299' });
+
+                    piorCpu = verificarPior(piorCpu, nomeLote, dadosCpu, dadosTemp);
+                    piorRam = verificarPior(piorRam, nomeLote, dadosRam, dadosProc);
+                    piorDisco = verificarPior(piorDisco, nomeLote, dadosDisco, dadosProc);
+                    piorTemp = verificarPior(piorTemp, nomeLote, dadosTemp, dadosCpu);
+                    piorProc = verificarPior(piorProc, nomeLote, dadosProc, dadosDisco);
+                });
+
+                function filtrarTop5(lista) {
+                    lista.sort(function (a, b) {
+                        let mediaA = calcularMedia(a.data);
+                        let mediaB = calcularMedia(b.data);
+                        return mediaB - mediaA;
+                    });
+                    return lista.slice(0, 5);
+                }
+
+                listaLotesCPU = filtrarTop5(listaLotesCPU);
+                listaLotesRAM = filtrarTop5(listaLotesRAM);
+                listaLotesDisco = filtrarTop5(listaLotesDisco);
+                listaLotesTemp = filtrarTop5(listaLotesTemp);
+                listaLotesProc = filtrarTop5(listaLotesProc);
+
+                document.getElementById("kpiCPUlote").innerText = piorCpu.nome;
+                document.getElementById("kpiCPU").innerText = Math.round(piorCpu.valor) + "%";
+                atualizarCorKPI(piorCpu.valor, LIMITES.cpu, document.getElementById("kpiCPU"));
+
+                document.getElementById("kpiProcessoslote").innerText = piorProc.nome;
+                document.getElementById("kpiProcessos").innerText = Math.round(piorProc.valor);
+                atualizarCorKPI(piorProc.valor, LIMITES.processo, document.getElementById("kpiProcessos"));
+
+                document.getElementById("kpiDiscolote").innerText = piorDisco.nome;
+                document.getElementById("kpiDisco").innerText = Math.round(piorDisco.valor) + "%";
+                atualizarCorKPI(piorDisco.valor, LIMITES.disco, document.getElementById("kpiDisco"));
+
+                document.getElementById("kpiTemplote").innerText = piorTemp.nome;
+                document.getElementById("kpiTemp").innerText = Math.round(piorTemp.valor) + "°C";
+                atualizarCorKPI(piorTemp.valor, LIMITES.temp, document.getElementById("kpiTemp"));
+
+                const labelsGrafico = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
+
+                DADOS_EVOLUCAO = {
+                    cpu: { semana: { labels: labelsGrafico, titulo: 'Evolução Uso CPU (Top 5 Piores)', eixoY: 'Uso CPU (%)', lotes: listaLotesCPU } },
+                    ram: { semana: { labels: labelsGrafico, titulo: 'Evolução RAM (Top 5 Piores)', eixoY: 'Uso RAM (%)', lotes: listaLotesRAM } },
+                    disco: { semana: { labels: labelsGrafico, titulo: 'Evolução Uso de Disco (Top 5 Piores)', eixoY: 'Uso Disco (%)', lotes: listaLotesDisco } },
+                    temp: { semana: { labels: labelsGrafico, titulo: 'Evolução Temperatura (Top 5 Piores)', eixoY: 'Temp. (°C)', lotes: listaLotesTemp } },
+                    processo: { semana: { labels: labelsGrafico, titulo: 'Evolução de Processos (Top 5 Piores)', eixoY: 'Qtd. Processos', lotes: listaLotesProc } }
+                };
+
+                DADOS_RELACAO = {
+                    cpu: { semana: { labels: labelsGrafico, titulo: `Visão ${piorCpu.nome}: CPU (%) x Temp`, cpu: piorCpu.dados, temp: piorCpu.relacao } },
+                    temp: { semana: { labels: labelsGrafico, titulo: `Visão ${piorTemp.nome}: Temp x CPU`, temp: piorTemp.dados, cpu: piorTemp.relacao } },
+                    ram: { semana: { labels: labelsGrafico, titulo: `Visão ${piorRam.nome}: RAM x Processos`, ram: piorRam.dados, processos: piorRam.relacao } },
+                    disco: { semana: { labels: labelsGrafico, titulo: `Visão ${piorDisco.nome}: Disco x Processos`, disco: piorDisco.dados, processos: piorDisco.relacao } },
+                    processo: { semana: { labels: labelsGrafico, titulo: `Visão ${piorProc.nome}: Processos x Disco`, processos: piorProc.dados, disco: piorProc.relacao } }
+                };
+
+                DADOS_CARGA = {
+                    cpu: { labels: ['CPU'], data: [piorCpu.dados], titulo: `Uso do Sistema ${piorCpu.nome} - CPU` },
+                    ram: { labels: ['RAM'], data: [piorRam.dados], titulo: `Uso do Sistema ${piorRam.nome} - RAM` },
+                    disco: { labels: ['Disco'], data: [piorDisco.dados], titulo: `Uso do Sistema ${piorDisco.nome} - Disco` },
+                    temp: { labels: ['Temp'], data: [piorTemp.dados], titulo: `Uso do Sistema ${piorTemp.nome} - Temperatura` },
+                    processo: { labels: ['Procs'], data: [piorProc.dados], titulo: `Uso do Sistema ${piorProc.nome} - Processos` }
+                };
+
+                iniciarChartJS();
+            })
+            .catch(erro => console.error("Erro no fetch:", erro));
+
+        function iniciarChartJS() {
+            const ctxRelacao = document.getElementById('relacao');
+            const ctxCarga = document.getElementById('carga');
+            const ctxEvolucao = document.getElementById('evolucao');
+            const selectEvolucao = document.getElementById('escolhaVisu');
+
+            if (ctxRelacao) {
+                const dadosIniciais = DADOS_RELACAO.cpu.semana;
+                graficoRelacao = new Chart(ctxRelacao, {
+                    type: 'line',
+                    data: {
+                        labels: dadosIniciais.labels,
+                        datasets: [
+                            { label: 'CPU', data: dadosIniciais.cpu, backgroundColor: 'blue', borderColor: 'blue', fill: false },
+                            { label: 'Temperatura', data: dadosIniciais.temp, backgroundColor: 'red', borderColor: 'red', fill: false }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' }, title: { display: true, text: dadosIniciais.titulo, font: { size: 18 } } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+
+            if (ctxEvolucao) {
+                const dadosIniciais = DADOS_EVOLUCAO.cpu.semana;
+                const piorLoteLabelInicial = encontrarPiorLote(dadosIniciais.lotes);
+                const datasetsIniciais = prepararDatasetsDestaque(dadosIniciais.lotes, piorLoteLabelInicial);
+                const limiteInicial = LIMITES?.cpu?.neutro ?? 85;
+                graficoEvolucao = new Chart(ctxEvolucao, {
+                    type: 'bar',
+                    data: { labels: dadosIniciais.labels, datasets: datasetsIniciais },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            annotation: { annotations: { linhaIdeal: { type: 'line', yMin: limiteInicial, yMax: limiteInicial, borderColor: '#FFAE42', borderWidth: 2, borderDash: [10, 5], label: { display: true, content: 'Limite Ideal' } } } },
+                            title: { display: true, text: dadosIniciais.titulo, font: { size: 18 } }
+                        },
+                        scales: { y: { title: { display: true, text: dadosIniciais.eixoY } } }
+                    }
+                });
+            }
+
+            if (ctxCarga) {
+                const dadosIniciaisrelacao = DADOS_CARGA.cpu;
+                graficoCarga = new Chart(ctxCarga, {
+                    type: 'boxplot',
+                    data: {
+                        labels: dadosIniciaisrelacao.labels,
+                        datasets: [{ label: 'Quartil', data: dadosIniciaisrelacao.data, backgroundColor: ['blue'], borderColor: ['black'], outlierBackgroundColor: 'red' }]
+                    },
+                    options: {
+                        indexAxis: 'x',
+                        plugins: { title: { display: true, text: dadosIniciaisrelacao.titulo, font: { size: 18 } } }
+                    }
+                });
+            }
+
+            selectEvolucao.addEventListener('change', atualizarGraficos);
+        }
+    });
+</script>
