@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lote</title>
+    <link rel="icon" href="./assets/navix-logo.jpg">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
+    <script src="../js/sessao.js"></script>
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
+    <script src="../js/usuario/verificadorCargo.js"></script>
+      <link href='https://cdn.boxicons.com/3.0.3/fonts/basic/boxicons.min.css' rel='stylesheet'>
+  <link href='https://cdn.boxicons.com/3.0.3/fonts/brands/boxicons-brands.min.css' rel='stylesheet'>
+
+</head>
+
+<body onload="carregarInformacoes(), simularValores(), verificadorCargo();">
+
+    <div class="flex flex-row w-full">
+        <div
+            class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600 fixed top-0 left-0">
+            <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10">
+            <div id="imagemUsuarioNavbar">
+                <div class="rounded-md w-20 h-20 mb-2"
+                    style="background-image: url(../assets/img/foto-usuario.png); background-size: cover; background-repeat: no-repeat; background-position: center;">
+                </div>
+            </div>
+
+            <div id="nomeProfissao" class="text-center mb-6"></div>
+
+            <div class="flex flex-col gap-4 w-[80%]">
+                <a href="../perfil-visualizar.html"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">Perfil</a>
+                <a
+                    class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">Dashboard</a>
+                <a href="./cadastroVeiculos.html"
+                    class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">Gerenciar
+                    Frota</a>
+                            <a href="https://navixsuporte.atlassian.net/jira/software/form/9d7593db-d676-44b4-a1f4-43762dea870c"
+          target="_blank"
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium ">
+          Suporte
+          <i class='bx  bx-message-dots-2'></i>
+        </a>
+                <div class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
+                    onclick="limparSessao()">
+                    <a href="../index.html" class="no-underline text-white">
+                        <h3 class="m-0 p-0">Sair</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col ml-[250px] w-full p-8">
+            <a class="btnVoltar" onclick="localStorage.clear(); redirecionar();">
+                <div style="margin-bottom: 20px; display: flex; align-items: center; font-size: 30px;">
+                    <i class='bx bx-arrow-left-stroke'></i>
+                    <h3>Voltar</h3>
+                </div>
+            </a>
+
+            <div class="topoTitulo">
+                <h1 class="tituloLote" id="tituloLote">Lote: Teste - 10 carros</h1>
+                <select class="selectData" id="selectPeriodo">
+                    <option value="semana" selected>Semana</option>
+                    <option value="mes">Mês</option>
+                    <option value="ano">Ano</option>
+                </select>
+            </div>
+
+            <main class="card">
+                <div class="kpis">
+                    <div class="kpi">
+                        <p class="tituloKPI">Taxa de Aprovação do Lote</p><br>
+                        <div class="ladinho">
+                            <div class="colour-ball" style="border-color: green;">
+                                <p class="valor">92%</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco">Risco: BAIXO</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi">
+                        <p class="tituloKPI">Taxa de Reprovação / Retrabalho</p><br>
+                        <div class="ladinho">
+                            <div class="colour-ball" style="border-color: yellow;">
+                                <p class="valor">8%</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco">Risco: MÉDIO</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi">
+                        <p class="tituloKPI">Alertas Críticos no Lote</p><br>
+                        <div class="ladinho">
+                            <div class="colour-ball" style="border-color: red;">
+                                <p class="valor">5</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco">Risco: ALTO</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi">
+                        <p class="tituloKPI">Tempo Médio de Inspeção</p><br>
+                        <div class="ladinho">
+                            <div class="colour-ball" style="border-color: yellow;">
+                                <p class="valor">4h</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco">Risco: MÉDIO</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi">
+                        <p class="tituloKPI">Confiabilidade dos Dados</p><br>
+                        <div class="ladinho">
+                            <div class="colour-ball" style="border-color: green;">
+                                <p class="valor">96%</p>
+                            </div>
+                            <div class="alerta">
+                                <p class="nvlRisco">Risco: BAIXO</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- GRÁFICO BARRAS -->
+                    <div class="container-filho">
+                        <div class="chart-container-alert p-4 h-full flex flex-col">
+                            <canvas id="alertasSemana" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- RANKING LOTES -->
+                    <div class="container-filho">
+                        <div class="chart-container-alert p-4 h-full flex flex-col">
+                            <h3 class="text-lg font-bold text-center mb-4 text-black" style="font-size: 18px;">
+                                RANKING DE LOTES (7 DIAS)
+                            </h3>
+                            <ol class="list-none space-y-2 flex-grow" id="rankingLista">
+                                <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
+                                    <span class="font-bold text-base text-blue-900">1. LOTE A003</span>
+                                    <span class="font-bold text-base text-blue-900">79 alertas</span>
+                                </li>
+                                <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                    <span class="font-medium text-gray-800">2. LOTE A004</span>
+                                    <span class="font-medium text-gray-800">61 alertas</span>
+                                </li>
+                                <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                    <span class="font-medium text-gray-800">3. LOTE A001</span>
+                                    <span class="font-medium text-gray-800">44 alertas</span>
+                                </li>
+                                <li class="flex justify-between items-center w-full p-3">
+                                    <span class="font-medium text-gray-800">4. LOTE A002</span>
+                                    <span class="font-medium text-gray-800">27 alertas</span>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- GRÁFICO BOXPLOT -->
+                    <div class="container-filho">
+                        <div class="chart-container-alert p-4 h-full flex flex-col">
+                            <h3 class="text-lg font-bold text-center mb-2 text-black text-[18px]">
+                                Distribuição de Alertas Por Lote
+                            </h3>
+                            <div class="flex-1">
+                                <canvas id="boxplotLote" class="w-full h-full"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GRÁFICO LINHA -->
+                    <div class="container-filho">
+                        <div class="chart-container-alert p-4 h-full flex flex-col">
+                            <h3 class="text-lg font-bold text-center mb-2 text-black text-[18px]">
+                                Evolução de Alertas
+                            </h3>
+                            <div class="flex-1">
+                                <canvas id="tempAlertChart" class="w-full h-full"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="../js/redirecionar.js"></script>
+
+    <!-- GRÁFICO BARRAS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            let alertasChart, boxplotChart, tempAlertChart;
+
+            // 2. Pegar os elementos do DOM
+            const selectPeriodo = document.getElementById('selectPeriodo');
+            const rankingTitulo = document.getElementById('rankingTitulo');
+            const rankingLista = document.getElementById('rankingLista');
+
+            const ctxBar = document.getElementById('alertasSemana');
+            const ctxBox = document.getElementById("boxplotLote");
+            const ctxTempAlert = document.getElementById('tempAlertChart').getContext('2d');
+
+            // 3. Função de atualização (como no seu primeiro arquivo)
+            function atualizarDashboard(periodo) {
+                let novosLabels;
+                // Dados Bar Chart
+                let d_bar_lote1, d_bar_lote2, d_bar_lote3, d_bar_lote4;
+                // Dados Boxplot
+                let d_box_lote1, d_box_lote2, d_box_lote3, d_box_lote4;
+                // Dados Line Chart
+                let d_line_temp, d_line_alertas;
+                // Dados Ranking
+                let novoTituloGrafico, novoTituloRanking, novoRankingHtml;
+
+                const labelsBoxplot = ['Lote A001', 'Lote A002', 'Lote A003', 'Lote A004'];
+
+                switch (periodo) {
+                    case 'mes':
+                        novosLabels = ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'];
+                        novoTituloGrafico = 'ALERTAS GERADOS (ÚLTIMO MÊS)';
+                        novoTituloRanking = 'RANKING DE LOTES (ÚLTIMO MÊS)';
+
+                        // Dados mocados Mês
+                        d_bar_lote1 = [25, 30, 22, 35];
+                        d_bar_lote2 = [15, 20, 18, 25];
+                        d_bar_lote3 = [40, 50, 45, 55];
+                        d_bar_lote4 = [30, 35, 28, 40];
+
+                        d_box_lote1 = { min: 20, q1: 25, median: 30, q3: 35, max: 40 };
+                        d_box_lote2 = { min: 10, q1: 15, median: 20, q3: 25, max: 30 };
+                        d_box_lote3 = { min: 35, q1: 40, median: 45, q3: 50, max: 60 };
+                        d_box_lote4 = { min: 5, q1: 10, median: 15, q3: 20, max: 25 };
+
+                        d_line_temp = [30, 32, 35, 33];
+                        d_line_alertas = [50, 65, 70, 60];
+
+                        novoRankingHtml = `
+                            <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
+                                <span class="font-bold text-base text-blue-900">1. LOTE A003</span>
+                                <span class="font-bold text-base text-blue-900">190 alertas</span>
+                            </li>
+                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                <span class="font-medium text-gray-800">2. LOTE A004</span>
+                                <span class="font-medium text-gray-800">133 alertas</span>
+                            </li>
+                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                <span class="font-medium text-gray-800">3. LOTE A001</span>
+                                <span class="font-medium text-gray-800">112 alertas</span>
+                            </li>
+                            <li class="flex justify-between items-center w-full p-3">
+                                <span class="font-medium text-gray-800">4. LOTE A002</span>
+                                <span class="font-medium text-gray-800">78 alertas</span>
+                            </li>`;
+                        break;
+
+                    case 'ano':
+                        novosLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                        novoTituloGrafico = 'ALERTAS GERADOS (ÚLTIMO ANO)';
+                        novoTituloRanking = 'RANKING DE LOTES (ÚLTIMO ANO)';
+
+                        // Dados mocados Ano
+                        d_bar_lote1 = [100, 110, 105, 115, 120, 125, 110, 105, 115, 120, 125, 130];
+                        d_bar_lote2 = [80, 85, 90, 95, 100, 105, 90, 85, 95, 100, 105, 110];
+                        d_bar_lote3 = [150, 160, 155, 165, 170, 175, 160, 155, 165, 170, 175, 180];
+                        d_bar_lote4 = [120, 130, 125, 135, 140, 145, 130, 125, 135, 140, 145, 150];
+
+                        d_box_lote1 = { min: 90, q1: 100, median: 115, q3: 125, max: 135 };
+                        d_box_lote2 = { min: 70, q1: 80, median: 95, q3: 105, max: 115 };
+                        d_box_lote3 = { min: 140, q1: 150, median: 165, q3: 175, max: 185 };
+                        d_box_lote4 = { min: 110, q1: 120, median: 135, q3: 145, max: 155 };
+
+                        d_line_temp = [28, 29, 30, 31, 32, 33, 34, 33, 32, 31, 30, 29];
+                        d_line_alertas = [200, 220, 230, 250, 260, 270, 280, 270, 260, 250, 230, 220];
+
+                        novoRankingHtml = `
+                            <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
+                                <span class="font-bold text-base text-blue-900">1. LOTE A003</span>
+                                <span class="font-bold text-base text-blue-900">1980 alertas</span>
+                            </li>
+                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                <span class="font-medium text-gray-800">2. LOTE A004</span>
+                                <span class="font-medium text-gray-800">1620 alertas</span>
+                            </li>
+                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                <span class="font-medium text-gray-800">3. LOTE A001</span>
+                                <span class="font-medium text-gray-800">1380 alertas</span>
+                            </li>
+                            <li class="flex justify-between items-center w-full p-3">
+                                <span class="font-medium text-gray-800">4. LOTE A002</span>
+                                <span class="font-medium text-gray-800">1140 alertas</span>
+                            </li>`;
+                        break;
+
+                    case 'semana':
+                    default:
+                        novosLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+                        novoTituloGrafico = 'ALERTAS GERADOS (7 DIAS)';
+                        novoTituloRanking = 'RANKING DE LOTES (7 DIAS)';
+
+                        // Dados mocados Semana (originais)
+                        d_bar_lote1 = [5, 7, 9, 6, 8, 4, 5];
+                        d_bar_lote2 = [3, 5, 2, 4, 6, 3, 4];
+                        d_bar_lote3 = [12, 19, 8, 15, 10, 6, 9];
+                        d_bar_lote4 = [20, 12, 3, 9, 13, 1, 3];
+
+                        d_box_lote1 = { min: 2, q1: 5, median: 8, q3: 12, max: 15 };
+                        d_box_lote2 = { min: 1, q1: 3, median: 5, q3: 8, max: 11 };
+                        d_box_lote3 = { min: 4, q1: 8, median: 12, q3: 18, max: 21 };
+                        d_box_lote4 = { min: 0, q1: 2, median: 4, q3: 6, max: 10 };
+
+                        d_line_temp = [27, 31, 34, 36, 38, 33, 29];
+                        d_line_alertas = [4, 6, 11, 15, 19, 10, 5];
+
+                        novoRankingHtml = `
+                            <li class="flex justify-between items-center w-full p-3 rounded bg-slate-200 shadow-sm">
+                                <span class="font-bold text-base text-blue-900">1. LOTE A003</span>
+                                <span class="font-bold text-base text-blue-900">79 alertas</span>
+                            </li>
+                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                <span class="font-medium text-gray-800">2. LOTE A004</span>
+                                <span class="font-medium text-gray-800">61 alertas</span>
+                            </li>
+                            <li class="flex justify-between items-center w-full p-3 border-b border-gray-200">
+                                <span class="font-medium text-gray-800">3. LOTE A001/span>
+                                <span class="font-medium text-gray-800">44 alertas</span>
+                            </li>
+                            <li class="flex justify-between items-center w-full p-3">
+                                <span class="font-medium text-gray-800">4. LOTE A002</span>
+                                <span class="font-medium text-gray-800">27 alertas</span>
+                            </li>`;
+                        break;
+                }
+
+                // 4. Atualizar o Gráfico de Barras (alertasSemana)
+                alertasChart.data.labels = novosLabels;
+                alertasChart.options.plugins.title.text = novoTituloGrafico;
+                alertasChart.data.datasets[0].data = d_bar_lote1;
+                alertasChart.data.datasets[1].data = d_bar_lote2;
+                alertasChart.data.datasets[2].data = d_bar_lote3;
+                alertasChart.data.datasets[3].data = d_bar_lote4;
+                alertasChart.update();
+
+                // 5. Atualizar o Boxplot (boxplotLote)
+                boxplotChart.data.labels = labelsBoxplot; // Labels são sempre os lotes
+                boxplotChart.data.datasets[0].data = [d_box_lote1, d_box_lote2, d_box_lote3, d_box_lote4];
+                boxplotChart.update();
+
+                // 6. Atualizar o Gráfico de Linha (tempAlertChart)
+                tempAlertChart.data.labels = novosLabels;
+                tempAlertChart.data.datasets[0].data = d_line_temp;
+                tempAlertChart.data.datasets[1].data = d_line_alertas;
+                tempAlertChart.update();
+
+                // 7. Atualizar o Ranking
+                rankingTitulo.innerText = novoTituloRanking;
+                rankingLista.innerHTML = novoRankingHtml;
+            }
+
+            // 8. Inicializar os gráficos
+            alertasChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: [], // Inicia vazio, será preenchido
+                    datasets: [
+                        { label: 'Lote A001', data: [], backgroundColor: '#001D3D' },
+                        { label: 'Lote A002', data: [], backgroundColor: '#003566' },
+                        { label: 'Lote A003', data: [], backgroundColor: 'darkblue' },
+                        { label: 'Lote A004', data: [], backgroundColor: 'royalblue' }
+                    ]
+                },
+                options: { responsive: true, plugins: { title: { display: true, text: '' } }, scales: { x: { stacked: true }, y: { stacked: true } } }
+            });
+
+            boxplotChart = new Chart(ctxBox, {
+                type: 'boxplot',
+                data: {
+                    labels: [], // Inicia vazio
+                    datasets: [{
+                        label: 'Distribuição de alertas',
+                        data: [], // Inicia vazio
+                        borderColor: 'darkblue',
+                        backgroundColor: 'royalblue'
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            tempAlertChart = new Chart(ctxTempAlert, {
+                type: 'line',
+                data: {
+                    labels: [], // Inicia vazio
+                    datasets: [
+                        { label: 'Temperatura Média De Componentes (°C)', data: [], borderColor: 'red', tension: 0.3, yAxisID: 'y' },
+                        { label: 'Alertas Gerados', data: [], borderColor: 'blue', tension: 0.3, yAxisID: 'y1' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    stacked: false,
+                    plugins: { title: { display: true, text: 'Temperatura vs Quantidade de Alertas' } },
+                    scales: {
+                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Temperatura (°C)' } },
+                        y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Alertas' }, grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+
+            // 9. Adicionar o Event Listener
+            selectPeriodo.addEventListener('change', (e) => {
+                atualizarDashboard(e.target.value);
+            });
+
+            // 10. Chamar a função pela primeira vez para carregar os dados da 'semana'
+            atualizarDashboard('semana');
+
+            // 11. Chamar as funções do 'onload' original
+            if (typeof carregarInformacoes === 'function') carregarInformacoes();
+            if (typeof simularValores === 'function') simularValores();
+            if (typeof verificadorCargo === 'function') verificadorCargo();
+
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var nomeEmpresa = sessionStorage.getItem("nome_ss");
+            var cargo = sessionStorage.getItem("cargo_ss");
+
+            var nomeProfissao = document.getElementById("nomeProfissao");
+
+            if (nomeProfissao) {
+                nomeProfissao.innerHTML = `
+                <p class="font-bold text-blue-900">${nomeEmpresa || "Usuário"}</p>
+                <p class="mb-4 text-blue-900">Cargo: ${cargo || "Não definido"}</p>
+            `;
+            }
+        });
+    </script>
