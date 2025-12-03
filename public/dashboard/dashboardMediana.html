@@ -15,8 +15,6 @@
     <script src="../js/sessao.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
     <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
-    <script
-        src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot@4.2.3/dist/chartjs-chart-boxplot.min.js"></script>
 </head>
 
 <body>
@@ -67,7 +65,6 @@
 
             <div class="topoTitulo">
                 <h1 class="tituloLote" id="tituloLote">Análise de Desempenho - Modelo Keniti</h1>
-                <div class="kpiData">Última Atualização: <span id="dataHora"></span></div>
             </div>
 
             <main class="card">
@@ -143,11 +140,6 @@
     let DADOS_EVOLUCAO = {};
     let DADOS_CARGA = {};
 
-    function atualizarDataHora() {
-        const agora = new Date();
-        document.getElementById("dataHora").textContent = agora.toLocaleString("pt-BR");
-    }
-
     function atualizarCorKPI(valor, limite, elemento) {
         if (!limite) return;
         const numero = Number(valor);
@@ -180,40 +172,40 @@
     const COR_SEGURO = '#0d4299';
 
     function prepararDatasetsDestaque(lotes, piorLoteLabel, limiteReferencia) {
-    const datasetsFinais = [];
+        const datasetsFinais = [];
 
-    lotes.forEach(loteOriginal => {
-        const isPiorLote = (loteOriginal.label === piorLoteLabel);
-        
-        if (!isPiorLote) {
-            datasetsFinais.push({
-                label: loteOriginal.label,
-                data: loteOriginal.data,
-                borderColor: COR_CONTEXTO,
-                backgroundColor: COR_CONTEXTO,
-                borderWidth: 1, 
-                borderRadius: 4,
-                order: 2 
-            });
-        } 
-        else {
-            const coresCondicionais = loteOriginal.data.map(valor => {
-                return (valor >= limiteReferencia) ? COR_ALERTA : COR_SEGURO;
-            });
+        lotes.forEach(loteOriginal => {
+            const isPiorLote = (loteOriginal.label === piorLoteLabel);
 
-            datasetsFinais.push({
-                label: loteOriginal.label,
-                data: loteOriginal.data,
-                backgroundColor: coresCondicionais, 
-                borderColor: coresCondicionais,
-                borderWidth: 1,
-                borderRadius: 6,
-                order: 1 
-            });
-        }
-    });
-    return datasetsFinais;
-}
+            if (!isPiorLote) {
+                datasetsFinais.push({
+                    label: loteOriginal.label,
+                    data: loteOriginal.data,
+                    borderColor: COR_CONTEXTO,
+                    backgroundColor: COR_CONTEXTO,
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    order: 2
+                });
+            }
+            else {
+                const coresCondicionais = loteOriginal.data.map(valor => {
+                    return (valor >= limiteReferencia) ? COR_ALERTA : COR_SEGURO;
+                });
+
+                datasetsFinais.push({
+                    label: loteOriginal.label,
+                    data: loteOriginal.data,
+                    backgroundColor: coresCondicionais,
+                    borderColor: coresCondicionais,
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    order: 1
+                });
+            }
+        });
+        return datasetsFinais;
+    }
 
     function encontrarPiorLote(lotes) {
         let piorLoteLabel = null;
@@ -230,20 +222,26 @@
         return piorLoteLabel;
     }
 
-    function calcularMedia(listaNumeros) {
-        let soma = 0;
+    function calcularMediana(listaNumeros) {
+        const dadosValidos = listaNumeros.filter(valor => valor > 0);
 
-        for (let i = 0; i < listaNumeros.length; i++) {
-            soma = soma + listaNumeros[i];
+        if (dadosValidos.length === 0) return 0;
+
+        dadosValidos.sort((a, b) => a - b);
+
+        const meio = Math.floor(dadosValidos.length / 2);
+
+        if (dadosValidos.length % 2 !== 0) {
+            return dadosValidos[meio];
+        } else {
+            return (dadosValidos[meio - 1] + dadosValidos[meio]) / 2;
         }
-
-        return soma / listaNumeros.length;
     }
 
     function verificarPior(piorAtual, nomeLote, dadosPrincipais, dadosRelacao) {
-        let media = calcularMedia(dadosPrincipais);
-        if (media > piorAtual.valor) {
-            return { nome: nomeLote, valor: media, dados: dadosPrincipais, relacao: dadosRelacao };
+        let mediana = calcularMediana(dadosPrincipais);
+        if (mediana > piorAtual.valor) {
+            return { nome: nomeLote, valor: mediana, dados: dadosPrincipais, relacao: dadosRelacao };
         }
         return piorAtual;
     }
@@ -296,7 +294,7 @@
             if (graficoEvolucao.options.plugins.annotation && graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal) {
                 graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMin = novoLimite;
                 graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMax = novoLimite;
-                graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.label.content ='Limite Ideal: ' + limiteAtual;
+                graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.label.content = 'Limite Ideal: ' + limiteAtual;
             }
             graficoEvolucao.update();
         }
@@ -357,7 +355,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        atualizarDataHora();
         carregarUsuarioSessao();
 
         carregarLimites().then(function (limitesDoBanco) {
@@ -423,9 +420,9 @@
 
                 function filtrarTop5(lista) {
                     lista.sort(function (a, b) {
-                        let mediaA = calcularMedia(a.data);
-                        let mediaB = calcularMedia(b.data);
-                        return mediaB - mediaA;
+                        let medA = calcularMediana(a.data);
+                        let medB = calcularMediana(b.data);
+                        return medB - medA;
                     });
                     return lista.slice(0, 5);
                 }
@@ -454,6 +451,11 @@
 
                 const labelsGrafico = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
 
+                function limparZeros(dados) {
+                    const filtrados = dados.filter(valor => valor > 0);
+                    return filtrados.length > 0 ? filtrados : [0];
+                }
+
                 DADOS_EVOLUCAO = {
                     cpu: { semana: { labels: labelsGrafico, titulo: 'Evolução Uso CPU (Top 5 Piores)', eixoY: 'Uso CPU (%)', lotes: listaLotesCPU } },
                     ram: { semana: { labels: labelsGrafico, titulo: 'Evolução RAM (Top 5 Piores)', eixoY: 'Uso RAM (%)', lotes: listaLotesRAM } },
@@ -471,11 +473,31 @@
                 };
 
                 DADOS_CARGA = {
-                    cpu: { labels: ['CPU'], data: [piorCpu.dados], titulo: `Uso do Sistema ${piorCpu.nome} - CPU` },
-                    ram: { labels: ['RAM'], data: [piorRam.dados], titulo: `Uso do Sistema ${piorRam.nome} - RAM` },
-                    disco: { labels: ['Disco'], data: [piorDisco.dados], titulo: `Uso do Sistema ${piorDisco.nome} - Disco` },
-                    temp: { labels: ['Temp'], data: [piorTemp.dados], titulo: `Uso do Sistema ${piorTemp.nome} - Temperatura` },
-                    processo: { labels: ['Procs'], data: [piorProc.dados], titulo: `Uso do Sistema ${piorProc.nome} - Processos` }
+                    cpu: {
+                        labels: ['CPU'],
+                        data: [limparZeros(piorCpu.dados)],
+                        titulo: `Uso do Sistema ${piorCpu.nome} - CPU`
+                    },
+                    ram: {
+                        labels: ['RAM'],
+                        data: [limparZeros(piorRam.dados)], 
+                        titulo: `Uso do Sistema ${piorRam.nome} - RAM`
+                    },
+                    disco: {
+                        labels: ['Disco'],
+                        data: [limparZeros(piorDisco.dados)],
+                        titulo: `Uso do Sistema ${piorDisco.nome} - Disco`
+                    },
+                    temp: {
+                        labels: ['Temp'],
+                        data: [limparZeros(piorTemp.dados)], 
+                        titulo: `Uso do Sistema ${piorTemp.nome} - Temperatura`
+                    },
+                    processo: {
+                        labels: ['Procs'],
+                        data: [limparZeros(piorProc.dados)], 
+                        titulo: `Uso do Sistema ${piorProc.nome} - Processos`
+                    }
                 };
 
                 iniciarChartJS();
