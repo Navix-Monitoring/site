@@ -114,7 +114,7 @@ async function verificarDia() {
 
         const listaLotes = [lote1, lote2, lote3, lote4, lote5, lote6];
 
-        const top6 = listaLotes.sort((a, b) => b.totalAvisos - a.totalAvisos);
+        const top6 = listaLotes.sort((a, b) => b.totalCritico - a.totalCritico);
 
         const somaBaixo =
             lote1.totalBaixo + lote2.totalBaixo + lote3.totalBaixo +

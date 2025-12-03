@@ -184,12 +184,12 @@ async function ultimos7dias() {
         }
 
         let series = [
-            { name: "Lote A001", data: dadosLotes[1].reverse() },
-            { name: "Lote A002", data: dadosLotes[2].reverse() },
-            { name: "Lote A003", data: dadosLotes[3].reverse() },
-            { name: "Lote A004", data: dadosLotes[4].reverse() },
-            { name: "Lote A005", data: dadosLotes[5].reverse() },
-            { name: "Lote A006", data: dadosLotes[6].reverse() },
+            { name: "Lote A001", data: dadosLotes[1] },
+            { name: "Lote A002", data: dadosLotes[2] },
+            { name: "Lote A003", data: dadosLotes[3] },
+            { name: "Lote A004", data: dadosLotes[4] },
+            { name: "Lote A005", data: dadosLotes[5] },
+            { name: "Lote A006", data: dadosLotes[6] },
         ];
 
 
@@ -244,17 +244,7 @@ async function ultimos7dias() {
 
         }
 
-        categorias.reverse();
-        somaCPUPorDia.reverse();
-        somaCPUPorDia2.reverse();
-        somaRAMPorDia.reverse();
-        somaRAMPorDia2.reverse();
-        somaDiscoPorDia.reverse();
-        somaDiscoPorDia2.reverse();
-        somaTempPorDia.reverse();
-        somaTempPorDia2.reverse();
-        somaAlertasCriticosPorDia.reverse();
-        somaAlertasCriticosPorDia2.reverse();
+        
 
         const alertasSemana = {
             chart: { type: "bar", height: 350, stacked: true, toolbar: { show: false } },
