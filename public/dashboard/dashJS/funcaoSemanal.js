@@ -192,6 +192,25 @@ async function ultimos7dias() {
             { name: "Lote A006", data: dadosLotes[6] },
         ];
 
+         const alertasSemana = {
+            chart: { type: "bar", height: 350, stacked: true, toolbar: { show: false } },
+            tooltip: { enabled: false },
+            title: { text: "ALERTAS CRÍTICOS GERADOS (7 DIAS)", align: "center" },
+            plotOptions: { bar: { horizontal: false } },
+            xaxis: { categories: categorias },
+            series: series,
+            colors: ["#0a1a2f", "#102f57", "#1c47a1", "#3d73ff", "#253f6e", "#4f83d1"]
+        };
+
+        if (chartAlertasSemana) chartAlertasSemana.destroy();
+
+        chartAlertasSemana = new ApexCharts(
+            document.querySelector("#alertasSemana"),
+            alertasSemana
+        );
+
+        chartAlertasSemana.render();
+
 
         //Gráfico comparativo de hardware
 
@@ -244,29 +263,9 @@ async function ultimos7dias() {
 
         }
 
-        
-
-        const alertasSemana = {
-            chart: { type: "bar", height: 350, stacked: true, toolbar: { show: false } },
-            tooltip: { enabled: false },
-            title: { text: "ALERTAS CRÍTICOS GERADOS (7 DIAS)", align: "center" },
-            plotOptions: { bar: { horizontal: false } },
-            xaxis: { categories: categorias },
-            series: series,
-            colors: ["#0a1a2f", "#102f57", "#1c47a1", "#3d73ff", "#253f6e", "#4f83d1"]
-        };
-
-        if (chartAlertasSemana) chartAlertasSemana.destroy();
-
-        chartAlertasSemana = new ApexCharts(
-            document.querySelector("#alertasSemana"),
-            alertasSemana
-        );
-
-        chartAlertasSemana.render();
 
 
-
+        //Gráfico comparativo de hardware
         document.getElementById("select_hardware_comparacao").onchange =
             () => ({
                 CPU: compararCPU,
@@ -408,6 +407,7 @@ function compararTEMP() {
     );
 
     chartHardware.render();
+
 }
 
 document.getElementById("select_hardware_comparacao").onchange =

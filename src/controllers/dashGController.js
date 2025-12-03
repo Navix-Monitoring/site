@@ -36,4 +36,23 @@ async function semanal(req, res) {
     }
 }
 
-module.exports = { diario, semanal };
+async function mensal(req, res) {
+    try {
+        const { nomeArquivo } = req.params;
+
+        const url = `https://bucket-client-navix.s3.amazonaws.com/dashAlertas/UltimasSemanas/${nomeArquivo}.json`;
+
+        const dados = await dashGModel.jsonMensal(url);
+
+        if (!dados) return res.status(404).send("Arquivo não encontrado no S3");
+
+        return res.status(200).json(dados);
+
+    } catch (erro) {
+        console.log("ERRO AO BUSCAR SEMANAL:", erro);
+        return res.status(500).json("Falha ao buscar mensal");
+    }
+}
+
+
+module.exports = { diario, semanal, mensal };

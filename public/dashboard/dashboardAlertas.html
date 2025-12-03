@@ -67,7 +67,7 @@
                     <select class="selectData" id="selectPeriodo">
                         <option value="dia" selected id="select_ontem">Dia</option>
                         <option value="semana">Últimos 7 dias</option>
-                        <option value="mes">Últimos 30 dias</option>
+                        <option value="mes">Últimas 4 semanas</option>
                     </select>
                 </div>
 
@@ -246,13 +246,14 @@
     </div>
     <script src="dashJS/funcoesTempoDash.js"></script>
     <script src="../js/redirecionar.js"></script>
-    <script src="dashJS/dashSemana.js"></script>
+    <script src="dashJS/funcaoSemanal.js"></script>
+    <script src="dashJS/funcaoMensal.js"></script>
     <script>
 
         document.getElementById("date1").addEventListener("change", verificarDia);
         document.getElementById("date2").addEventListener("change", verificarDia);
 
-        document.getElementById("selectPeriodo").onchange = () => ({ dia: verificarDia, semana: ultimos7dias }[selectPeriodo.value]());
+        document.getElementById("selectPeriodo").onchange = () => ({ dia: verificarDia, semana: ultimos7dias,mes : ultimasSemanas}[selectPeriodo.value]());
 
 
         document.addEventListener("DOMContentLoaded", () => {

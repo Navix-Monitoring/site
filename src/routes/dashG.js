@@ -11,4 +11,8 @@ router.get("/semanal/:nomeArquivo", (req, res) => {
     dashGController.semanal(req, res);
 });
 
+router.get("/mensal/:nomeArquivo", (req, res) => {
+    dashGController.mensal(req, res);
+});
+
 module.exports = router;
