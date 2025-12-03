@@ -176,24 +176,44 @@
     }
 
     const COR_CONTEXTO = '#B0B0B0';
+    const COR_ALERTA = '#dc2626';
+    const COR_SEGURO = '#0d4299';
 
-    function prepararDatasetsDestaque(lotes, piorLoteLabel) {
-        const datasetsFinais = [];
-        lotes.forEach(loteOriginal => {
-            const corDesteLote = (loteOriginal.label === piorLoteLabel) ? loteOriginal.borderColor : COR_CONTEXTO;
+    function prepararDatasetsDestaque(lotes, piorLoteLabel, limiteReferencia) {
+    const datasetsFinais = [];
+
+    lotes.forEach(loteOriginal => {
+        const isPiorLote = (loteOriginal.label === piorLoteLabel);
+        
+        if (!isPiorLote) {
             datasetsFinais.push({
                 label: loteOriginal.label,
                 data: loteOriginal.data,
-                borderColor: corDesteLote,
-                backgroundColor: corDesteLote,
-                fill: false,
-                borderRadius: 6,
-                categoryPercentage: 0.8,
-                barPercentage: 0.85,
+                borderColor: COR_CONTEXTO,
+                backgroundColor: COR_CONTEXTO,
+                borderWidth: 1, 
+                borderRadius: 4,
+                order: 2 
             });
-        });
-        return datasetsFinais;
-    }
+        } 
+        else {
+            const coresCondicionais = loteOriginal.data.map(valor => {
+                return (valor >= limiteReferencia) ? COR_ALERTA : COR_SEGURO;
+            });
+
+            datasetsFinais.push({
+                label: loteOriginal.label,
+                data: loteOriginal.data,
+                backgroundColor: coresCondicionais, 
+                borderColor: coresCondicionais,
+                borderWidth: 1,
+                borderRadius: 6,
+                order: 1 
+            });
+        }
+    });
+    return datasetsFinais;
+}
 
     function encontrarPiorLote(lotes) {
         let piorLoteLabel = null;
@@ -248,14 +268,14 @@
                 graficoRelacao.data.datasets.push({ label: 'Temperatura', data: dados.temp, backgroundColor: 'red', borderColor: 'red', fill: false });
                 graficoRelacao.data.datasets.push({ label: 'CPU', data: dados.cpu, backgroundColor: 'blue', borderColor: 'blue', fill: false });
             } else if (metrica === 'ram') {
-                graficoRelacao.data.datasets.push({ label: 'RAM', data: dados.ram, backgroundColor: 'green', borderColor: 'green', fill: false });
-                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'purple', borderColor: 'purple', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'RAM', data: dados.ram, backgroundColor: 'blue', borderColor: 'blue', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'red', borderColor: 'red', fill: false });
             } else if (metrica === 'disco') {
-                graficoRelacao.data.datasets.push({ label: 'Disco', data: dados.disco, backgroundColor: 'orange', borderColor: 'orange', fill: false });
-                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'purple', borderColor: 'purple', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Disco', data: dados.disco, backgroundColor: 'blue', borderColor: 'blue', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'red', borderColor: 'red', fill: false });
             } else if (metrica === 'processo') {
-                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'purple', borderColor: 'purple', fill: false });
-                graficoRelacao.data.datasets.push({ label: 'Disco', data: dados.disco, backgroundColor: 'orange', borderColor: 'orange', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Processos', data: dados.processos, backgroundColor: 'red', borderColor: 'red', fill: false });
+                graficoRelacao.data.datasets.push({ label: 'Disco', data: dados.disco, backgroundColor: 'blue', borderColor: 'blue', fill: false });
             }
             graficoRelacao.update();
         }
@@ -264,7 +284,8 @@
         if (graficoEvolucao && DADOS_EVOLUCAO[metrica]) {
             const dados = DADOS_EVOLUCAO[metrica].semana;
             const piorLoteLabel = encontrarPiorLote(dados.lotes);
-            const novosDatasets = prepararDatasetsDestaque(dados.lotes, piorLoteLabel);
+            const limiteAtual = (LIMITES[metrica]) ? LIMITES[metrica].neutro : 0;
+            const novosDatasets = prepararDatasetsDestaque(dados.lotes, piorLoteLabel, limiteAtual);
 
             graficoEvolucao.data.datasets = novosDatasets;
             graficoEvolucao.data.labels = dados.labels;
@@ -275,7 +296,7 @@
             if (graficoEvolucao.options.plugins.annotation && graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal) {
                 graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMin = novoLimite;
                 graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.yMax = novoLimite;
-                graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.label.content = 'Ideal';
+                graficoEvolucao.options.plugins.annotation.annotations.linhaIdeal.label.content ='Limite Ideal: ' + limiteAtual;
             }
             graficoEvolucao.update();
         }
