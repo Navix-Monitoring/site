@@ -16,6 +16,8 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="../js/sessao.js"></script>
     <script src="../js/redirecionar.js"></script>
     <link rel="stylesheet" href="../css/dashboard.css" />
@@ -47,6 +49,12 @@
       .legend-hidden {
         opacity: 0.3 !important;
         text-decoration: line-through;
+      }
+      .slope-card {
+        transition: transform 0.2s;
+      }
+      .slope-card:hover {
+        transform: translateY(-2px);
       }
     </style>
   </head>
@@ -114,7 +122,7 @@
         >
           <div>
             <h1 class="text-2xl font-bold text-gray-800">
-              Predição de Frota (Multi-Lote)
+              Predição de Frota
             </h1>
             <p class="text-gray-500 mt-1 text-sm">
               Comparativo de tendência de falhas entre todos os lotes.
@@ -124,7 +132,7 @@
             <div class="flex flex-col text-right">
               <span class="text-xs text-gray-400 font-bold mb-1">PERÍODO</span>
               <span
-                class="text-lg font-bold text-amber-600 border-b-2 border-amber-600 pb-1"
+                class="text-lg font-bold text-gray-800 border-b-2 text-gray-800 pb-1"
                 >Diário (14 dias)</span
               >
             </div>
@@ -286,17 +294,19 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 h-[300px] mb-10">
-          <div class="bg-white p-6 rounded-lg shadow-sm flex flex-col">
+        <div class="mb-10">
+          <div class="bg-white p-6 rounded-lg shadow-sm">
             <h3 class="font-bold text-gray-700 mb-2">
               Velocidade de Degradação Comparativa (Slope)
             </h3>
             <p class="text-xs text-gray-500 mb-4" id="descSlope">
               O quanto o uso sobe por unidade de tempo.
             </p>
-            <div class="relative flex-1 w-full">
-              <canvas id="chartSlope"></canvas>
-            </div>
+
+            <div
+              id="slopeGrid"
+              class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
+            ></div>
           </div>
         </div>
       </div>
@@ -314,13 +324,14 @@
         "#93c5fd",
       ];
       let frotaDados = {};
-      let chartMultiLine, chartRul, chartSlope;
+      let chartMultiLine, chartRul;
 
       async function carregarDados() {
         try {
           const response = await fetch(JSON_URL, { cache: "no-store" });
           if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
           frotaDados = await response.json();
+
           document.getElementById("textoAlerta").innerText =
             "Dados da frota atualizados.";
           document.getElementById("boxAlerta").className =
@@ -354,11 +365,7 @@
 
       function atualizarDashboard() {
         const comp = document.getElementById("selComponente").value;
-
-        if (!frotaDados[comp] || !frotaDados[comp]["semana"]) {
-          return;
-        }
-
+        if (!frotaDados[comp] || !frotaDados[comp]["semana"]) return;
         let dados = frotaDados[comp]["semana"];
 
         document.getElementById("kpiSeguros").innerText = dados.kpis.seguros;
@@ -413,7 +420,6 @@
             },
           };
         });
-
         for (let i = 0; i < 6; i++) {
           const leg = document.getElementById(`leg-${i}`);
           if (leg) leg.classList.remove("legend-hidden");
@@ -421,18 +427,48 @@
         chartMultiLine.update();
 
         chartRul.data.labels = dados.rulLabels;
-        chartRul.data.datasets[0].data = dados.rul;
-        chartRul.data.datasets[0].backgroundColor = dados.rul.map((val) =>
-          val < 5 ? "#b91c1c" : "#1e40af"
-        );
+
+        const rulVisual = dados.rul.map((d) => (d >= 999 ? 100 : d));
+        const rulColors = dados.rul.map((d) => {
+          if (d < 5) return "#b91c1c";
+          if (d >= 999) return "#22c55e";
+          return "#1e40af";
+        });
+
+        chartRul.data.datasets[0].data = rulVisual;
+        chartRul.data.datasets[0].backgroundColor = rulColors;
+
+        chartRul.data.datasets[0].originalData = dados.rul;
         chartRul.update();
 
-        chartSlope.data.labels = dados.slopeLabels;
-        chartSlope.data.datasets[0].data = dados.slopeData;
-        chartSlope.data.datasets[0].backgroundColor = dados.slopeData.map(
-          (sl) => (sl >= 2.0 ? "#b91c1c" : "#3b82f6")
-        );
-        chartSlope.update();
+        const gridContainer = document.getElementById("slopeGrid");
+        gridContainer.innerHTML = "";
+
+        for (let i = 0; i < dados.slopeData.length; i++) {
+          const valorOriginal = dados.slopeData[i];
+          const valorFormatado = Number(valorOriginal).toFixed(2);
+          const nome = dados.slopeLabels[i];
+
+          const isPositivo = valorOriginal > 0;
+          const corBg = isPositivo
+            ? "bg-red-50 border-red-200"
+            : "bg-green-50 border-green-200";
+          const corTexto = isPositivo ? "text-red-700" : "text-green-700";
+          const icone = isPositivo ? "bx-trending-up" : "bx-trending-down";
+          const sinal = isPositivo ? "+" : "";
+
+          const cardHtml = `
+                    <div class="slope-card border rounded-lg p-4 flex flex-col items-center justify-center ${corBg}">
+                        <span class="text-gray-600 font-bold text-sm mb-1">${nome}</span>
+                        <div class="flex items-center gap-1">
+                            <i class='bx ${icone} text-xl ${corTexto}'></i>
+                            <span class="text-2xl font-bold ${corTexto}">${sinal}${valorFormatado}%</span>
+                        </div>
+                        <span class="text-xs text-gray-500 mt-1">ao dia</span>
+                    </div>
+                `;
+          gridContainer.innerHTML += cardHtml;
+        }
       }
 
       function inicializarGraficos() {
@@ -490,26 +526,23 @@
             indexAxis: "y",
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { x: { title: { display: true, text: "Dias Restantes" } } },
-          },
-        });
-
-        const ctxSlope = document.getElementById("chartSlope").getContext("2d");
-        chartSlope = new Chart(ctxSlope, {
-          type: "bar",
-          data: {
-            labels: [],
-            datasets: [
-              { label: "Taxa de Crescimento", data: [], borderRadius: 4 },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const rawValue =
+                      context.chart.data.datasets[0].originalData[
+                        context.dataIndex
+                      ];
+                    if (rawValue >= 999) return " Status: Estável (>90 dias)";
+                    return " Dias Restantes: " + rawValue;
+                  },
+                },
+              },
+            },
             scales: {
-              y: { title: { display: true, text: "Taxa de Crescimento" } },
+              x: { title: { display: true, text: "Dias Restantes" }, max: 100 },
             },
           },
         });
