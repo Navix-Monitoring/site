@@ -69,7 +69,24 @@
 
             <main class="card">
                 <div class="kpi-unified-card">
-                    <h2 class="kpi-section-title">PIORES LOTES - MEDIANAS</h2>
+                    <h2 class="kpi-section-title">PIORES LOTES - MEDIANAS <span
+                            class="relative group cursor-pointer text-gray-500 text-s bg-gray-200 px-1 rounded">i
+                            <div
+                                class="absolute hidden z-100 group-hover:block bg-white shadow-md p-2 rounded text-s left-6 top-0 w-32 flex flex-col gap-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-red-600 font-bold">■</span>
+                                    <p>Crítico</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-yellow-500 font-bold">■</span>
+                                    <p>Atenção</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-green-600 font-bold">■</span>
+                                    <p>Normal</p>
+                                </div>
+                            </div>
+                    </h2>
                     <div class="kpi-row">
                         <div class="kpi-column">
                             <span class="kpi-title-top">Uso da CPU</span>
@@ -140,28 +157,28 @@
     let DADOS_CARGA = {};
 
     function atualizarCorKPI(valor, limite, elemento, invertido = false) {
-    if (!limite) return;
-    const numero = Number(valor);
+        if (!limite) return;
+        const numero = Number(valor);
 
-    if (invertido) {
-        if (numero <= limite.critico) {
-            elemento.style.color = "red";
-        } 
-        else if (numero <= limite.atencao) {
-            elemento.style.color = "orange";
+        if (invertido) {
+            if (numero <= limite.critico) {
+                elemento.style.color = "red";
+            }
+            else if (numero <= limite.atencao) {
+                elemento.style.color = "orange";
+            } else {
+                elemento.style.color = "green";
+            }
         } else {
-            elemento.style.color = "green";
-        }
-    } else {
-        if (numero >= limite.critico) {
-            elemento.style.color = "red";
-        } else if (numero >= limite.atencao) {
-            elemento.style.color = "orange";
-        } else {
-            elemento.style.color = "green";
+            if (numero >= limite.critico) {
+                elemento.style.color = "red";
+            } else if (numero >= limite.atencao) {
+                elemento.style.color = "orange";
+            } else {
+                elemento.style.color = "green";
+            }
         }
     }
-}
 
     function carregarUsuarioSessao() {
         var imagemUsuarioNavbar = document.getElementById("imagemUsuarioNavbar");
@@ -201,11 +218,11 @@
             else {
                 const coresCondicionais = loteOriginal.data.map(valor => {
                     if (metrica === 'processo') {
-                    return (valor <= limiteReferencia) ? COR_ALERTA : COR_SEGURO;
-                } else {
-                    return (valor >= limiteReferencia) ? COR_ALERTA : COR_SEGURO;
-                }
-            });
+                        return (valor <= limiteReferencia) ? COR_ALERTA : COR_SEGURO;
+                    } else {
+                        return (valor >= limiteReferencia) ? COR_ALERTA : COR_SEGURO;
+                    }
+                });
 
                 datasetsFinais.push({
                     label: loteOriginal.label,
@@ -494,7 +511,7 @@
                     },
                     ram: {
                         labels: ['RAM'],
-                        data: [limparZeros(piorRam.dados)], 
+                        data: [limparZeros(piorRam.dados)],
                         titulo: `Uso do Sistema ${piorRam.nome} - RAM`
                     },
                     disco: {
@@ -504,12 +521,12 @@
                     },
                     temp: {
                         labels: ['Temp'],
-                        data: [limparZeros(piorTemp.dados)], 
+                        data: [limparZeros(piorTemp.dados)],
                         titulo: `Uso do Sistema ${piorTemp.nome} - Temperatura`
                     },
                     processo: {
                         labels: ['Procs'],
-                        data: [limparZeros(piorProc.dados)], 
+                        data: [limparZeros(piorProc.dados)],
                         titulo: `Uso do Sistema ${piorProc.nome} - Processos`
                     }
                 };
@@ -554,7 +571,7 @@
                     options: {
                         responsive: true, maintainAspectRatio: false,
                         plugins: {
-                            annotation: { annotations: { linhaIdeal: { type: 'line', yMin: limiteInicial, yMax: limiteInicial, borderColor: '#FFAE42', borderWidth: 2, borderDash: [10, 5], label: { display: true, content: 'Limite Ideal' } } } },
+                            annotation: { annotations: { linhaIdeal: { type: 'line', yMin: limiteInicial, yMax: limiteInicial, borderColor: '#FFAE42', borderWidth: 2, borderDash: [10, 5], label: { display: true, content: 'Limite Ideal: ' + limiteInicial } } } },
                             title: { display: true, text: dadosIniciais.titulo, font: { size: 18 } }
                         },
                         scales: { y: { title: { display: true, text: dadosIniciais.eixoY } } }
