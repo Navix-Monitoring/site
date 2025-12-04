@@ -68,7 +68,7 @@ async function ultimasSemanas() {
         somaTodosAlertas = somaBaixo + somaNeutro + somaAtencao + somaCritico
 
         document.getElementById("tituloLote").innerHTML =
-            `Modelo NAV-M100 - 06 lotes - ${somaTodosAlertas} alertas`;
+            `Modelo NAV-M100 - 06 lotes - ${somaTodosAlertas} capturas`;
 
         //KPIs
         document.getElementById("porcentagemBaixo").innerHTML =
@@ -139,7 +139,7 @@ async function ultimasSemanas() {
 
         for (let i = 0; i < top6.length; i++) {
             document.getElementById(`numero_lote_top${i + 1}`).innerHTML =
-                `${i + 1}. LOTE A00${top6[i].lote}`;
+                `${i + 1}. LOTE A00${top6[i].lote} - ${Math.round(((top6[i].totalCritico) * 100) / somaCritico)}% dos críticos totais`;
             document.getElementById(`alertas_lote_top${i + 1}`).innerHTML =
                 `${top6[i].totalCritico} alertas`;
         }

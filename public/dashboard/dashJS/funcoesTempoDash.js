@@ -185,7 +185,7 @@ async function verificarDia() {
 
         for (let i = 0; i < top6.length; i++) {
             document.getElementById(`numero_lote_top${i + 1}`).innerHTML =
-                `${i + 1}. LOTE A00${top6[i].lote}`;
+                `${i + 1}. LOTE A00${top6[i].lote} - ${Math.round(((top6[i].totalCritico) * 100) / somaCritico)}% dos críticos totais`;
             document.getElementById(`alertas_lote_top${i + 1}`).innerHTML =
                 `${top6[i].totalCritico} alertas`;
         }
