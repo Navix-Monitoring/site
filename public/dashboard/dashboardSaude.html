@@ -82,6 +82,17 @@
 
     <div class="flex flex-col">
 
+      <div class="flex flex-col">
+
+      <div class="flex items-center justify-between ml-[250px] p-6">
+        <h1 class="tituloLote">Desempenho Energético</h1>
+
+        <button class="btnVoltar" onclick="window.location.href='selecionar-lote.html'">
+          Escolher Lote
+        </button>
+      </div>v>
+
+
       <!-- PAINEL DE KPIs E GRÁFICOS -->
       <div id="painelDashboard" class="ml-[250px] p-6">
 
@@ -265,52 +276,80 @@
   });
 </script>
 
-<!-- GRÁFICOS -->
+<!-- GRÁFICO 3 -->
 <script>
-  /* ===========================
-     1) GAUGE - APEXCHARTS
-     =========================== */
+  async function carregarGraficoEvolucao() {
+    try {
+      const response = await fetch(URL_JSON_ALERTA);
+      const json = await response.json();
 
-  /* ===========================
-     2) COMPARAÇÃO - BARRAS
-     =========================== */
+      console.log("JSON evolução:", json);
 
-  /* ===========================
-     3) EVOLUÇÃO - LINHA (CPU, RAM, DISCO)
-     =========================== */
-  new Chart(document.getElementById('healthEvolutionChart'), {
-    type: 'line',
-    data: {
-      labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4', 'Semana 5', 'Semana 6'],
+      // Labels (dias)
+      let labels = json.dias.map((d, i) => "Dia " + (i + 1));
 
-      datasets: [
-        {
-          label: 'CPU',
-          data: [70, 72, 75, 74, 78, 80],
-          borderWidth: 2,
-          tension: 0.3
+      // Arrays para CPU, RAM e DISCO
+      let cpu = [];
+      let ram = [];
+      let disco = [];
+
+      json.dias.forEach(dia => {
+        let lote = dia.lotes[0];
+
+        // cálculo de saúde por dia (mesma lógica do seu gráfico 1)
+        const cpuSaude = 100 - (lote.cpuCritico * 0.5);
+        const ramSaude = 100 - (lote.ramCritico * 0.5);
+        const discoSaude = 100 - (lote.discoCritico * 0.5);
+
+        cpu.push(cpuSaude);
+        ram.push(ramSaude);
+        disco.push(discoSaude);
+      });
+
+      console.log("CPU evolução:", cpu);
+      console.log("RAM evolução:", ram);
+      console.log("DISCO evolução:", disco);
+
+      // montar gráfico
+      new Chart(document.getElementById('healthEvolutionChart'), {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'CPU',
+              data: cpu,
+              borderWidth: 2,
+              tension: 0.3
+            },
+            {
+              label: 'RAM',
+              data: ram,
+              borderWidth: 2,
+              tension: 0.3
+            },
+            {
+              label: 'Disco',
+              data: disco,
+              borderWidth: 2,
+              tension: 0.3
+            }
+          ]
         },
-        {
-          label: 'RAM',
-          data: [60, 62, 61, 65, 67, 70],
-          borderWidth: 2,
-          tension: 0.3
-        },
-        {
-          label: 'Disco',
-          data: [85, 83, 88, 90, 92, 94],
-          borderWidth: 2,
-          tension: 0.3
+        options: {
+          scales: {
+            y: { beginAtZero: true, max: 100 }
+          }
         }
-      ]
-    },
-    options: {
-      scales: {
-        y: { beginAtZero: true, max: 100 }
-      }
-    }
-  });
+      });
 
+    } catch (erro) {
+      console.error("Erro ao carregar evolução:", erro);
+    }
+  }
+
+  // Executar quando a página terminar de carregar
+  document.addEventListener("DOMContentLoaded", carregarGraficoEvolucao);
 </script>
 
 </html>
