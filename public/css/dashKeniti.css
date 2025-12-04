@@ -9,9 +9,9 @@ body {
 }
 
 .tituloLote {
-    margin-left: 20px;
     font-size: 50px;
-    width: 120vh;
+    width: 100%;
+    text-align: center;
 }
 
 .topoTitulo {
@@ -42,7 +42,7 @@ body {
 
 .kpi-section-title {
     width: 100%;
-    max-width: 147vh;
+    max-width: 100%;
     margin: 0 auto 15px auto;
     font-size: 20px;
     font-weight: 700;
@@ -54,7 +54,7 @@ body {
 .kpi-unified-card {
     display: flex;
     width: 100%;
-    max-width: 147vh;
+    max-width: 100%;
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
@@ -205,13 +205,14 @@ body {
     display: flex;
     margin-top: 5vh;
     height: fit-content;
-    gap: 7vh;
+    gap: 20px;
     align-items: center;
+    width: 100%;
     justify-content: center;
 }
 
 .container-grafico {
-    width: 70vh;
+    width: 49%;
     height: 40vh;
     padding: 2vh;
     background-color: #F7F8FC;
@@ -222,13 +223,13 @@ body {
 }
 
 .container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     text-align: center;
     height: fit-content;
     margin-top: 2vh;
-    gap: 7vh;
+    gap: 5vh;
+    width: 100%;
 }
 
 .container-filho {
@@ -236,6 +237,8 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    min-width: 0;
+    width: 100%;
 }
 
 .nvlRisco {
@@ -243,7 +246,7 @@ body {
 }
 
 .chart-container {
-    width: 147vh;
+    width: 100%;
     height: 50vh;
     padding: 2vh;
     background-color: #F7F8FC;
@@ -253,7 +256,7 @@ body {
 }
 
 .chart-container-alert {
-    width: 70vh;
+    width: 100%;
     height: 40vh;
     padding: 2vh;
     background-color: white;
@@ -291,8 +294,7 @@ body {
     background-color: white;
     border-radius: 10px;
     padding: 24px;
-    margin-top: 25px;
-    width: 147vh;
+    width: 100%;
     box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
     height: auto;
     display: flex;
