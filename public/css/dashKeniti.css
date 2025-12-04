@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-/* --- Estilos Globais --- */
 * {
     font-family: "Inter";
 }
@@ -9,7 +8,6 @@ body {
     background-color: #f2f3f7;
 }
 
-/* --- Títulos e Botão Voltar --- */
 .tituloLote {
     font-size: 50px;
     width: 100%;
@@ -34,7 +32,6 @@ body {
     transform: scale(1.01);
 }
 
-/* --- Seção de KPIs (Cards Superiores) --- */
 .kpi-section-title {
     width: 100%;
     max-width: 100%;
@@ -108,7 +105,6 @@ body {
     font-size: 2.8vh;
 }
 
-/* --- Inputs e Selects --- */
 .escolhaVisu {
     margin-bottom: 10px;
     width: 9vh;
@@ -119,7 +115,6 @@ body {
     cursor: pointer;
 }
 
-/* --- Layout Principal e Cards de Gráficos --- */
 .card {
     margin: 10px;
     border-radius: 10px;
@@ -148,7 +143,6 @@ body {
     color: #333;
 }
 
-/* --- Containers dos Gráficos (Chart.js) --- */
 .chart-container-integrated {
     width: 100%;
     height: 50vh;
@@ -170,7 +164,6 @@ body {
     border-radius: 10px;
 }
 
-/* --- Grid inferior (Relação e Carga) --- */
 .container {
     display: grid;
     grid-template-columns: 1fr 1fr;
