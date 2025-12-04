@@ -197,9 +197,9 @@
     var imagemUsuarioNavbar = document.getElementById("imagemUsuarioNavbar");
     if (imagemUsuarioNavbar) {
       imagemUsuarioNavbar.innerHTML = `
-        <div class="rounded-md w-20 h-20 mb-2"
-          style="background-image: url(${sessionStorage.imagem}); background-size: cover; background-repeat: no-repeat; background-position: center;">
-        </div>`;
+      <div class="rounded-md w-20 h-20 mb-2"
+        style="background-image: url(${sessionStorage.imagem}); background-size: cover; background-repeat: no-repeat; background-position: center;">
+      </div>`;
     }
   }
 
@@ -216,8 +216,8 @@
 
     if (nomeProfissao) {
       nomeProfissao.innerHTML = `
-        <p class="font-bold text-blue-900">${nomeEmpresa}</p>
-        <p class="mb-4 text-blue-900">Cargo: ${cargo}</p>`;
+<p class="font-bold text-blue-900">${nomeEmpresa}</p>
+<p class="mb-4 text-blue-900">Cargo: ${cargo}</p>`;
     }
     let kpiCpu = [];
     let kpiRam = [];
@@ -382,6 +382,5 @@
   // Executar quando a página terminar de carregar
   document.addEventListener("DOMContentLoaded", carregarGraficoEvolucao);
 </script>
-
 
 </html>
