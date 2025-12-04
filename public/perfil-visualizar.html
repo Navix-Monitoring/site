@@ -196,31 +196,33 @@
 
     if (cargo === "Engenheiro automotivo") {
       alertasDiv.innerHTML += `
-        <a href="./dashboard/dashboardSaude.html" 
-           class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
-          <div>
-            <p class="text-black font-semibold text-lg">Dashboard Saúde</p>
-            <p class="text-black">Descrição: xxxxxx</p>
-          </div>
-        </a>
+<a href="./dashboard/dashboardEngenheiroQualidade.html" 
+   onclick="pegarSessionStorage('EngenheiroQualidade')"
+   class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
+  <div>
+    <p class="text-black font-semibold text-lg">Dashboard Saúde</p>
+    <p class="text-black">Descrição: Saúde de cada componente do lote</p>
+  </div>
+</a>
       `;
       alertasDiv.innerHTML += `
         <a href="./dashboard/dashboardBateria.html" 
            class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
           <div>
             <p class="text-black font-semibold text-lg">Dashboard Bateria</p>
-            <p class="text-black">Descrição: xxxxxx</p>
+            <p class="text-black">Descrição: Monitoramento da Saúde da Bateria</p>
           </div>
         </a>
       `;
       alertasDiv.innerHTML += `
-        <a href="./dashboard/dashProcessos.html" 
-           class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
-          <div>
-            <p class="text-black font-semibold text-lg">Dashboard Processos</p>
-            <p class="text-black">Descrição: Monitoramento de processos e gargalos</p>
-          </div>
-        </a>
+<a href="./dashboard/dashboardEngenheiroQualidade.html" 
+   onclick="pegarSessionStorage('EngenheiroProcesso')"
+   class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
+  <div>
+    <p class="text-black font-semibold text-lg">Dashboard Processos</p>
+    <p class="text-black">Descrição: Monitoramento de processos e gargalos</p>
+  </div>
+</a>
       `;
     } else if (cargo === "Engenheiro de qualidade") {
       alertasDiv.innerHTML += `
@@ -252,6 +254,21 @@
       `;
     }
   });
+
+  // Função para capturar dados ao clicar em qualquer dashboard
+  function pegarSessionStorage(nomeDashboard) {
+    let nome = sessionStorage.getItem("nome_ss");
+    let cargo = sessionStorage.getItem("cargo_ss");
+    let email = sessionStorage.getItem("email_ss");
+
+    console.log("Nome:", nome);
+    console.log("Cargo:", cargo);
+    console.log("Email:", email);
+
+    // Salva qual dashboard foi escolhida
+    sessionStorage.setItem("dashboardSelecionada", nomeDashboard);
+  }
+
 </script>
 
 </html>

@@ -61,13 +61,26 @@ function listarLotes() {
 }
 
 function gerarCorBolinha(index) {
-  const cores = ["vermelho", "laranja", "amarelo", "verde"];
-  return cores[index % cores.length];
+    const cores = ["vermelho", "laranja", "amarelo", "verde"];
+    return cores[index % cores.length];
 }
 
 function abrirLote(idLote) {
-  localStorage.setItem('lote', idLote);
-  window.location = "lote.html";
+    // Guarda o lote selecionado
+    localStorage.setItem('lote', idLote);
+
+    // Recupera a dashboard selecionada do sessionStorage
+    const dashboardSelecionada = sessionStorage.getItem("dashboardSelecionada");
+
+    // Faz o redirecionamento de acordo com o valor salvo
+    if (dashboardSelecionada === "EngenheiroQualidade") {
+        window.location = "/dashboard/dashboardSaude.html";
+    } else if (dashboardSelecionada === "EngenheiroProcesso") {
+        window.location = "/dashboard/dashProcessos.html";
+    } else {
+        // Caso não seja nenhum dos dois, mantém o padrão
+        window.location = "/dashboard/lote.html";
+    }
 }
 
 function filtrarModelo() {
@@ -120,16 +133,16 @@ function buscarLote(idLote) {
     fetch(`/dashboard/buscarLoteparaEditar/${idLote}`, {
         method: "GET"
     }).then(res => res.json())
-      .then(json => {
-        console.log("Entrei na resposta do fetch do buscar lote para editar...");
+        .then(json => {
+            console.log("Entrei na resposta do fetch do buscar lote para editar...");
 
-        const lote = json[0];
-        const dataFabricacao = new Date(lote.data_fabricacao);
+            const lote = json[0];
+            const dataFabricacao = new Date(lote.data_fabricacao);
 
-        // Formata no padrão yyyy-mm-dd para input[type=date]
-        const dataFormatadaInput = `${dataFabricacao.getFullYear()}-${String(dataFabricacao.getMonth() + 1).padStart(2, '0')}-${String(dataFabricacao.getDate()).padStart(2, '0')}`;
+            // Formata no padrão yyyy-mm-dd para input[type=date]
+            const dataFormatadaInput = `${dataFabricacao.getFullYear()}-${String(dataFabricacao.getMonth() + 1).padStart(2, '0')}-${String(dataFabricacao.getDate()).padStart(2, '0')}`;
 
-        criarEditar.innerHTML = `
+            criarEditar.innerHTML = `
             <dialog id="lote${idLote}" class="editarLote rounded-md w-1/3 p-6">
                 <h2 class="text-xl font-bold mb-4">Editar Lote: ${lote.codigo_lote}</h2>
 
@@ -145,14 +158,14 @@ function buscarLote(idLote) {
                 </div>
             </dialog>
         `;
-        // <label class="block mb-2 font-semibold">Quantidade de veículos:</label>
-        // <input type="number" id="qtdVeiculos${idLote}" value="${lote.qtd_veiculos}" class="w-full border rounded-md p-2 mb-4"></input>
+            // <label class="block mb-2 font-semibold">Quantidade de veículos:</label>
+            // <input type="number" id="qtdVeiculos${idLote}" value="${lote.qtd_veiculos}" class="w-full border rounded-md p-2 mb-4"></input>
 
-        const dialog = document.getElementById(`lote${idLote}`);
-        if (dialog) dialog.showModal();
-        else console.error("Dialog não encontrado!");
-      })
-      .catch(erro => console.error("Erro ao buscar lote:", erro));
+            const dialog = document.getElementById(`lote${idLote}`);
+            if (dialog) dialog.showModal();
+            else console.error("Dialog não encontrado!");
+        })
+        .catch(erro => console.error("Erro ao buscar lote:", erro));
 }
 
 function fecharDialog(idLote) {
@@ -160,24 +173,24 @@ function fecharDialog(idLote) {
     if (dialog) dialog.close();
 }
 
-function salvarLote(idLote){
+function salvarLote(idLote) {
     const codigoLote = document.getElementById(`codigoLote${idLote}`).value;
     const dataFabricacao = document.getElementById(`dataFabricacao${idLote}`).value;
     //const qtdVeiculos = document.getElementById(`qtdVeiculos${idLote}`).value;
     console.log(codigoLote)
-    fetch(`/dashboard/editarLote/${idLote}`,{
+    fetch(`/dashboard/editarLote/${idLote}`, {
         method: "PUT",
-        headers: {"Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             codigo_lote: codigoLote,
             data_fabricacao: dataFabricacao
-           // qtd_veiculos: qtdVeiculos
+            // qtd_veiculos: qtdVeiculos
         })
-    }).then(res=>res.json())
-    .then(json=> {
-        console.log("Entrei na resposta do fetch de editar lote...")
-        
-    })
+    }).then(res => res.json())
+        .then(json => {
+            console.log("Entrei na resposta do fetch de editar lote...")
+
+        })
 }
 
 
@@ -333,7 +346,7 @@ function filtrarPorData() {
     const idsRegistrados = [];
 
     if (!dataSelecionada) {
-        listarLotes(); 
+        listarLotes();
         return;
     }
 
