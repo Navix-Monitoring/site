@@ -271,7 +271,7 @@
           </div>
 
           <div
-            class="col-span-1 bg-white p-6 rounded-lg shadow-sm flex flex-col justify-between"
+            class="col-span-1 bg-white p-6 rounded-lg shadow-sm flex flex-col"
           >
             <div>
               <h3 class="font-bold text-gray-700 mb-2">
@@ -284,14 +284,7 @@
                 <canvas id="chartRul"></canvas>
               </div>
             </div>
-            <button
-              id="btnRecall"
-              class="w-full mt-4 bg-red-700 text-white font-bold py-3 rounded shadow-md hover:bg-red-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              onclick="alert('Ordem de Recall gerada com sucesso!')"
-            >
-              <i class="bx bx-error-circle mr-2"></i> GERAR RELATÓRIO DE RECALL
-            </button>
-          </div>
+            </div>
         </div>
 
         <div class="mb-10">
@@ -379,25 +372,19 @@
         ).innerText = `Taxa de crescimento de uso (por dia).`;
 
         const boxAlerta = document.getElementById("boxAlerta");
-        const btnRecall = document.getElementById("btnRecall");
-
+        
+        // Lógica do botão removida desta seção para evitar erros de console
         if (dados.kpis.criticos > 0) {
           boxAlerta.className =
             "bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-8";
           document.getElementById(
             "textoAlerta"
           ).innerHTML = `<strong>ATENÇÃO:</strong> ${dados.kpis.criticos} lote(s) com previsão de falha crítica (>90%). Foco em <strong>${dados.kpis.pior}</strong>.`;
-          btnRecall.disabled = false;
-          btnRecall.classList.remove("bg-gray-400", "cursor-not-allowed");
-          btnRecall.classList.add("bg-red-700", "hover:bg-red-800");
         } else {
           boxAlerta.className =
             "bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-8";
           document.getElementById("textoAlerta").innerText =
             "Toda a frota opera dentro dos limites de segurança.";
-          btnRecall.disabled = true;
-          btnRecall.classList.remove("bg-red-700", "hover:bg-red-800");
-          btnRecall.classList.add("bg-gray-400", "cursor-not-allowed");
         }
 
         chartMultiLine.data.labels = dados.labels;
