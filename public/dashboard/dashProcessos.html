@@ -57,7 +57,7 @@
   <!-- CONTEÚDO PRINCIPAL -->
   <aside class="ml-[250px] p-6 h-[140px] border-b bg-white shadow-md">
     <h1 class="text-2xl font-bold mb-4 text-blue-900">Dashboard de Latência</h1>
-    <p class="text-gray-700"></p>
+    <p class="text-gray-700">Lote: </p>
     <div class="flex justify-end text-s gap-4 mb-1">
       <span><span class="inline-block w-3 h-3 bg-red-600 mr-1"></span>Crítico</span>
       <span><span class="inline-block w-3 h-3 bg-orange-500 mr-1"></span>Alerta</span>
@@ -86,7 +86,7 @@
       </div>
 
       <div class="bg-white p-4 rounded-md shadow-md">
-        <h3 class="font-semibold text-gray-700">Maior variação de RAM</h3>
+        <h3 class="font-semibold text-gray-700">Processo com maior variação de RAM</h3>
         <span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-[2px] rounded">
           Chrome.exe
         </span>
@@ -240,10 +240,6 @@
         <canvas id="graficoTopGargalo"></canvas>
       </div>
 
-      <div class="bg-white p-4 rounded-md shadow-md xl:col-span-2">
-        <h3 class="text-lg font-semibold mb-2">Previsão de Travamento</h3>
-        <canvas id="graficoPrevisao"></canvas>
-      </div>
 
     </div>
   </section>
@@ -329,7 +325,7 @@
     criarGrafico("graficoVida", "bar", ["proc1", "proc2"], [300, 150]);
     criarGrafico("graficoGargalos", "line", ["Seg", "Ter", "Qua"], [2, 4, 1]);
     criarGrafico("graficoTopGargalo", "bar", ["A", "B", "C"], [10, 8, 3]);
-    criarGrafico("graficoPrevisao", "line", ["Hoje", "Amanhã"], [20, 35]);
+
   </script>
 </body>
 

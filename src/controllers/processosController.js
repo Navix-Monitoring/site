@@ -3,9 +3,9 @@ const processosModel = require("../models/processosModel");
 async function listaProcessos(req,res){
     console.log("Entrei no controller listar")
     try{
-        const{ano, mes, semana, dia} = req.params;
+        const{ano, mes, semana, dia,modelo, id} = req.params;
 
-        const url = `https://celina-teste-csv.s3.amazonaws.com/Ano/${ano}/Mes/${mes}/Semana/${semana}/listaProcessos/listaProcessos_02-12-2025.csv`
+        const url = `https://bucket-client-navix.s3.amazonaws.com/dashProcessos/listaProcessos/Modelo/${modelo}/IDlote/${lote}/Ano/${ano}`
 
         const dados = await processosModel.listaProcessos(url);
 

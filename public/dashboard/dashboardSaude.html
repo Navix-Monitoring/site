@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engenheiro Qualidade</title>
+  <link rel="icon" href="../assets/navix-logo.jpg" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ApexCharts -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
+  <script src="../js/sessao.js"></script>
+  <link rel="stylesheet" href="../css/dashboard.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href='https://cdn.boxicons.com/3.0.3/fonts/basic/boxicons.min.css' rel='stylesheet'>
+  <link href='https://cdn.boxicons.com/3.0.3/fonts/brands/boxicons-brands.min.css' rel='stylesheet'>
+</head>
+
+<body class="bg-gray-100">
+
+  <div class="flex flex-row w-full">
+
+    <!-- NAV BAR -->
+    <div
+      class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600 fixed top-0 left-0">
+      <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10" />
+
+      <div id="imagemUsuarioNavbar">
+        <div class="rounded-md w-20 h-20 mb-2"
+          style="background-image: url(../assets/img/foto-usuario.png); background-size: cover; background-repeat: no-repeat; background-position: center;">
+        </div>
+      </div>
+
+      <div id="nomeProfissao" class="text-center mb-6"></div>
+
+      <div class="flex flex-col gap-4 w-[80%]">
+        <a href="../perfil-visualizar.html"
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+          Perfil
+        </a>
+
+        <a onclick="redirecionar()"
+          class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium"
+          style="cursor: pointer;">
+          Dashboard
+        </a>
+
+        <a href="../admin.html" id="adm-only"
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+          Cadastrar Funcionários
+        </a>
+
+        <a href="./cadastroVeiculos.html"
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
+          Gerenciar Frota
+        </a>
+
+        <a href="https://navixsuporte.atlassian.net/jira/software/form/9d7593db-d676-44b4-a1f4-43762dea870c"
+          target="_blank"
+          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium ">
+          Suporte
+          <i class='bx bx-message-dots-2'></i>
+        </a>
+
+        <div class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
+          onclick="limparSessao()">
+          <a href="../index.html" class="no-underline text-white">
+            <h3 class="m-0 p-0">Sair</h3>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+
+      <!-- PAINEL DE KPIs E GRÁFICOS -->
+      <div id="painelDashboard" class="ml-[250px] p-6">
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-3 gap-6 mb-6">
+
+          <!-- Uso Médio da CPU -->
+          <div class="bg-white shadow-md p-6 rounded-lg text-center">
+            <h2 class="font-bold text-xl text-blue-900">Uso Mediana da CPU</h2>
+            <p class="text-3xl font-bold text-blue-700" id="kpi_cpu">45%</p>
+            <p class="text-gray-600 text-sm mt-2">Baseado nas últimas leituras.</p>
+          </div>
+
+          <!-- Uso Médio da RAM -->
+          <div class="bg-white shadow-md p-6 rounded-lg text-center">
+            <h2 class="font-bold text-xl text-blue-900">Uso Mediana da RAM</h2>
+            <p class="text-3xl font-bold text-blue-700" id="kpi_ram">62%</p>
+            <p class="text-gray-600 text-sm mt-2">Consumo de memória atual.</p>
+          </div>
+
+          <!-- Uso do Disco -->
+          <div class="bg-white shadow-md p-6 rounded-lg text-center">
+            <h2 class="font-bold text-xl text-blue-900">Uso do Disco</h2>
+            <p class="text-3xl font-bold text-blue-700" id="kpi_disco">90%</p>
+            <p class="text-gray-600 text-sm mt-2">Taxa de utilização do disco.</p>
+          </div>
+
+        </div>
+
+        <!-- GRÁFICOS -->
+        <div class="grid grid-cols-2 gap-6">
+
+          <!-- VELOCÍMETRO -->
+          <div class="bg-white shadow-md p-6 rounded-lg">
+            <h2 class="font-bold text-xl text-blue-900 mb-3">Saúde Geral dos Componentes</h2>
+            <div id="gaugeChart"></div>
+          </div>
+
+          <!-- COMPARAÇÃO ENTRE COMPONENTES -->
+          <div class="bg-white shadow-md p-6 rounded-lg">
+            <h2 class="font-bold text-xl text-blue-900 mb-3">Comparação da Saúde dos Componentes</h2>
+            <canvas id="componentComparisonChart"></canvas>
+          </div>
+
+        </div>
+
+        <!-- EVOLUÇÃO DA SAÚDE AO LONGO DO TEMPO -->
+        <div class="bg-white shadow-md p-6 rounded-lg mt-6">
+          <h2 class="font-bold text-xl text-blue-900 mb-3">Evolução da Saúde ao Longo da Semana</h2>
+          <canvas id="healthEvolutionChart"></canvas>
+        </div>
+
+      </div>
+    </div>
+    <div id="criarEditar"></div>
+
+  </div>
+
+</body>
+
+<script src="../js/dashboardEngenheiroQualidade.js"></script>
+<script src="../js/usuario/verificadorCargo.js"></script>
+<script src="../js/redirecionar.js"></script>
+
+<script>
+  const URL_JSON = "https://bucket-client-navix.s3.us-east-1.amazonaws.com/dashMediana/2025/RelatorioGeral.json";
+  const URL_JSON_ALERTA = "https://bucket-client-navix.s3.us-east-1.amazonaws.com/dashAlertas/Ultimos7Dias/Relatorio-Ultimos7Dias.json";
+
+  // FOTO
+  function carregarFotoUsuario() {
+    var imagemUsuarioNavbar = document.getElementById("imagemUsuarioNavbar");
+    if (imagemUsuarioNavbar) {
+      imagemUsuarioNavbar.innerHTML = `
+        <div class="rounded-md w-20 h-20 mb-2"
+          style="background-image: url(${sessionStorage.imagem}); background-size: cover; background-repeat: no-repeat; background-position: center;">
+        </div>`;
+    }
+  }
+
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    verificarCargo();
+    carregarFotoUsuario();
+    plotarGrafico()
+
+    var nomeEmpresa = sessionStorage.getItem("nome_ss");
+    var cargo = sessionStorage.getItem("cargo_ss");
+    var nomeProfissao = document.getElementById("nomeProfissao");
+
+    if (nomeProfissao) {
+      nomeProfissao.innerHTML = `
+        <p class="font-bold text-blue-900">${nomeEmpresa}</p>
+        <p class="mb-4 text-blue-900">Cargo: ${cargo}</p>`;
+    }
+    let kpiCpu = [];
+    let kpiRam = [];
+    let kpiDisco = [];
+    fetch(URL_JSON)
+      .then(resposta => resposta.json())
+      .then(jsonKpi => {
+        console.log("json kpi", jsonKpi)
+        jsonKpi[0].dias.forEach(element => {
+          kpiCpu.push(element.cpu);
+          kpiRam.push(element.ram);
+          kpiDisco.push(element.disco);
+        });
+        kpiCpu.sort((a, b) => a - b);
+        kpiRam.sort((a, b) => a - b);
+        kpiDisco.sort((a, b) => a - b);
+        const kpiValorCpu = kpiCpu[3];
+        const kpiValorRam = kpiRam[3];
+        const kpiValorDisco = kpiDisco[3];
+        document.getElementById('kpi_cpu').innerText = `${kpiValorCpu}%`;
+        document.getElementById('kpi_ram').innerText = `${kpiValorRam}%`;
+        document.getElementById('kpi_disco').innerText = `${kpiValorDisco}%`;
+      });
+
+
+    async function plotarGrafico() {
+      fetch(URL_JSON_ALERTA)
+        .then(resposta => resposta.json())
+        .then(jsonAlerta => {
+          console.log("json alerta", jsonAlerta.dias[0].lotes[0])
+          cpuCritico = jsonAlerta.dias[0].lotes[0].cpuCritico;
+          ramCritico = jsonAlerta.dias[0].lotes[0].ramCritico;
+          discoCritico = jsonAlerta.dias[0].lotes[0].discoCritico;
+          console.log(cpuCritico);
+          console.log(ramCritico);
+          console.log(discoCritico);
+          cpuCritico *= 0.5;
+          ramCritico *= 0.5;
+          discoCritico *= 0.5;
+          let saudeGeral = 100 - (cpuCritico + ramCritico + discoCritico);
+          console.log('saude geral', saudeGeral)
+          let saudeCpu = 100 - cpuCritico;
+          let saudeRam = 100 - ramCritico;
+          let saudeDisco = 100 - discoCritico;
+          var gaugeOptions = {
+            series: [saudeGeral],
+            chart: {
+              height: 260,
+              type: "radialBar",
+            },
+            plotOptions: {
+              radialBar: {
+                startAngle: -135,
+                endAngle: 135,
+                hollow: { size: "60%" },
+                dataLabels: {
+                  value: {
+                    fontSize: "28px",
+                    color: "#1e3a8a",
+                    formatter: val => val + "%"
+                  }
+                },
+                track: { background: "#d1d5db" },
+              }
+            },
+            colors: ["#F7D917"]
+          };
+
+          new Chart(document.getElementById('componentComparisonChart'), {
+            type: 'bar',
+            data: {
+              labels: ['CPU', 'RAM', 'Disco'],
+              datasets: [{
+                label: 'Saúde (%)',
+                data: [saudeCpu, saudeRam, saudeDisco],
+                backgroundColor: ['#1e40af', '#2563eb', '#3b82f6']
+              }]
+            },
+            options: {
+              scales: { y: { beginAtZero: true, max: 100 } }
+            }
+          });
+
+          new ApexCharts(document.querySelector("#gaugeChart"), gaugeOptions).render();
+        });
+    }
+  });
+</script>
+
+<!-- GRÁFICOS -->
+<script>
+  /* ===========================
+     1) GAUGE - APEXCHARTS
+     =========================== */
+
+  /* ===========================
+     2) COMPARAÇÃO - BARRAS
+     =========================== */
+
+  /* ===========================
+     3) EVOLUÇÃO - LINHA (CPU, RAM, DISCO)
+     =========================== */
+  new Chart(document.getElementById('healthEvolutionChart'), {
+    type: 'line',
+    data: {
+      labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4', 'Semana 5', 'Semana 6'],
+
+      datasets: [
+        {
+          label: 'CPU',
+          data: [70, 72, 75, 74, 78, 80],
+          borderWidth: 2,
+          tension: 0.3
+        },
+        {
+          label: 'RAM',
+          data: [60, 62, 61, 65, 67, 70],
+          borderWidth: 2,
+          tension: 0.3
+        },
+        {
+          label: 'Disco',
+          data: [85, 83, 88, 90, 92, 94],
+          borderWidth: 2,
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true, max: 100 }
+      }
+    }
+  });
+
+</script>
+
+</html>
