@@ -284,7 +284,7 @@
                 <canvas id="chartRul"></canvas>
               </div>
             </div>
-            </div>
+          </div>
         </div>
 
         <div class="mb-10">
@@ -318,6 +318,9 @@
       ];
       let frotaDados = {};
       let chartMultiLine, chartRul;
+
+      const RUL_LIMITE_ALERTA = 100; 
+      const RUL_MAX_GRAFICO = 130; 
 
       async function carregarDados() {
         try {
@@ -356,6 +359,24 @@
         chartMultiLine.update();
       }
 
+      function gerarDatasDinamicas(qtdTotal, pontoCorte) {
+        const datas = [];
+        const dataBase = new Date();
+        dataBase.setDate(dataBase.getDate() - pontoCorte);
+
+        for (let i = 0; i < qtdTotal; i++) {
+          if (i === pontoCorte) {
+            datas.push("Hoje");
+          } else {
+            const dia = String(dataBase.getDate()).padStart(2, "0");
+            const mes = String(dataBase.getMonth() + 1).padStart(2, "0");
+            datas.push(`${dia}/${mes}`);
+          }
+          dataBase.setDate(dataBase.getDate() + 1);
+        }
+        return datas;
+      }
+
       function atualizarDashboard() {
         const comp = document.getElementById("selComponente").value;
         if (!frotaDados[comp] || !frotaDados[comp]["semana"]) return;
@@ -372,8 +393,7 @@
         ).innerText = `Taxa de crescimento de uso (por dia).`;
 
         const boxAlerta = document.getElementById("boxAlerta");
-        
-        // Lógica do botão removida desta seção para evitar erros de console
+
         if (dados.kpis.criticos > 0) {
           boxAlerta.className =
             "bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-8";
@@ -387,7 +407,11 @@
             "Toda a frota opera dentro dos limites de segurança.";
         }
 
-        chartMultiLine.data.labels = dados.labels;
+        chartMultiLine.data.labels = gerarDatasDinamicas(
+          dados.labels.length,
+          dados.pontoCorte
+        );
+
         chartMultiLine.data.datasets = dados.series.map((serie, index) => {
           const corAzulDoLote = tonsAzul[index % tonsAzul.length];
           return {
@@ -415,16 +439,18 @@
 
         chartRul.data.labels = dados.rulLabels;
 
-        const rulVisual = dados.rul.map((d) => (d >= 999 ? 100 : d));
+        const rulVisual = dados.rul.map((d) =>
+          d > RUL_LIMITE_ALERTA ? RUL_MAX_GRAFICO : d
+        );
+
         const rulColors = dados.rul.map((d) => {
-          if (d < 5) return "#b91c1c";
-          if (d >= 999) return "#22c55e";
-          return "#1e40af";
+          if (d < 5) return "#b91c1c"; 
+          if (d > RUL_LIMITE_ALERTA) return "#22c55e"; 
+          return "#1e40af"; 
         });
 
         chartRul.data.datasets[0].data = rulVisual;
         chartRul.data.datasets[0].backgroundColor = rulColors;
-
         chartRul.data.datasets[0].originalData = dados.rul;
         chartRul.update();
 
@@ -438,8 +464,8 @@
 
           const isPositivo = valorOriginal > 0;
           const corBg = isPositivo
-            ? "bg-red-50 border-red-200"
-            : "bg-green-50 border-green-200";
+            ? "bg-red-200 border-red-200"
+            : "bg-green-200 border-green-200";
           const corTexto = isPositivo ? "text-red-700" : "text-green-700";
           const icone = isPositivo ? "bx-trending-up" : "bx-trending-down";
           const sinal = isPositivo ? "+" : "";
@@ -515,6 +541,24 @@
             maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
+              annotation: {
+                annotations: {
+                  limiteSeguranca: {
+                    type: "line",
+                    xMin: 100,
+                    xMax: 100,
+                    borderColor: "#6b7280",
+                    borderWidth: 1,
+                    borderDash: [4, 4],
+                    label: {
+                      display: true,
+                      content: "Fim do Risco",
+                      position: "start",
+                      font: { size: 10 },
+                    },
+                  },
+                },
+              },
               tooltip: {
                 callbacks: {
                   label: function (context) {
@@ -522,14 +566,17 @@
                       context.chart.data.datasets[0].originalData[
                         context.dataIndex
                       ];
-                    if (rawValue >= 999) return " Status: Estável (>90 dias)";
+                    if (rawValue > 100) return " Status: Estável (>100 dias)";
                     return " Dias Restantes: " + rawValue;
                   },
                 },
               },
             },
             scales: {
-              x: { title: { display: true, text: "Dias Restantes" }, max: 100 },
+              x: {
+                title: { display: true, text: "Dias Restantes" },
+                max: 130,
+              },
             },
           },
         });

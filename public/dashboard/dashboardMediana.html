@@ -64,7 +64,7 @@
             </a>
 
             <div class="topoTitulo">
-                <h1 class="tituloLote" id="tituloLote">Análise de Desempenho - Modelo Keniti</h1>
+                <h1 class="tituloLote" id="tituloLote">Análise de Desempenho - NAV-M100</h1>
             </div>
 
             <main class="card">
@@ -139,18 +139,29 @@
     let DADOS_EVOLUCAO = {};
     let DADOS_CARGA = {};
 
-    function atualizarCorKPI(valor, limite, elemento) {
-        if (!limite) return;
-        const numero = Number(valor);
+    function atualizarCorKPI(valor, limite, elemento, invertido = false) {
+    if (!limite) return;
+    const numero = Number(valor);
+
+    if (invertido) {
+        if (numero <= limite.critico) {
+            elemento.style.color = "red";
+        } 
+        else if (numero <= limite.atencao) {
+            elemento.style.color = "orange";
+        } else {
+            elemento.style.color = "green";
+        }
+    } else {
         if (numero >= limite.critico) {
             elemento.style.color = "red";
-        }
-        else if (numero >= limite.atencao) {
+        } else if (numero >= limite.atencao) {
             elemento.style.color = "orange";
         } else {
             elemento.style.color = "green";
         }
     }
+}
 
     function carregarUsuarioSessao() {
         var imagemUsuarioNavbar = document.getElementById("imagemUsuarioNavbar");
@@ -170,7 +181,7 @@
     const COR_ALERTA = '#dc2626';
     const COR_SEGURO = '#0d4299';
 
-    function prepararDatasetsDestaque(lotes, piorLoteLabel, limiteReferencia) {
+    function prepararDatasetsDestaque(lotes, piorLoteLabel, limiteReferencia, metrica) {
         const datasetsFinais = [];
 
         lotes.forEach(loteOriginal => {
@@ -189,8 +200,12 @@
             }
             else {
                 const coresCondicionais = loteOriginal.data.map(valor => {
+                    if (metrica === 'processo') {
+                    return (valor <= limiteReferencia) ? COR_ALERTA : COR_SEGURO;
+                } else {
                     return (valor >= limiteReferencia) ? COR_ALERTA : COR_SEGURO;
-                });
+                }
+            });
 
                 datasetsFinais.push({
                     label: loteOriginal.label,
@@ -282,7 +297,7 @@
             const dados = DADOS_EVOLUCAO[metrica].semana;
             const piorLoteLabel = encontrarPiorLote(dados.lotes);
             const limiteAtual = (LIMITES[metrica]) ? LIMITES[metrica].neutro : 0;
-            const novosDatasets = prepararDatasetsDestaque(dados.lotes, piorLoteLabel, limiteAtual);
+            const novosDatasets = prepararDatasetsDestaque(dados.lotes, piorLoteLabel, limiteAtual, metrica);
 
             graficoEvolucao.data.datasets = novosDatasets;
             graficoEvolucao.data.labels = dados.labels;
@@ -438,7 +453,7 @@
 
                 document.getElementById("kpiProcessoslote").innerText = piorProc.nome;
                 document.getElementById("kpiProcessos").innerText = Math.round(piorProc.valor);
-                atualizarCorKPI(piorProc.valor, LIMITES.processo, document.getElementById("kpiProcessos"));
+                atualizarCorKPI(piorProc.valor, LIMITES.processo, document.getElementById("kpiProcessos"), true);
 
                 document.getElementById("kpiDiscolote").innerText = piorDisco.nome;
                 document.getElementById("kpiDisco").innerText = Math.round(piorDisco.valor) + "%";
@@ -531,7 +546,7 @@
             if (ctxEvolucao) {
                 const dadosIniciais = DADOS_EVOLUCAO.cpu.semana;
                 const piorLoteLabelInicial = encontrarPiorLote(dadosIniciais.lotes);
-                const datasetsIniciais = prepararDatasetsDestaque(dadosIniciais.lotes, piorLoteLabelInicial);
+                const datasetsIniciais = prepararDatasetsDestaque(dadosIniciais.lotes, piorLoteLabelInicial, 'cpu');
                 const limiteInicial = LIMITES?.cpu?.neutro ?? 85;
                 graficoEvolucao = new Chart(ctxEvolucao, {
                     type: 'bar',
