@@ -41,10 +41,21 @@ async function jsonMensal(url) {
     }
 }
 
+function parametro() {
+    console.log("Acessei o dashboard model - listando os parametros")
+    const instrucaoSql = `
+    SELECT * FROM parametroHardware WHERE fkModelo = 1;
+    `
+    console.log("Executando a instrução de listar modelos:\n" + instrucaoSql)
+    return database.executar(instrucaoSql);
+}
+
+
 
 
 module.exports = {
     jsonDiario,
     jsonSemanal,
-    jsonMensal
+    jsonMensal,
+    parametro
 };
