@@ -15,4 +15,9 @@ router.get("/mensal/:nomeArquivo", (req, res) => {
     dashGController.mensal(req, res);
 });
 
+
+router.get("/parametroHardware", (req, res) => {
+    dashGController.listarParametros(req, res);
+});
+
 module.exports = router;
