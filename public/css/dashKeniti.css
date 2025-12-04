@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
+/* --- Estilos Globais --- */
 * {
     font-family: "Inter";
 }
@@ -8,6 +9,7 @@ body {
     background-color: #f2f3f7;
 }
 
+/* --- Títulos e Botão Voltar --- */
 .tituloLote {
     font-size: 50px;
     width: 100%;
@@ -21,14 +23,6 @@ body {
     gap: 10vh;
 }
 
-.selectData {
-    text-align: center;
-    padding: 8px;
-    border-radius: 8px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.589);
-    cursor: pointer;
-}
-
 .btnVoltar {
     width: fit-content;
     display: flex;
@@ -40,6 +34,7 @@ body {
     transform: scale(1.01);
 }
 
+/* --- Seção de KPIs (Cards Superiores) --- */
 .kpi-section-title {
     width: 100%;
     max-width: 100%;
@@ -63,20 +58,20 @@ body {
     flex-direction: column;
 }
 
-.kpi-column {
+.kpi-row {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     border-right: 1px solid #E5E7EB;
     padding: 0 10px;
 }
 
-.kpi-row {
+.kpi-column {
     flex: 1;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     border-right: 1px solid #E5E7EB;
@@ -113,70 +108,18 @@ body {
     font-size: 2.8vh;
 }
 
-.cabecalho {
-    display: grid;
-    grid-template-columns: 150px 200px 130px 150px 200px 100px;
-    align-items: center;
+/* --- Inputs e Selects --- */
+.escolhaVisu {
+    margin-bottom: 10px;
+    width: 9vh;
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.589);
+    cursor: pointer;
 }
 
-.botoes {
-    display: grid;
-    grid-template-columns: 100px 100px;
-}
-
-.cards-lotes {
-    display: grid;
-    grid-template-columns: 150px 200px 150px 50px 320px 100px 100px;
-    align-items: center;
-}
-
-.cards-modelos {
-    display: grid;
-    grid-template-columns: 150px 200px 170px 100px 200px 100px;
-}
-
-.processos {
-    font-size: 10px;
-}
-
-.tituloKPI {
-    font-size: 15px;
-    font-weight: bold;
-}
-
-.colour-ball {
-    height: 75px;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    justify-content: center;
-    width: 75px;
-    border-radius: 100%;
-    border: 4.5px solid;
-}
-
-.valor {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.alerta {
-    display: flex;
-}
-
-.ladinho {
-    margin: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-}
-
-.editarLote {
-    justify-self: center;
-    align-self: center;
-}
-
+/* --- Layout Principal e Cards de Gráficos --- */
 .card {
     margin: 10px;
     border-radius: 10px;
@@ -188,40 +131,46 @@ body {
     align-items: center;
 }
 
-.bolinha {
-    background-color: red;
-    border-radius: 100%;
-    margin-top: 2.5px;
-    width: 12px;
-    height: 12px;
-}
-
-.chart {
-    width: 100px;
-    height: 100px;
-}
-
-.graficos {
-    display: flex;
-    margin-top: 5vh;
-    height: fit-content;
-    gap: 20px;
-    align-items: center;
+.dashboard-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 24px;
     width: 100%;
-    justify-content: center;
+    box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
+    height: auto;
+    display: flex;
+    flex-direction: column;
 }
 
-.container-grafico {
-    width: 49%;
+.dashboard-card-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* --- Containers dos Gráficos (Chart.js) --- */
+.chart-container-integrated {
+    width: 100%;
+    height: 50vh;
+    display: block;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+}
+
+.chart-container-alert {
+    width: 100%;
     height: 40vh;
     padding: 2vh;
-    background-color: #F7F8FC;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.589);
+    background-color: white;
+    box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
     margin-bottom: 1vh;
     margin-top: 2vh;
     border-radius: 10px;
 }
 
+/* --- Grid inferior (Relação e Carga) --- */
 .container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -239,155 +188,4 @@ body {
     flex-direction: column;
     min-width: 0;
     width: 100%;
-}
-
-.nvlRisco {
-    font-weight: bold;
-}
-
-.chart-container {
-    width: 100%;
-    height: 50vh;
-    padding: 2vh;
-    background-color: #F7F8FC;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.589);
-    margin-bottom: 1vh;
-    border-radius: 10px;
-}
-
-.chart-container-alert {
-    width: 100%;
-    height: 40vh;
-    padding: 2vh;
-    background-color: white;
-    box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
-    margin-bottom: 1vh;
-    margin-top: 2vh;
-    border-radius: 10px;
-}
-
-.carrossel {
-    display: flex;
-    gap: 0.5vh;
-    align-items: center;
-}
-
-.carrossel-btn {
-    font-size: 3vh;
-    cursor: pointer;
-    border: none;
-    background-color: none;
-    color: black;
-}
-
-.titulo {
-    border: 1.5px black solid;
-    background-color: white;
-    width: fit-content;
-    font-size: 2vh;
-    font-weight: 700;
-    padding: 0.4vh;
-    border-radius: 10px;
-}
-
-.dashboard-card {
-    background-color: white;
-    border-radius: 10px;
-    padding: 24px;
-    width: 100%;
-    box-shadow: 0 0 12px rgba(155, 155, 155, 0.589);
-    height: auto;
-    display: flex;
-    flex-direction: column;
-}
-
-.chart-container-integrated {
-    width: 100%;
-    height: 50vh;
-    display: block;
-    background-color: transparent;
-    box-shadow: none;
-    padding: 0;
-    margin: 0;
-}
-
-.dashboard-card-header h2 {
-    font-size: 20px;
-    font-weight: 700;
-    color: #333;
-}
-
-.heatmap-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-.heatmap-table th {
-    padding: 12px 16px;
-    background-color: #fcfcfc;
-    color: #6B7280;
-    font-weight: 600;
-    border-bottom: 2px solid #E5E7EB;
-    text-align: left;
-}
-
-.heatmap-table td {
-    padding: 14px 16px;
-    border-bottom: 1px solid #E5E7EB;
-    font-weight: 500;
-}
-
-.heatmap-table tbody tr {
-    transition: background-color 0.2s;
-}
-
-.heatmap-table tbody tr:hover {
-    background-color: #EFF6FF;
-    cursor: pointer;
-}
-
-.heatmap-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.heatmap-table th:first-child,
-.heatmap-table td:first-child {
-    text-align: left;
-    font-weight: 700;
-    color: #333;
-}
-
-.heatmap-table th:not(:first-child),
-.heatmap-table td:not(:first-child) {
-    text-align: center;
-}
-
-.heatmap-table tbody tr.lote-destaque {
-    opacity: 1;
-    background-color: #ffe3df;
-    font-weight: 600;
-}
-
-.escolhaVisu {
-    margin-bottom: 10px;
-    width: 9vh;
-    text-align: center;
-    padding: 8px;
-    border-radius: 8px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.589);
-    cursor: pointer;
-}
-
-.topicoGraf {
-    display: flex;
-    justify-content: space-between;
-}
-
-.kpiData {
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 500;
-    width: 25vh;
 }
