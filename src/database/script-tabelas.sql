@@ -33,9 +33,7 @@ CREATE TABLE endereco(
     pais VARCHAR(20),
     fkEmpresa INT NOT NULL,
     CONSTRAINT fkEnderecoEmpresa FOREIGN KEY(fkEmpresa) REFERENCES empresa(id)
-
 );
-
 
 -- Tabela: funcionario
 CREATE TABLE funcionario(
@@ -53,7 +51,6 @@ CREATE TABLE funcionario(
     CONSTRAINT fkCargoFuncionario FOREIGN KEY(fkCargo) REFERENCES cargo(id)
 );
 
-
 -- Tabela: lote
 CREATE TABLE lote(
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -69,6 +66,7 @@ CREATE TABLE lote(
 CREATE TABLE modelo(
     id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(50),
+    mac_address VARCHAR(20) UNIQUE NULL,
     status ENUM('Ativo','Descontinuado'),
     versaoPilotoAutomatico VARCHAR(45),
     fkEmpresa int,
@@ -90,7 +88,7 @@ CREATE TABLE veiculo(
 -- Tabela: hardware (Ajustado o 'id' para ser AUTO_INCREMENT para facilitar as FKs)
 CREATE TABLE hardware(
     id INT PRIMARY KEY AUTO_INCREMENT,
-    tipo ENUM('CPU','RAM','DISCO')
+    tipo ENUM('CPU','RAM','DISCO', 'CPUPROCESSOS', 'RAMPROCESSOS','DISCOPROCESSOS')
 );
 
 -- Tabela Associativa: parametroHardware (N:N)
@@ -107,33 +105,31 @@ CREATE TABLE parametroHardware(
     PRIMARY KEY(fkHardware, fkModelo, unidadeMedida)
 );
 
+
 -- Inserir cargos
 INSERT INTO cargo (titulo) VALUES
 ('Administrador'), 
 ('Engenheiro automotivo'),   
 ('Engenheiro de qualidade');
 
--- Inserir empresas
+-- Inserir empresas (CORRIGIDO)
 INSERT INTO empresa (razaoSocial, cnpj, codigo_ativacao) VALUES
-('Tech Solutions LTDA', '12345678000195', 'ABC123'),
+('SPTechMotors', '12345678000195', 'ABC123'),
 ('Auto Veículos S.A.', '98765432000189', 'XYZ987');
 
 -- Inserir endereços
-INSERT INTO endereco (rua, numero, cep, bairro, cidade, estado, pais,fkEmpresa) VALUES 
-('Rua das Flores', 123, '12345678', 'Centro', 'São Paulo', 'SP', 'Brasil',1),
-('Av. Paulista', 1000, '87654321', 'Bela Vista', 'São Paulo', 'SP', 'Brasil',2);
+INSERT INTO endereco (rua, numero, cep, bairro, cidade, estado, pais, fkEmpresa) VALUES 
+('Rua das Flores', 123, '12345678', 'Centro', 'São Paulo', 'SP', 'Brasil', 1),
+('Av. Paulista', 1000, '87654321', 'Bela Vista', 'São Paulo', 'SP', 'Brasil', 2);
 
 -- Inserir funcionários
 INSERT INTO funcionario (fkEmpresa, nome, sobrenome, telefone, statusPerfil, email, senha, fkCargo) VALUES 
-(1, 'Carlos', 'Silva', '11987654321', 'Ativo' ,'carlos.silva@tech.com', 'senha123', 1),
-(2, 'Ana', 'Oliveira', '11987654322','Ativo' , 'ana.oliveira@auto.com', 'senha456', 2),
-(1, 'Gabriel', 'Santos', '11982654321','Ativo' , 'gabriel.santos@tech.com', 'senha143', 3);
+(1, 'Carlos', 'Silva', '11987654321', 'Ativo', 'carlos.silva@tech.com', 'senha123', 1),
+(2, 'Ana', 'Oliveira', '11987654322','Ativo', 'ana.oliveira@auto.com', 'senha456', 2),
+(1, 'Gabriel', 'Santos', '11982654321','Ativo', 'gabriel.santos@tech.com', 'senha143', 3);
 
 -- Inserir lotes
-INSERT INTO navix.lote (codigo_lote, data_fabricacao, fkEmpresa, status)
-VALUES
--- Empresa 1
-
+INSERT INTO lote (codigo_lote, data_fabricacao, fkEmpresa, status) VALUES
 ('LT-A93F', '2025-02-11', 1, 'ativo'),
 ('LT-B72K', '2024-12-28', 1, 'inativo'),
 ('LT-C19P', '2025-03-23', 1, 'ativo'),
@@ -144,7 +140,6 @@ VALUES
 ('LT-H56N', '2025-01-30', 1, 'manutenção'),
 ('LT-J83M', '2025-10-08', 1, 'ativo'),
 ('LT-K62Z', '2025-04-17', 1, 'inativo'),
--- Empresa 2
 ('ENG-A93F', '2025-02-11', 2, 'ativo'),
 ('CAR-B72K', '2024-12-28', 2, 'ativo'),
 ('TRN-C19P', '2025-03-23', 2, 'manutenção'),
@@ -157,41 +152,46 @@ VALUES
 ('OIL-K62Z', '2025-04-17', 2, 'ativo');
 
 -- Inserir modelos
-INSERT INTO modelo (nome, status, versaoPilotoAutomatico, fkEmpresa) VALUES 
-('NAV-M100', 'Ativo', '1.2.5', 1),
-('NAV-M200', 'Descontinuado', '2.0.1', 2),
-('E-Drive Alpha L3', 'ativo','1.2.5', 1),
-('NeoMotion LX3', 'descontinuado','2.3.5', 2),
-('Voltura Urban 300', 'ativo','6.4.2', 2),
-('Autovance E3', 'descontinuado','2.4.6', 1),
-('TerraEV Vision L3', 'ativo','1.5.3', 2),
--- Modelos 100% Elétricos - Nível 4
-('E-Drive Alpha L4', 'ativo','6.8.9', 1),
-('NeoMotion LX4', 'ativo','2.2.5', 2),
-('Voltura Urban 400', 'descontinuado','2.2.2', 1),
-('Autovance E4', 'ativo','7.5.3', 1),
-('TerraEV Vision L4', 'descontinuado','4.5.9', 2),
-('SkyRide Autonomous', 'ativo','7.3.2', 2),
-('ElectraOne L4+', 'descontinuado','2.3.4', 2);
+INSERT INTO modelo (nome, mac_address, status, versaoPilotoAutomatico, fkEmpresa) VALUES 
+('NAV-M100', NULL, 'Ativo', '1.2.5', 1),
+('NAV-M200', NULL, 'Descontinuado', '2.0.1', 2),
+('E-Drive Alpha L3', NULL, 'ativo','1.2.5', 1),
+('NeoMotion LX3', NULL, 'descontinuado','2.3.5', 2),
+('Voltura Urban 300', NULL, 'ativo','6.4.2', 2),
+('Autovance E3', NULL, 'descontinuado','2.4.6', 1),
+('TerraEV Vision L3', NULL, 'ativo','1.5.3', 2),
+('E-Drive Alpha L4', NULL, 'ativo','6.8.9', 1),
+('NeoMotion LX4', NULL, 'ativo','2.2.5', 2),
+('Voltura Urban 400', NULL, 'descontinuado','2.2.2', 1),
+('Autovance E4', NULL, 'ativo','7.5.3', 1),
+('TerraEV Vision L4', NULL, 'descontinuado','4.5.9', 2),
+('SkyRide Autonomous', NULL, 'ativo','7.3.2', 2),
+('ElectraOne L4+', NULL, 'descontinuado','2.3.4', 2);
 
--- Inserir veículos
 INSERT INTO veiculo (fkModelo, fkLote, data_ativacao) VALUES 
 (1, 1, '2025-01-01'),
-(2, 2, '2025-02-15');
+(2, 2, '2025-02-15'),
+(1, 1, '2025-01-01'),
+(1, 2, '2025-02-15'),
+(1, 3, '2025-03-10'),
+(1, 4, '2025-04-18'),
+(1, 5, '2025-05-22'),
+(1, 6, '2025-06-30');
 
--- Inserir hardware
 INSERT INTO hardware (tipo) VALUES 
 ('CPU'),
 ('RAM'),
-('DISCO');
+('DISCO'),
+('CPUPROCESSOS'),
+('RAMPROCESSOS'),
+('DISCOPROCESSOS');
 
--- Inserir parametros hardware (CPU uso, CPU temperatura, RAM, Disco)
 INSERT INTO parametroHardware (fkHardware, fkModelo, unidadeMedida, parametroMinimo, parametroNeutro, parametroAtencao, parametroCritico) VALUES 
-(1, 1, 'USO', 20, 50, 75, 90),        -- CPU uso
-(1, 1, 'TEMPERATURA', 40, 60, 75, 90), -- CPU temperatura
-(2, 1, 'GB', 15, 25, 60, 80),          -- RAM
-(3, 1, 'GB', 10, 20, 60, 80);          -- Disco
-
-
-select * from funcionario f
-inner join cargo c ON c.id = f.fkCargo;
+(1, 1, 'USO', 20, 50, 75, 90),
+(1, 1, 'TEMPERATURA', 40, 60, 75, 90),
+(1, 1, 'QTD', 120, 160, 210, 250),
+(2, 1, 'GB', 15, 25, 60, 80),
+(3, 1, 'GB', 10, 20, 60, 80),
+(4, 1, 'USO', 0, 50, 70, 100),
+(5, 1, 'MB', 0, 10, 20, 30),
+(6, 1, 'MB', 0, 2, 5, 10);
