@@ -77,6 +77,8 @@ function abrirLote(idLote) {
         window.location = "/dashboard/dashboardSaude.html";
     } else if (dashboardSelecionada === "EngenheiroProcesso") {
         window.location = "/dashboard/dashProcessos.html";
+    } else if (dashboardSelecionada === "EngenheiroBateria") {
+        window.location = "/dashboard/dashboardBateria.html"
     } else {
         // Caso não seja nenhum dos dois, mantém o padrão
         window.location = "/dashboard/lote.html";

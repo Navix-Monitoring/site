@@ -206,13 +206,15 @@
 </a>
       `;
       alertasDiv.innerHTML += `
-        <a href="./dashboard/dashboardBateria.html" 
-           class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
-          <div>
-            <p class="text-black font-semibold text-lg">Dashboard Bateria</p>
-            <p class="text-black">Descrição: Monitoramento da Saúde da Bateria</p>
-          </div>
-        </a>
+
+<a href="./dashboard/dashboardEngenheiroQualidade.html" 
+   onclick="pegarSessionStorage('EngenheiroBateria')"
+   class="flex items-center bg-white border-l-4 border-blue-600 p-4 rounded-lg shadow-md hover:bg-blue-50">
+  <div>
+    <p class="text-black font-semibold text-lg">Dashboard Bateria</p>
+    <p class="text-black">Descrição: Monitoramento da Saúde da Bateria</p>
+  </div>
+</a>
       `;
       alertasDiv.innerHTML += `
 <a href="./dashboard/dashboardEngenheiroQualidade.html" 
