@@ -57,8 +57,8 @@
   <!-- CONTEÚDO PRINCIPAL -->
   <aside class="ml-[250px] p-6 h-[140px] border-b bg-white shadow-md">
     <h1 class="text-2xl font-bold mb-4 text-blue-900">Dashboard de Latência</h1>
-    <p class="text-gray-700">Monitoramento de processos, gargalos e desempenho do sistema.</p>
-    <div class="flex justify-end text-xs gap-4 mb-1">
+    <p class="text-gray-700"></p>
+    <div class="flex justify-end text-s gap-4 mb-1">
       <span><span class="inline-block w-3 h-3 bg-red-600 mr-1"></span>Crítico</span>
       <span><span class="inline-block w-3 h-3 bg-orange-500 mr-1"></span>Alerta</span>
       <span><span class="inline-block w-3 h-3 bg-yellow-500 mr-1"></span>Neutro</span>
@@ -67,12 +67,14 @@
   </aside>
 
   <section class="ml-[250px] h-[850px] overflow-y-auto p-6 bg-gray-50">
-    <select class="border rounded-md pl-5 pr-2 py-2 mb-4" id="selectPeriodo">
+    
+    <!-- <select class="border rounded-md pl-5 pr-2 py-2 mb-4" id="selectPeriodo">
       <option value="dia" selected>Dia</option>
       <option value="semana">Semana</option>
       <option value="mes">Mês</option>
       <option value="ano">Ano</option>
-    </select>
+    </select> -->
+
     <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
       <div class="bg-white p-4 rounded-md shadow-md">
@@ -127,8 +129,8 @@
         <div class="flex justify-between items-center mb-2">
 
           <h3 class="text-lg font-semibold">Lista de Processos
-            <span class="relative group cursor-pointer text-gray-500 text-sm bg-gray-200 px-1 rounded">i
-              <div class="absolute hidden group-hover:block bg-white shadow-md p-2 rounded text-xs left-6 top-0 w-32">
+            <span class="relative group cursor-pointer text-gray-500 text-s bg-gray-200 px-1 rounded">i
+              <div class="absolute hidden z-100 group-hover:block bg-white shadow-md p-2 rounded text-s left-6 top-0 w-32">
                 <p><span class="text-red-600 font-bold">■</span> Crítico</p>
                 <p><span class="text-orange-500 font-bold">■</span> Alerta</p>
                 <p><span class="text-yellow-500 font-bold">■</span>Neutro</p>
@@ -137,12 +139,15 @@
           </h3>
           <span class=" text-gray-600">Total: 27</span>
         </div>
+        <p>Filtrar:</p>
         <div class="headerProcessos grid grid-cols-5">
+          
           <div class="inputPesquisa w-70">
             <input type="text" class="border rounded-md pl-5 pr-4 py-2 w-full" id="processo" placeholder=" " required>
             <label for="processo"> Nome do Processo <i class='bx  bx-search-alt'></i></label>
           </div>
           <div>
+            
             <select name="" id="" class="border rounded-md pl-5 pr-2 py-2">
               <option value="">Criticidade</option>
               <option value="">Crítico</option>
