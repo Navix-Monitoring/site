@@ -1,5 +1,7 @@
 const dataAtual = new Date();
 
+nomeLote.innerHTML = "Lote: "
+
 const ano = dataAtual.getFullYear();
 const mes = (dataAtual.getMonth() + 1);
 const dia = dataAtual.getDate();
@@ -11,6 +13,9 @@ function calcularSemana(dia) {
     if (dia <= 22) return 3;
     return 4;
 }
+let dadosGargalos;
+let dadosGerais;
+let dadosLista;
 
 async function atualizarTudo() {
     document.getElementById("loader-processos").classList.remove("oculto");
@@ -26,6 +31,7 @@ async function atualizarTudo() {
         console.log("Dados gerais carregados:", geral);
         console.log("Lista de gargalos carregada: ", gargalos);
     } finally {
+        gerarDadosGraficos();
         document.getElementById("loader-processos").classList.add("oculto");
     }
 }
@@ -76,6 +82,8 @@ async function buscarCSVGargalos() {
     console.log(conteudos)
 
     gerarDadosGargalos(conteudos);
+
+    dadosGargalos = conteudos;
 
 }
 
@@ -196,6 +204,92 @@ async function buscarCSVGeral() {
 
     console.log("Total de linhas combinadas:", conteudos.length);
     console.log(conteudos)
+    
+    dadosGerais = conteudos;
+}
+
+async function gerarDadosGraficos(){
+    let dadosGerais2 = dadosLista
+
+    let dadosGeraisRam = dadosGerais
+
+    let dadosGeraiTempoVida = dadosLista
+
+
+
+    dadosGerais2.sort((a,b)=>{
+         const cpuA = parseFloat(a.Cpu) || 0;
+        const cpuB = parseFloat(b.Cpu) || 0;
+        return cpuB - cpuA; 
+    });
+    
+
+    dadosGeraisRam.sort((a,b)=>{
+         const ramA = parseFloat(a.Ram) || 0;
+        const ramb = parseFloat(b.Ram) || 0;
+        return ramb - ramA; 
+    });
+
+     dadosGeraiTempoVida.sort((a,b)=>{
+         const tempoA = parseFloat(a.Ram) || 0;
+        const tempob = parseFloat(b.Ram) || 0;
+        return tempob - tempoA; 
+    });
+
+
+    const Top5MaioresCpu = dadosGerais2.slice(0, 5);
+    const Top3MaioresRam = dadosGeraisRam.slice(0, 3);
+    const Top5TempoVida = dadosGeraiTempoVida.slice(0,5);
+
+
+
+    criarGrafico("graficoTopCPU", "bar", [Top5MaioresCpu[0].Nome, Top5MaioresCpu[1].Nome, Top5MaioresCpu[2].Nome, Top5MaioresCpu[3].Nome, Top5MaioresCpu[4].Nome], [Top5MaioresCpu[0].Cpu, Top5MaioresCpu[1].Cpu, Top5MaioresCpu[2].Cpu, Top5MaioresCpu[3].Cpu, Top5MaioresCpu[4].Cpu]);
+      criarGrafico(
+      "graficoRam",
+      "line",
+      ["t1", "t2", "t3", "t4", "t5"], // tempo no eixo X
+      [], // deixe vazio porque não será usado
+      undefined,
+      {
+        plugins: {
+          legend: { display: true }
+        },
+        elements: {
+          line: {
+            tension: 0.3
+          }
+        },
+        data: {
+          labels: ["t1", "t2", "t3", "t4", "t5"],
+          datasets: [
+            {
+              label: Top3MaioresRam[0].Nome,
+              data: [10, 30, 25, 40, 35],
+              borderColor: "#6ce5e8",
+              backgroundColor: "transparent",
+              borderWidth: 3
+            },
+            {
+              label: Top3MaioresRam[1].Nome,
+              data: [20, 22, 18, 30, 27],
+              borderColor: "#41b8d5",
+              backgroundColor: "transparent",
+              borderWidth: 3
+            },
+            {
+              label: Top3MaioresRam[2].Nome,
+              data: [15, 18, 22, 20, 25],
+              borderColor: "#2d8bba",
+              backgroundColor: "transparent",
+              borderWidth: 3
+            }
+          ]
+        }
+      }
+    );
+
+    criarGrafico("graficoVida", "bar", [Top5TempoVida[0].Nome, Top5TempoVida[1].Nome, Top5TempoVida[2].Nome,Top5TempoVida[3].Nome,Top5TempoVida[4].Nome], [Top5TempoVida[0].TempoVida, Top5TempoVida[1].TempoVida,Top5TempoVida[2].TempoVida,Top5TempoVida[3].TempoVida,Top5TempoVida[4].TempoVida]);
+
 
 }
 
@@ -297,6 +391,7 @@ async function buscarCSVLista() {
 
     listarProcessos(conteudos);
     gerarKPIS(conteudos);
+    dadosLista = conteudos;
 }
 
 async function listarProcessos(conteudos) {

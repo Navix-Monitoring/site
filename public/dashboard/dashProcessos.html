@@ -60,7 +60,7 @@
   <!-- CONTEÚDO PRINCIPAL -->
   <aside class="ml-[250px] p-6 h-[140px] border-b bg-white shadow-md">
     <h1 class="text-2xl font-bold mb-4 text-blue-900">Dashboard de Latência</h1>
-    <p class="text-gray-700">Lote: </p>
+    <p id="nomeLote" class="text-gray-700">Lote: </p>
     <div class="flex justify-end text-s gap-4 mb-1">
       <span><span class="inline-block w-3 h-3 bg-red-600 mr-1"></span>Crítico</span>
       <span><span class="inline-block w-3 h-3 bg-orange-500 mr-1"></span>Alerta</span>
@@ -283,52 +283,9 @@
     }
 
 
-    criarGrafico("graficoTopCPU", "bar", ["procA", "procB", "procC", "procD", "procE"], [80, 50, 40, 30, 20]);
-    criarGrafico(
-      "graficoRam",
-      "line",
-      ["t1", "t2", "t3", "t4", "t5"], // tempo no eixo X
-      [], // deixe vazio porque não será usado
-      undefined,
-      {
-        plugins: {
-          legend: { display: true }
-        },
-        elements: {
-          line: {
-            tension: 0.3
-          }
-        },
-        data: {
-          labels: ["t1", "t2", "t3", "t4", "t5"],
-          datasets: [
-            {
-              label: "Processo A",
-              data: [10, 30, 25, 40, 35],
-              borderColor: "#6ce5e8",
-              backgroundColor: "transparent",
-              borderWidth: 3
-            },
-            {
-              label: "Processo B",
-              data: [20, 22, 18, 30, 27],
-              borderColor: "#41b8d5",
-              backgroundColor: "transparent",
-              borderWidth: 3
-            },
-            {
-              label: "Processo C",
-              data: [15, 18, 22, 20, 25],
-              borderColor: "#2d8bba",
-              backgroundColor: "transparent",
-              borderWidth: 3
-            }
-          ]
-        }
-      }
-    );
+    
+  
 
-    criarGrafico("graficoVida", "bar", ["proc1", "proc2"], [300, 150]);
     criarGrafico("graficoGargalos", "line", ["Seg", "Ter", "Qua"], [2, 4, 1]);
     criarGrafico("graficoTopGargalo", "bar", ["A", "B", "C"], [10, 8, 3]);
 

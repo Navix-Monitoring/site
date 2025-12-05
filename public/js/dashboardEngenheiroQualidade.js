@@ -68,6 +68,7 @@ function gerarCorBolinha(index) {
 function abrirLote(idLote) {
     // Guarda o lote selecionado
     localStorage.setItem('lote', idLote);
+    localStorage.setItem('nomeLote', )
 
     // Recupera a dashboard selecionada do sessionStorage
     const dashboardSelecionada = sessionStorage.getItem("dashboardSelecionada");
