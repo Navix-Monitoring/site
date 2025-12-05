@@ -319,8 +319,8 @@
       let frotaDados = {};
       let chartMultiLine, chartRul;
 
-      const RUL_LIMITE_ALERTA = 100; 
-      const RUL_MAX_GRAFICO = 130; 
+      const RUL_LIMITE_ALERTA = 100;
+      const RUL_MAX_GRAFICO = 130;
 
       async function carregarDados() {
         try {
@@ -412,11 +412,15 @@
           dados.pontoCorte
         );
 
+        // --- MUDANÇA 1: APLICAR LIMITE E SALVAR ORIGINAL ---
         chartMultiLine.data.datasets = dados.series.map((serie, index) => {
           const corAzulDoLote = tonsAzul[index % tonsAzul.length];
           return {
             label: serie.label,
-            data: serie.data,
+            // Visualmente trava em 100
+            data: serie.data.map(valor => valor > 100 ? 100 : valor),
+            // Salva dado original para o tooltip
+            originalData: serie.data,
             borderWidth: 2,
             tension: 0.4,
             backgroundColor: corAzulDoLote,
@@ -431,6 +435,7 @@
             },
           };
         });
+
         for (let i = 0; i < 6; i++) {
           const leg = document.getElementById(`leg-${i}`);
           if (leg) leg.classList.remove("legend-hidden");
@@ -471,15 +476,15 @@
           const sinal = isPositivo ? "+" : "";
 
           const cardHtml = `
-                    <div class="slope-card border rounded-lg p-4 flex flex-col items-center justify-center ${corBg}">
-                        <span class="text-gray-600 font-bold text-sm mb-1">${nome}</span>
-                        <div class="flex items-center gap-1">
-                            <i class='bx ${icone} text-xl ${corTexto}'></i>
-                            <span class="text-2xl font-bold ${corTexto}">${sinal}${valorFormatado}%</span>
-                        </div>
-                        <span class="text-xs text-gray-500 mt-1">ao dia</span>
-                    </div>
-                `;
+            <div class="slope-card border rounded-lg p-4 flex flex-col items-center justify-center ${corBg}">
+                <span class="text-gray-600 font-bold text-sm mb-1">${nome}</span>
+                <div class="flex items-center gap-1">
+                    <i class='bx ${icone} text-xl ${corTexto}'></i>
+                    <span class="text-2xl font-bold ${corTexto}">${sinal}${valorFormatado}%</span>
+                </div>
+                <span class="text-xs text-gray-500 mt-1">ao dia</span>
+            </div>
+          `;
           gridContainer.innerHTML += cardHtml;
         }
       }
@@ -521,10 +526,17 @@
                       borderRadius: 2,
                     };
                   },
+                  // --- MUDANÇA 2: TOOLTIP LENDO DADO ORIGINAL ---
+                  label: function(context) {
+                    const dadosOriginais = context.dataset.originalData;
+                    const valorReal = dadosOriginais ? dadosOriginais[context.dataIndex] : context.parsed.y;
+                    return `${context.dataset.label}: ${valorReal}%`;
+                  }
                 },
               },
             },
-            scales: { y: { min: 0, suggestedMax: 105 } },
+            // --- MUDANÇA 3: EIXO Y TRAVADO EM 100 ---
+            scales: { y: { min: 0, max: 100 } },
           },
         });
 
