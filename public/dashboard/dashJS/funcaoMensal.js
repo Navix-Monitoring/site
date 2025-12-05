@@ -7,7 +7,7 @@ async function ultimasSemanas() {
 
     if (chartAlertasSemana) chartAlertasSemana.destroy();
     if (chartComparativo) chartComparativo.destroy();
-
+    if (chartHardware) chartHardware.destroy();
 
 
     document.getElementById("input1").style.display = "none"
@@ -412,6 +412,144 @@ async function ultimasSemanas() {
         );
 
         chartComparativo.render();
+
+        //Gráfico que compara hardware por semana
+
+        somaCPUPorSemana = [];
+        somaRAMPorSemana = [];
+        somaDiscoPorSemana = [];
+        somaTempPorSemana = [];
+
+        for (let s = 0; s < 4; s++) {
+            let cpu = 0, ram = 0, disco = 0, temp = 0;
+
+            semanas[s].forEach(dia => {
+                dia.lotes.forEach(lote => {
+                    cpu += lote.cpuCritico;
+                    ram += lote.ramCritico;
+                    disco += lote.discoCritico;
+                    temp += lote.tempCritico;
+                });
+            });
+
+            somaCPUPorSemana.push(cpu);
+            somaRAMPorSemana.push(ram);
+            somaDiscoPorSemana.push(disco);
+            somaTempPorSemana.push(temp);
+        }
+
+        somaCPUPorSemana2 = [];
+        somaRAMPorSemana2 = [];
+        somaDiscoPorSemana2 = [];
+        somaTempPorSemana2 = [];
+
+        const semanas2_2 = [];
+        for (let i = 0; i < 4; i++) {
+            semanas2_2.push(json2.dias.slice(i * 7, (i + 1) * 7));
+        }
+
+        semanas2_2.reverse();
+
+        for (let s = 0; s < 4; s++) {
+            let cpu2 = 0, ram2 = 0, disco2 = 0, temp2 = 0;
+
+            semanas2_2[s].forEach(dia => {
+                dia.lotes.forEach(lote => {
+                    cpu2 += lote.cpuCritico;
+                    ram2 += lote.ramCritico;
+                    disco2 += lote.discoCritico;
+                    temp2 += lote.tempCritico;
+                });
+            });
+
+            somaCPUPorSemana2.push(cpu2);
+            somaRAMPorSemana2.push(ram2);
+            somaDiscoPorSemana2.push(disco2);
+            somaTempPorSemana2.push(temp2);
+        }
+
+        document.getElementById("select_hardware_comparacao").onchange =
+            () => ({
+                CPU: compararCPUSemanal,
+                RAM: compararRAMSemanal,
+                TEMP: compararTEMPSemanal,
+                DISCO: compararDiscoSemanal
+            }[select_hardware_comparacao.value]());
+
+            compararCPUSemanal()
+
+        function compararCPUSemanal() {
+            if (chartHardware) chartHardware.destroy();
+
+            let graf = {
+                chart: { type: "line", height: 350 },
+                stroke: { curve: "smooth", width: 3 },
+                series: [
+                    { name: "4 semanas atuais", data: somaCPUPorSemana },
+                    { name: "4 semanas anteriores", data: somaCPUPorSemana2 }
+                ],
+                xaxis: { categories: categoriasSemanas },
+                colors: ["#3b82f6", "#0a1a2f"]
+            };
+
+            chartHardware = new ApexCharts(document.querySelector("#tempAlertChart"), graf);
+            chartHardware.render();
+        }
+
+        function compararRAMSemanal() {
+            if (chartHardware) chartHardware.destroy();
+
+            let graf = {
+                chart: { type: "line", height: 350 },
+                stroke: { curve: "smooth", width: 3 },
+                series: [
+                    { name: "4 semanas atuais", data: somaRAMPorSemana },
+                    { name: "4 semanas anteriores", data: somaRAMPorSemana2 }
+                ],
+                xaxis: { categories: categoriasSemanas },
+                colors: ["#3b82f6", "#0a1a2f"]
+            };
+
+            chartHardware = new ApexCharts(document.querySelector("#tempAlertChart"), graf);
+            chartHardware.render();
+        }
+
+        function compararDiscoSemanal() {
+            if (chartHardware) chartHardware.destroy();
+
+            let graf = {
+                chart: { type: "line", height: 350 },
+                stroke: { curve: "smooth", width: 3 },
+                series: [
+                    { name: "4 semanas atuais", data: somaDiscoPorSemana },
+                    { name: "4 semanas anteriores", data: somaDiscoPorSemana2 }
+                ],
+                xaxis: { categories: categoriasSemanas },
+                colors: ["#3b82f6", "#0a1a2f"]
+            };
+
+            chartHardware = new ApexCharts(document.querySelector("#tempAlertChart"), graf);
+            chartHardware.render();
+        }
+
+        function compararTEMPSemanal() {
+            if (chartHardware) chartHardware.destroy();
+
+            let graf = {
+                chart: { type: "line", height: 350 },
+                stroke: { curve: "smooth", width: 3 },
+                series: [
+                    { name: "4 semanas atuais", data: somaTempPorSemana },
+                    { name: "4 semanas anteriores", data: somaTempPorSemana2 }
+                ],
+                xaxis: { categories: categoriasSemanas },
+                colors: ["#3b82f6", "#0a1a2f"]
+            };
+
+            chartHardware = new ApexCharts(document.querySelector("#tempAlertChart"), graf);
+            chartHardware.render();
+        }
+
 
     } catch {
 

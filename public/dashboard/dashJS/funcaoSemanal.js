@@ -79,20 +79,20 @@ async function ultimos7dias() {
         somaTodosAlertas = somaBaixo + somaNeutro + somaAtencao + somaCritico
 
         document.getElementById("tituloLote").innerHTML =
-            `Modelo NAV-M100 - 06 lotes - ${somaTodosAlertas} alertas`;
+            `Modelo NAV-M100 - 06 lotes - ${somaTodosAlertas} capturas`;
 
         //KPIs
         document.getElementById("porcentagemBaixo").innerHTML =
             `${Math.round((somaBaixo * 100) / somaTodosAlertas)}%`;
-        document.getElementById("totalAlertaBaixoKPI").innerHTML = `${somaBaixo} alertas`;
+        document.getElementById("totalAlertaBaixoKPI").innerHTML = `${somaBaixo} capturas`;
 
         document.getElementById("porcentagemNeutro").innerHTML =
             `${Math.round((somaNeutro * 100) / somaTodosAlertas)}%`;
-        document.getElementById("totalAlertaNeutroKPI").innerHTML = `${somaNeutro} alertas`;
+        document.getElementById("totalAlertaNeutroKPI").innerHTML = `${somaNeutro} capturas`;
 
         document.getElementById("porcentagemAtencao").innerHTML =
             `${Math.round((somaAtencao * 100) / somaTodosAlertas)}%`;
-        document.getElementById("totalAlertaAtencaoKPI").innerHTML = `${somaAtencao} alertas`;
+        document.getElementById("totalAlertaAtencaoKPI").innerHTML = `${somaAtencao} capturas`;
 
         document.getElementById("porcentagemCritico").innerHTML =
             `${Math.round((somaCritico * 100) / somaTodosAlertas)}%`;
@@ -192,7 +192,7 @@ async function ultimos7dias() {
             { name: "Lote A006", data: dadosLotes[6] },
         ];
 
-         const alertasSemana = {
+        const alertasSemana = {
             chart: { type: "bar", height: 350, stacked: true, toolbar: { show: false } },
             tooltip: { enabled: false },
             title: { text: "ALERTAS CRÍTICOS GERADOS (7 DIAS)", align: "center" },
@@ -214,6 +214,9 @@ async function ultimos7dias() {
 
         //Gráfico comparativo de hardware
 
+        
+
+
         for (let i = 0; i < json.dias.length; i++) {
             const dia = json.dias[i];
 
@@ -230,14 +233,20 @@ async function ultimos7dias() {
                 somaDisco += lote.discoCritico;
                 somaTemp += lote.tempCritico;
             }
+            let totalCriticoDia = 0;
+            for (let j = 0; j < dia.lotes.length; j++) {
+                totalCriticoDia += dia.lotes[j].totalCritico;
+            }
+
+            somaAlertasCriticosPorDia.push(totalCriticoDia);
             somaRAMPorDia.push(somaRAM);
             somaCPUPorDia.push(somaCPU);
             somaDiscoPorDia.push(somaDisco);
             somaTempPorDia.push(somaTemp);
-
-            somaAlertasCriticosPorDia.push(somaRAM + somaCPU + somaDisco + somaTemp)
-
         }
+
+
+
 
         for (let i = 0; i < json2.dias.length; i++) {
             const dia = json2.dias[i];
@@ -283,12 +292,13 @@ async function ultimos7dias() {
 
         var comparativoAlertas = {
             chart: { type: "area", height: 330 },
-            plotOptions: { bar: { horizontal: true, distributed: true } },
             colors: ["#3b82f6", "#0a1a2f"],
+
             series: [
-                { name: "Semana Atual (Total de Críticos)", data: somaAlertasCriticosPorDia },
-                { name: "Última Semana(Total de Críticos)", data: somaAlertasCriticosPorDia2 }
+                { name: "Semana Atual", data: somaAlertasCriticosPorDia },
+                { name: "Semana Passada", data: somaAlertasCriticosPorDia2 }
             ],
+
             xaxis: { categories: categorias }
         };
 

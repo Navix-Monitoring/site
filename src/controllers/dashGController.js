@@ -57,7 +57,7 @@ async function mensal(req, res) {
 function listarParametros(req,res){
     console.log("Acessei o controller listar parametro...")
 
-    dashboardModel.parametro().then(function(resposta){
+    dashGModel.parametro().then(function(resposta){
         res.status(200).json(resposta);
     }).catch(function(erro){
         res.status(500).json(erro.sqlMessage);

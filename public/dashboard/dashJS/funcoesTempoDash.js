@@ -18,7 +18,7 @@ let chartComparativo = null;
 
 async function verificarDia() {
 
-     document.getElementById("input1").style.display = "block"
+    document.getElementById("input1").style.display = "block"
     document.getElementById("input2").style.display = "block"
 
 
@@ -135,7 +135,7 @@ async function verificarDia() {
         const somaTodosAlertas = somaBaixo + somaNeutro + somaAtencao + somaCritico;
 
         document.getElementById("tituloLote").innerHTML =
-            `Modelo NAV-M100 - 06 lotes - ${somaTodosAlertas} alertas`;
+            `Modelo NAV-M100 - 06 lotes - ${somaTodosAlertas} capturas`;
 
         const somaCPU =
             lote1.cpuCritico + lote2.cpuCritico + lote3.cpuCritico +
@@ -157,15 +157,15 @@ async function verificarDia() {
 
         document.getElementById("porcentagemBaixo").innerHTML =
             `${Math.round((somaBaixo * 100) / somaTodosAlertas)}%`;
-        document.getElementById("totalAlertaBaixoKPI").innerHTML = `${somaBaixo} alertas`;
+        document.getElementById("totalAlertaBaixoKPI").innerHTML = `${somaBaixo} capturas`;
 
         document.getElementById("porcentagemNeutro").innerHTML =
             `${Math.round((somaNeutro * 100) / somaTodosAlertas)}%`;
-        document.getElementById("totalAlertaNeutroKPI").innerHTML = `${somaNeutro} alertas`;
+        document.getElementById("totalAlertaNeutroKPI").innerHTML = `${somaNeutro} capturas`;
 
         document.getElementById("porcentagemAtencao").innerHTML =
             `${Math.round((somaAtencao * 100) / somaTodosAlertas)}%`;
-        document.getElementById("totalAlertaAtencaoKPI").innerHTML = `${somaAtencao} alertas`;
+        document.getElementById("totalAlertaAtencaoKPI").innerHTML = `${somaAtencao} capturas`;
 
         document.getElementById("porcentagemCritico").innerHTML =
             `${Math.round((somaCritico * 100) / somaTodosAlertas)}%`;
@@ -196,6 +196,7 @@ async function verificarDia() {
             chart: { type: "bar", height: 350, stacked: true, toolbar: { show: false } },
             plotOptions: { bar: { barHeight: "90%" } },
             title: { text: `ALERTAS CRÍTICOS GERADOS - ${ontemBR}`, align: "center" },
+            
             colors: ["#0a1a2f", "#102f57", "#1c47a1", "#3d73ff", "#253f6e", "#4f83d1"],
             series: [
                 { name: "Lote A001", data: [lote1.totalCritico, lote1_2.totalCritico] },
@@ -205,7 +206,7 @@ async function verificarDia() {
                 { name: "Lote A005", data: [lote5.totalCritico, lote5_2.totalCritico] },
                 { name: "Lote A006", data: [lote6.totalCritico, lote6_2.totalCritico] }
             ],
-            xaxis: { categories: [ontemBR,diaAnteOntemBR] }
+            xaxis: { categories: [ontemBR, diaAnteOntemBR] }
         };
 
         if (chartAlertasSemana) chartAlertasSemana.destroy();
@@ -228,7 +229,7 @@ async function verificarDia() {
                 { name: "Temperatura", data: [`${somaTemp}`, `${somaTemp_2}`] },
             ],
             colors: ["#0a1a2f", "#102f57", "#1c47a1", "#3d73ff"],
-            xaxis: { categories: [ontemBR,diaAnteOntemBR] }
+            xaxis: { categories: [ontemBR, diaAnteOntemBR] }
         };
 
         if (chartHardware) chartHardware.destroy();
@@ -241,7 +242,7 @@ async function verificarDia() {
         chartHardware.render();
         // Gráfico comparativo de alertas totais
 
-        document.getElementById("tituloAlertasTotais").innerHTML = `Comparativo - Alertas Totais`;
+        document.getElementById("tituloAlertasTotais").innerHTML = `Comparativo - Alertas Críticos Totais`;
         document.getElementById("subtituloAlertasTotais").innerHTML = `${ontemBR} x dia Anterior`;
 
         var comparativoAlertas = {
@@ -250,9 +251,9 @@ async function verificarDia() {
             colors: ["#3b82f6", "#0a1a2f"],
             series: [{
                 name: "Alertas Críticos",
-                data: [somaCritico,somaCriticoAnteOntem]
+                data: [somaCritico, somaCriticoAnteOntem]
             }],
-            xaxis: { categories: [ontemBR,diaAnteOntemBR] }
+            xaxis: { categories: [ontemBR, diaAnteOntemBR] }
         };
 
         if (chartComparativo) chartComparativo.destroy();

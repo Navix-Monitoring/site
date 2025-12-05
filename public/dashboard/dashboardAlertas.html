@@ -15,6 +15,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot"></script>
     <script src="../js/usuario/verificadorCargo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 
 </head>
@@ -89,8 +91,8 @@
 
             <main class="card">
                 <div class="kpis">
-                    <div class="kpi baixo">
-                        <p class="tituloKPI">Alertas baixos</p><br>
+                    <div class="kpi baixo" onclick="kpiBaixoDescricao()">
+                        <p class="tituloKPI">Status baixos</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: green;">
                                 <p class="valor" id="porcentagemBaixo">20%</p>
@@ -100,8 +102,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="kpi neutro">
-                        <p class="tituloKPI">Alertas neutros</p><br>
+                    <div class="kpi neutro" onclick="kpiNeutroDescricao()">
+                        <p class="tituloKPI">Status neutros</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: yellow;">
                                 <p class="valor" id="porcentagemNeutro">30%</p>
@@ -111,8 +113,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="kpi alerta">
-                        <p class="tituloKPI">Alertas de atenção</p><br>
+                    <div class="kpi alerta" onclick="kpiAtencaoDescricao()">
+                        <p class="tituloKPI">Status de atenção</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: orange;">
                                 <p class="valor" id="porcentagemAtencao">40%</p>
@@ -122,8 +124,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="kpi critico">
-                        <p class="tituloKPI">Alertas Críticos</p><br>
+                    <div class="kpi critico" onclick="kpiCriticoDescricao()">
+                        <p class="tituloKPI">Status Críticos</p><br>
                         <div class="ladinho">
                             <div class="colour-ball" style="border-color: red;">
                                 <p class="valor" id="porcentagemCritico">10%</p>
@@ -208,7 +210,7 @@
                             </h3>
                             <select
                                 style="align-self: center;border: 1px solid black;border-radius: 6px;text-align: center;"
-                                 id="select_hardware_comparacao">
+                                id="select_hardware_comparacao">
                                 <option value="CPU">CPU</option>
                                 <option value="RAM">RAM</option>
                                 <option value="TEMP">TEMPERATURA DA CPU</option>
@@ -253,7 +255,7 @@
         document.getElementById("date1").addEventListener("change", verificarDia);
         document.getElementById("date2").addEventListener("change", verificarDia);
 
-        document.getElementById("selectPeriodo").onchange = () => ({ dia: verificarDia, semana: ultimos7dias,mes : ultimasSemanas}[selectPeriodo.value]());
+        document.getElementById("selectPeriodo").onchange = () => ({ dia: verificarDia, semana: ultimos7dias, mes: ultimasSemanas }[selectPeriodo.value]());
 
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -279,4 +281,141 @@
             const select = document.getElementById("selectPeriodo");
             let scriptDiaCarregado = false;
         });
+    </script>
+
+
+
+    <script>
+
+        async function carregarParametros() {
+            try {
+                const resposta = await fetch("/dashboard/parametroHardware");
+                if (!resposta.ok) throw new Error("Falha ao buscar parâmetros");
+
+                const dados = await resposta.json();
+                return dados;
+            } catch (erro) {
+                console.error("Erro ao carregar parâmetros:", erro);
+                return [];
+            }
+        }
+
+        function mostrarPopupKPI(titulo, cor, conteudo) {
+            Swal.fire({
+                title: titulo,
+                html: conteudo,
+                icon: "info",
+                confirmButtonText: "OK",
+                confirmButtonColor: cor,
+                background: "#f8f9fa",
+                color: "#1b1b1b",
+                width: 650,
+                padding: "1.5em",
+                showClass: { popup: "animate__animated animate__fadeInDown" },
+                hideClass: { popup: "animate__animated animate__fadeOutUp" }
+            });
+        }
+
+        async function kpiBaixoDescricao() {
+            const parametros = await carregarParametros();
+
+            let html = `
+        <div style="font-size: 18px;">
+            <p>É quando as capturas estão dentro dos limites saudáveis e propostos.</p>
+            <b>Status mínimos permitidos por componente para o modelo ${parametros[0].nome}:</b><br><br>
+    `;
+            ordemMedidas = ["Temperatura da CPU", "Uso da CPU", "Uso da RAM", "Uso do Disco"]
+            ordemUnidades = ["°C", "%", "%", "%"]
+            parametros.forEach((p, i) => {
+                html += `
+            <div style="margin-bottom: 6px;">
+                <b>${ordemMedidas[i]}:</b> ${p.parametroMinimo} ${ordemUnidades[i]}
+            </div>
+        `;
+            });
+
+            html += "</div>";
+
+            mostrarPopupKPI("Limite – Status BAIXO", "#16a34a", html);
+        }
+
+
+        async function kpiNeutroDescricao() {
+            const parametros = await carregarParametros();
+
+            let html = `
+        <div style="font-size: 18px;">
+            <p>Valores considerados aceitáveis e em funcionamento normal.</p>
+            <b>Faixa neutra por componente para o modelo ${parametros[0].nome}:</b><br><br>
+    `;
+
+            ordemMedidas = ["Temperatura da CPU", "Uso da CPU", "Uso da RAM", "Uso do Disco"];
+            ordemUnidades = ["°C", "%", "%", "%"];
+
+            parametros.forEach((p, i) => {
+                html += `
+            <div style="margin-bottom: 6px;">
+                <b>${ordemMedidas[i]}:</b> até ${p.parametroNeutro} ${ordemUnidades[i]}
+            </div>
+        `;
+            });
+
+            html += "</div>";
+
+            mostrarPopupKPI("Faixa NEUTRA", "#facc15", html);
+        }
+
+
+        async function kpiAtencaoDescricao() {
+            const parametros = await carregarParametros();
+
+            let html = `
+        <div style="font-size: 18px;">
+            <p>Indica que o sistema está começando a apresentar sinais incomuns.</p>
+            <b>Valores de ATENÇÃO por componente para o modelo ${parametros[0].nome}:</b><br><br>
+    `;
+
+            ordemMedidas = ["Temperatura da CPU", "Uso da CPU", "Uso da RAM", "Uso do Disco"];
+            ordemUnidades = ["°C", "%", "%", "%"];
+
+            parametros.forEach((p, i) => {
+                html += `
+            <div style="margin-bottom: 6px;">
+                <b>${ordemMedidas[i]}:</b> acima de ${p.parametroAtencao} ${ordemUnidades[i]}
+            </div>
+        `;
+            });
+
+            html += "</div>";
+
+            mostrarPopupKPI("Faixa de ATENÇÃO", "#fb923c", html);
+        }
+
+
+
+        async function kpiCriticoDescricao() {
+            const parametros = await carregarParametros();
+
+            let html = `
+        <div style="font-size: 18px;">
+            <p>Indica que o componente pode apresentar falhas ou travamentos.</p>
+            <b>Limite CRÍTICO por componente para o modelo ${parametros[0].nome}:</b><br><br>
+    `;
+
+            ordemMedidas = ["Temperatura da CPU", "Uso da CPU", "Uso da RAM", "Uso do Disco"];
+            ordemUnidades = ["°C", "%", "%", "%"];
+
+            parametros.forEach((p, i) => {
+                html += `
+            <div style="margin-bottom: 6px;">
+                <b>${ordemMedidas[i]}:</b> acima de ${p.parametroCritico} ${ordemUnidades[i]}
+            </div>
+        `;
+            });
+
+            html += "</div>";
+
+            mostrarPopupKPI("LIMITE CRÍTICO", "#ef4444", html);
+        }
+
     </script>
