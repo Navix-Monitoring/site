@@ -412,14 +412,12 @@
           dados.pontoCorte
         );
 
-        // --- MUDANÇA 1: APLICAR LIMITE E SALVAR ORIGINAL ---
+        
         chartMultiLine.data.datasets = dados.series.map((serie, index) => {
           const corAzulDoLote = tonsAzul[index % tonsAzul.length];
           return {
             label: serie.label,
-            // Visualmente trava em 100
             data: serie.data.map(valor => valor > 100 ? 100 : valor),
-            // Salva dado original para o tooltip
             originalData: serie.data,
             borderWidth: 2,
             tension: 0.4,
