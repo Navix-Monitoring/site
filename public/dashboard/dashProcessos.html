@@ -12,9 +12,12 @@
   <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
   <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="../css/dashCelina.css">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="./dashJS/dashProcessos.js"></script>
+
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100" onload="atualizarTudo()">
   <div class="flex flex-row w-full">
     <!-- NAVBAR -->
     <div
@@ -74,43 +77,47 @@
       <option value="mes">Mês</option>
       <option value="ano">Ano</option>
     </select> -->
+      <div id="loader-processos" class="loader-processos oculto">
+    <div class="spinner"></div>
+    <p>Carregando processos...</p>
+</div>
 
     <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
       <div class="bg-white p-4 rounded-md shadow-md">
         <h3 class="font-semibold text-gray-700">Processo com maior uso de CPU</h3>
-        <span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-[2px] rounded">
-          Chrome.exe
+        <span id="kpi_cpu_nome" class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-[2px] rounded">
+          Carregando...
         </span>
-        <p id="kpi_cpu" class="text-xl font-bold mt-2 text-blue-900">23%</p>
+        <p id="kpi_cpu_valor" class="text-xl font-bold mt-2 text-blue-900">Carregando...</p>
       </div>
 
       <div class="bg-white p-4 rounded-md shadow-md">
         <h3 class="font-semibold text-gray-700">Processo com maior variação de RAM</h3>
-        <span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-[2px] rounded">
-          Chrome.exe
+        <span id="kpi_ram_nome" class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-[2px] rounded">
+          carregando...
         </span>
-        <p id="kpi_ram" class="text-xl font-bold mt-2 text-blue-900">512MB</p>
+        <p id="kpi_ram_valor" class="text-xl font-bold mt-2 text-blue-900">Carregando...</p>
       </div>
 
       <div class="bg-white p-4 rounded-md shadow-md">
         <h3 class="font-semibold text-gray-700">Processo com maior tempo de vida</h3>
-        <span class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-[2px] rounded">
-          Chrome.exe
+        <span id="kpi_vida_nome" class="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-[2px] rounded">
+          Carregando...
         </span>
-        <p id="kpi_vida" class="text-xl font-bold mt-2 text-blue-900">2h 13min</p>
+        <p id="kpi_vida_valor" class="text-xl font-bold mt-2 text-blue-900">Carregando...</p>
       </div>
 
-      <div class="bg-white p-4 rounded-md shadow-md kpi_gargalo flex items-center gap-4">
+      <div id="kpi_gargalo_borda" class="bg-white p-4 rounded-md shadow-md flex items-center gap-4 border-t-4">
         <div class="border-indicador w-2 rounded-full"></div>
         <div>
           <h3 class="font-semibold text-gray-700">Gargalos por dia</h3>
           <div class="flex-col items-center gap-2 mt-1">
-            <span class="inline-block bg-red-100 text-red-700 text-xs px-2 py-[2px] rounded">
+            <span id="kpi_gargalo_status" class="inline-block text-xs px-2 py-[2px] rounded">
               <span class="dotCriticidade"></span>
-              Crítico
+              Carregando...
             </span>
-            <p id="kpi_gargalo" class="text-2xl font-bold text-blue-900">41</p>
+            <p id="kpi_gargalo_valor" class="text-2xl font-bold text-blue-900">Carregando...</p>
 
           </div>
         </div>
@@ -128,7 +135,7 @@
       <div class="bg-white p-4 rounded-md shadow-md xl:col-span-2 flex-col">
         <div class="flex justify-between items-center mb-2">
 
-          <h3 class="text-lg font-semibold">Lista de Processos
+          <h3 class="text-lg font-semibold">Lista da média dos Processos
             <span class="relative group cursor-pointer text-gray-500 text-s bg-gray-200 px-1 rounded">i
               <div class="absolute hidden z-100 group-hover:block bg-white shadow-md p-2 rounded text-s left-6 top-0 w-32">
                 <p><span class="text-red-600 font-bold">■</span> Crítico</p>
@@ -137,7 +144,7 @@
                 <p><span class="text-green-600 font-bold">■</span> Normal</p>
               </div>
           </h3>
-          <span class=" text-gray-600">Total: 27</span>
+          <span class=" text-gray-600" id="totalProcessos">Total: Carregando...</span>
         </div>
         <p>Filtrar:</p>
         <div class="headerProcessos grid grid-cols-5">
@@ -176,40 +183,40 @@
           <span>Disco</span>
           <span>Tempo de Vida</span>
         </div>
-        <div class="processosLista">
+        <div class="processosLista" id="processosLista">
 
-          <div class="card_processo" data-level="critico">
+          <!-- <div class="card_processo" data-level="critico">
+            <span>chrome.exe</span>
+            <span>23%</span>
+            <span>512 MB</span>
+            <span>20 MB/s</span>
+            <span>2h 13min</span>
+          </div> -->
+
+          <!-- <div class="card_processo" data-level="alerta">
+            <span>chrome.exe</span>
+            <span>23%</span>
+            <span>512 MB</span>
+            <span>20 MB/s</span>
+            <span>2h 13min</span>
+          </div> -->
+
+          <!-- <div class="card_processo" data-level="neutro">
+            <span>chrome.exe</span>
+            <span>23%</span>
+            <span>512 MB</span>
+            <span>20 MB/s</span>
+            <span>2h 13min</span>
+          </div> -->
+
+          <!-- <div class="card_processo" data-level="normal">
             <span>chrome.exe</span>
             <span>23%</span>
             <span>512 MB</span>
             <span>20 MB/s</span>
             <span>2h 13min</span>
           </div>
-
-          <div class="card_processo" data-level="alerta">
-            <span>chrome.exe</span>
-            <span>23%</span>
-            <span>512 MB</span>
-            <span>20 MB/s</span>
-            <span>2h 13min</span>
-          </div>
-
-          <div class="card_processo" data-level="neutro">
-            <span>chrome.exe</span>
-            <span>23%</span>
-            <span>512 MB</span>
-            <span>20 MB/s</span>
-            <span>2h 13min</span>
-          </div>
-
-          <div class="card_processo" data-level="normal">
-            <span>chrome.exe</span>
-            <span>23%</span>
-            <span>512 MB</span>
-            <span>20 MB/s</span>
-            <span>2h 13min</span>
-          </div>
-        </div>
+        </div> -->
       </div>
 
       <!-- TOP 5 CPU-->
@@ -243,7 +250,6 @@
 
     </div>
   </section>
-
   <script>
 
 
