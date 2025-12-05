@@ -240,13 +240,12 @@
 
     function encontrarPiorLote(lotes) {
         let piorLoteLabel = null;
-        let maiorMedia = -Infinity;
+        let maiorValor = -Infinity;
         lotes.forEach(lote => {
-            let soma = 0;
-            for (let i = 0; i < lote.data.length; i++) soma += lote.data[i];
-            const media = soma / lote.data.length;
-            if (media > maiorMedia) {
-                maiorMedia = media;
+            const valorAtual = calcularMediana(lote.data);
+
+            if (valorAtual > maiorValor) {
+                maiorValor = valorAtual;
                 piorLoteLabel = lote.label;
             }
         });
