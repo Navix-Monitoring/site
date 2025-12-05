@@ -1,9 +1,9 @@
 
 .kpi_gargalo {
-    border-top: #e11d48 solid 4px;
+    border-top: rgb(0, 140, 255) solid 4px;
 }
 .dotCriticidade {
-    background-color: #e11d48;
+    background-color: green;
 }
 
 .inputPesquisa {
@@ -99,4 +99,41 @@
 
 .card_processo[data-level="normal"] {
     border-left: 5px solid #10b981; /* verde */
+}
+
+.loader-processos {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.loader-processos.oculto {
+    display: none;
+}
+
+/* Spinner */
+.spinner {
+    width: 80px;
+    height: 80px;
+    border: 10px solid #cccccc;
+    border-top: 10px solid #4f46e5;
+    border-radius: 50%;
+    animation: girar 1.2s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes girar {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
