@@ -155,22 +155,6 @@
           </div>
           <div>
             
-            <select name="" id="" class="border rounded-md pl-5 pr-2 py-2">
-              <option value="">Criticidade</option>
-              <option value="">Crítico</option>
-              <option value="">Alerta</option>
-              <option value="">Neutro</option>
-              <option value="">Normal</option>
-            </select>
-          </div>
-          <div>
-            <select name="" id="" class="border rounded-md pl-5 pr-2 py-2">
-              <option value="">Métrica</option>
-              <option value="">CPU</option>
-              <option value="">RAM</option>
-              <option value="">Disco</option>
-              <option value="">Tempo de vida</option>
-            </select>
           </div>
 
         </div>
@@ -227,19 +211,11 @@
 
       </div>
 
-      <div class="bg-white p-4 rounded-md shadow-md">
-        <h3 class="text-lg font-semibold mb-2">Variação de RAM (Top 3)</h3>
-        <canvas id="graficoRam"></canvas>
-      </div>
 
       <div class="bg-white p-4 rounded-md shadow-md">
         <h3 class="text-lg font-semibold mb-2">Comparação de Tempo de Vida</h3>
         <canvas id="graficoVida"></canvas>
       </div>
-
-      <div class="bg-white p-4 rounded-md shadow-md xl:col-span-2">
-        <h3 class="text-lg font-semibold mb-2">Ocorrência Geral de Gargalos</h3>
-        <canvas id="graficoGargalos"></canvas>
       </div>
 
       <div class="bg-white p-4 rounded-md shadow-md xl:col-span-2">
@@ -276,18 +252,13 @@
         }
       };
 
-      // 👉 Permite sobrescrever qualquer coisa (inclusive datasets)
       const configFinal = Object.assign({}, configPadrao, opcoesExtras);
 
       new Chart(ctx, configFinal);
     }
 
 
-    
-  
-
-    criarGrafico("graficoGargalos", "line", ["Seg", "Ter", "Qua"], [2, 4, 1]);
-    
+      
 
   </script>
 </body>

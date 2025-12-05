@@ -31,7 +31,7 @@ async function atualizarTudo() {
         console.log("Lista de gargalos carregada: ", gargalos);
     } finally {
         document.getElementById("nomeLote")
-        nomeLote.innerHTML = "Lote: "+ localStorage.getItem("codigoLote");
+        nomeLote.innerHTML = "Lote: " + localStorage.getItem("codigoLote");
         gerarDadosGraficos();
         document.getElementById("loader-processos").classList.add("oculto");
     }
@@ -124,7 +124,7 @@ async function gerarDadosGargalos(conteudos) {
         mediaDiaria = totalDeProcessos / totalDeDias;
     }
 
-     const kpiStatusEl = document.getElementById('kpi_gargalo_status');
+    const kpiStatusEl = document.getElementById('kpi_gargalo_status');
     const kpiBordaEl = document.getElementById('kpi_gargalo_borda');
 
     classeCorBGFundo = ' ';
@@ -134,7 +134,7 @@ async function gerarDadosGargalos(conteudos) {
     let statusqtdGargalos = mediaDiaria.toFixed(2) >= 71 ? "Crítico" : mediaDiaria.toFixed(2) >= 41 ? "Alerta" : mediaDiaria.toFixed(2) >= 21 ? "Neutro" : "Normal"
     if (statusqtdGargalos === "Crítico") {
         classeCorBGFundo = "bg-red-100";
-        classeCorBorda = "border-red-500"; 
+        classeCorBorda = "border-red-500";
         classeCorTexto = "text-red-700"
     } else if (statusqtdGargalos === "Alerta") {
         classeCorBGFundo = "bg-orange-100";
@@ -152,7 +152,7 @@ async function gerarDadosGargalos(conteudos) {
         classeCorTexto = "text-green-700"
 
     }
-    
+
     kpiStatusEl.classList.add(classeCorBGFundo);
     kpiStatusEl.classList.add(classeCorTexto);
     kpiBordaEl.classList.add(classeCorBorda);
@@ -205,121 +205,80 @@ async function buscarCSVGeral() {
 
     console.log("Total de linhas combinadas:", conteudos.length);
     console.log(conteudos)
-    
+
     dadosGerais = conteudos;
 }
 
-async function gerarDadosGraficos(){
+async function gerarDadosGraficos() {
     let dadosGerais2 = dadosLista;
 
     let dadosGeraisRam = dadosGerais;
+
+
+
 
     let dadosGeraisTempoVida = dadosLista;
 
     let dadosGargalosTop = dadosGargalos;
 
-    dadosGerais2.sort((a,b)=>{
-         const cpuA = parseFloat(a.Cpu) || 0;
+    dadosGerais2.sort((a, b) => {
+        const cpuA = parseFloat(a.Cpu) || 0;
         const cpuB = parseFloat(b.Cpu) || 0;
-        return cpuB - cpuA; 
+        return cpuB - cpuA;
     });
-    
 
-    dadosGeraisRam.sort((a,b)=>{
-         const ramA = parseFloat(a.Ram) || 0;
+
+    dadosGeraisRam.sort((a, b) => {
+        const ramA = parseFloat(a.Ram) || 0;
         const ramb = parseFloat(b.Ram) || 0;
-        return ramb - ramA; 
+        return ramb - ramA;
     });
 
-     dadosGeraisTempoVida.sort((a,b)=>{
-         const tempoA = parseFloat(a.Ram) || 0;
+    dadosGeraisTempoVida.sort((a, b) => {
+        const tempoA = parseFloat(a.Ram) || 0;
         const tempob = parseFloat(b.Ram) || 0;
-        return tempob - tempoA; 
+        return tempob - tempoA;
     });
 
     const listaNome = {};
 
-    for(const p of dadosGargalosTop){
+    for (const p of dadosGargalosTop) {
         let nomeProcesso = p.Nome;
-        if(!nomeProcesso){
+        if (!nomeProcesso) {
             console.warn("Item ignorado: Nome ausente ou nulo para o processo.", p);
             continue;
         }
 
-        if(nomeProcesso in listaNome){
+        if (nomeProcesso in listaNome) {
             p.Nome = nomeProcesso
             listaNome[nomeProcesso].push(p);
-        }else{
+        } else {
             listaNome[nomeProcesso] = [p];
         }
     }
 
     const nomesUnicos = Object.keys(listaNome);
-    
+
     const dadosSumarizados = Object.keys(listaNome).map(nome => {
-    return {
-        nome: nome,
-        contagemGargalos: listaNome[nome].length
-    };
-});
-dadosSumarizados.sort((a, b) => b.contagemGargalos - a.contagemGargalos);
-const top5Processos = dadosSumarizados.slice(0, 5); 
-const rotulosNomes = top5Processos.map(item => item.nome);
-const dadosContagens = top5Processos.map(item => item.contagemGargalos);
+        return {
+            nome: nome,
+            contagemGargalos: listaNome[nome].length
+        };
+    });
+
+    dadosSumarizados.sort((a, b) => b.contagemGargalos - a.contagemGargalos);
+    const top5Processos = dadosSumarizados.slice(0, 5);
+    const rotulosNomes = top5Processos.map(item => item.nome);
+    const dadosContagens = top5Processos.map(item => item.contagemGargalos);
 
 
     const Top5MaioresCpu = dadosGerais2.slice(0, 5);
-    const Top3MaioresRam = dadosGeraisRam.slice(0, 3);
-    const Top5TempoVida = dadosGeraisTempoVida.slice(0,5);
+    const Top5TempoVida = dadosGeraisTempoVida.slice(0, 5);
 
     criarGrafico("graficoTopGargalo", "bar", rotulosNomes, dadosContagens);
 
     criarGrafico("graficoTopCPU", "bar", [Top5MaioresCpu[0].Nome, Top5MaioresCpu[1].Nome, Top5MaioresCpu[2].Nome, Top5MaioresCpu[3].Nome, Top5MaioresCpu[4].Nome], [Top5MaioresCpu[0].Cpu, Top5MaioresCpu[1].Cpu, Top5MaioresCpu[2].Cpu, Top5MaioresCpu[3].Cpu, Top5MaioresCpu[4].Cpu]);
-      criarGrafico(
-      "graficoRam",
-      "line",
-      ["t1", "t2", "t3", "t4", "t5"], // tempo no eixo X
-      [], // deixe vazio porque não será usado
-      undefined,
-      {
-        plugins: {
-          legend: { display: true }
-        },
-        elements: {
-          line: {
-            tension: 0.3
-          }
-        },
-        data: {
-          labels: ["t1", "t2", "t3", "t4", "t5"],
-          datasets: [
-            {
-              label: Top3MaioresRam[0].Nome,
-              data: [10, 30, 25, 40, 35],
-              borderColor: "#6ce5e8",
-              backgroundColor: "transparent",
-              borderWidth: 3
-            },
-            {
-              label: Top3MaioresRam[1].Nome,
-              data: [20, 22, 18, 30, 27],
-              borderColor: "#41b8d5",
-              backgroundColor: "transparent",
-              borderWidth: 3
-            },
-            {
-              label: Top3MaioresRam[2].Nome,
-              data: [15, 18, 22, 20, 25],
-              borderColor: "#2d8bba",
-              backgroundColor: "transparent",
-              borderWidth: 3
-            }
-          ]
-        }
-      }
-    );
-
-    criarGrafico("graficoVida", "bar", [Top5TempoVida[0].Nome, Top5TempoVida[1].Nome, Top5TempoVida[2].Nome,Top5TempoVida[3].Nome,Top5TempoVida[4].Nome], [Top5TempoVida[0].TempoVida, Top5TempoVida[1].TempoVida,Top5TempoVida[2].TempoVida,Top5TempoVida[3].TempoVida,Top5TempoVida[4].TempoVida]);
+    criarGrafico("graficoVida", "bar", [Top5TempoVida[0].Nome, Top5TempoVida[1].Nome, Top5TempoVida[2].Nome, Top5TempoVida[3].Nome, Top5TempoVida[4].Nome], [Top5TempoVida[0].TempoVida, Top5TempoVida[1].TempoVida, Top5TempoVida[2].TempoVida, Top5TempoVida[3].TempoVida, Top5TempoVida[4].TempoVida]);
 
 
 }
