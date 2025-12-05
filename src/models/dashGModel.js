@@ -46,8 +46,26 @@ async function jsonMensal(url) {
 function parametro() {
     console.log("Acessei o dashboard model - listando os parametros")
     const instrucaoSql = `
-    SELECT modelo.nome, fkHardware,unidadeMedida,parametroMinimo,parametroNeutro,parametroAtencao,parametroCritico FROM parametroHardware INNER JOIN modelo on fkModelo = id WHERE fkModelo = 1;
-    `
+SELECT
+    modelo.nome,
+    fkHardware,
+    unidadeMedida,
+    parametroMinimo,
+    parametroNeutro,
+    parametroAtencao,
+    parametroCritico
+FROM
+    parametroHardware
+INNER JOIN
+    modelo ON fkModelo = id
+WHERE
+    fkModelo = 1
+    AND fkHardware != 4 -- Adicionado aqui para excluir globalmente
+    AND (
+        parametroHardware.unidadeMedida = 'TEMPERATURA'
+        OR parametroHardware.unidadeMedida = 'USO'
+        OR parametroHardware.unidadeMedida = 'GB'
+    );    `
     console.log("Executando a instrução de listar modelos:\n" + instrucaoSql)
     return database.executar(instrucaoSql);
 }

@@ -210,13 +210,13 @@ async function buscarCSVGeral() {
 }
 
 async function gerarDadosGraficos(){
-    let dadosGerais2 = dadosLista
+    let dadosGerais2 = dadosLista;
 
-    let dadosGeraisRam = dadosGerais
+    let dadosGeraisRam = dadosGerais;
 
-    let dadosGeraiTempoVida = dadosLista
+    let dadosGeraisTempoVida = dadosLista;
 
-
+    let dadosGargalosTop = dadosGargalos;
 
     dadosGerais2.sort((a,b)=>{
          const cpuA = parseFloat(a.Cpu) || 0;
@@ -231,18 +231,48 @@ async function gerarDadosGraficos(){
         return ramb - ramA; 
     });
 
-     dadosGeraiTempoVida.sort((a,b)=>{
+     dadosGeraisTempoVida.sort((a,b)=>{
          const tempoA = parseFloat(a.Ram) || 0;
         const tempob = parseFloat(b.Ram) || 0;
         return tempob - tempoA; 
     });
 
+    const listaNome = {};
+
+    for(const p of dadosGargalosTop){
+        let nomeProcesso = p.Nome;
+        if(!nomeProcesso){
+            console.warn("Item ignorado: Nome ausente ou nulo para o processo.", p);
+            continue;
+        }
+
+        if(nomeProcesso in listaNome){
+            p.Nome = nomeProcesso
+            listaNome[nomeProcesso].push(p);
+        }else{
+            listaNome[nomeProcesso] = [p];
+        }
+    }
+
+    const nomesUnicos = Object.keys(listaNome);
+    
+    const dadosSumarizados = Object.keys(listaNome).map(nome => {
+    return {
+        nome: nome,
+        contagemGargalos: listaNome[nome].length
+    };
+});
+dadosSumarizados.sort((a, b) => b.contagemGargalos - a.contagemGargalos);
+const top5Processos = dadosSumarizados.slice(0, 5); 
+const rotulosNomes = top5Processos.map(item => item.nome);
+const dadosContagens = top5Processos.map(item => item.contagemGargalos);
+
 
     const Top5MaioresCpu = dadosGerais2.slice(0, 5);
     const Top3MaioresRam = dadosGeraisRam.slice(0, 3);
-    const Top5TempoVida = dadosGeraiTempoVida.slice(0,5);
+    const Top5TempoVida = dadosGeraisTempoVida.slice(0,5);
 
-
+    criarGrafico("graficoTopGargalo", "bar", rotulosNomes, dadosContagens);
 
     criarGrafico("graficoTopCPU", "bar", [Top5MaioresCpu[0].Nome, Top5MaioresCpu[1].Nome, Top5MaioresCpu[2].Nome, Top5MaioresCpu[3].Nome, Top5MaioresCpu[4].Nome], [Top5MaioresCpu[0].Cpu, Top5MaioresCpu[1].Cpu, Top5MaioresCpu[2].Cpu, Top5MaioresCpu[3].Cpu, Top5MaioresCpu[4].Cpu]);
       criarGrafico(
