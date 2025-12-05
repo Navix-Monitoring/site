@@ -1,6 +1,5 @@
 const dataAtual = new Date();
 
-nomeLote.innerHTML = "Lote: "
 
 const ano = dataAtual.getFullYear();
 const mes = (dataAtual.getMonth() + 1);
@@ -31,6 +30,8 @@ async function atualizarTudo() {
         console.log("Dados gerais carregados:", geral);
         console.log("Lista de gargalos carregada: ", gargalos);
     } finally {
+        document.getElementById("nomeLote")
+        nomeLote.innerHTML = "Lote: "+ localStorage.getItem("codigoLote");
         gerarDadosGraficos();
         document.getElementById("loader-processos").classList.add("oculto");
     }

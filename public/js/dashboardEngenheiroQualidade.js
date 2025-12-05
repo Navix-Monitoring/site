@@ -32,7 +32,7 @@ function listarLotes() {
 
                 lotes.innerHTML += `
                     <div class="${corFundo} p-4 rounded-lg text-white cards-lotes" 
-                        onclick="abrirLote(${idLote})" 
+                        onclick="abrirLote(${idLote}, '${lote.codigo_lote}')" 
                         style="cursor: pointer;">
                         <p>Lote: ${lote.codigo_lote}</p>
                         <p>Situação: ${lote.statusLote}</p>
@@ -65,10 +65,10 @@ function gerarCorBolinha(index) {
     return cores[index % cores.length];
 }
 
-function abrirLote(idLote) {
+function abrirLote(idLote, codigoLote) {
     // Guarda o lote selecionado
     localStorage.setItem('lote', idLote);
-    localStorage.setItem('nomeLote', )
+    localStorage.setItem('codigoLote', codigoLote);
 
     // Recupera a dashboard selecionada do sessionStorage
     const dashboardSelecionada = sessionStorage.getItem("dashboardSelecionada");
@@ -104,7 +104,7 @@ function filtrarModelo() {
                     let modelo = listaLotes[c].nomeModelo == null ? "N/A" : listaLotes[c].nomeModelo
                     lotes.innerHTML +=
                         `
-               <div class="bg-blue-900 p-4 rounded-lg text-white cards-lotes" onclick="abrirLote(${json[c].idLote})" style="cursor: pointer;">
+               <div class="bg-blue-900 p-4 rounded-lg text-white cards-lotes" onclick="abrirLote(${json[c].idLote}, ${listaLotes[c].codigo_lote})" style="cursor: pointer;">
                         <p>Lote: ${listaLotes[c].codigo_lote}</p>
                         <p>Situação: ${listaLotes[c].statusLote}</p>
                         <p>Modelo: ${modelo}</p>
@@ -257,7 +257,7 @@ function filtrar() {
                 if (filtroStatus === "#" || lote.statusLote === traduzirStatus(filtroStatus)) {
                     lotes.innerHTML += `
                         <div class="${corFundo} p-4 rounded-lg text-white cards-lotes" 
-                             onclick="abrirLote(${idLote})" 
+                             onclick="abrirLote(${idLote},  ${lote.codigo_lote})" 
                              style="cursor: pointer;">
                             <p>Lote: ${lote.codigo_lote}</p>
                             <p>Situação: ${lote.statusLote}</p>
@@ -318,7 +318,7 @@ function pesquisar() {
 
                     lotes.innerHTML += `
                         <div class="${corFundo} p-4 rounded-lg text-white cards-lotes" 
-                            onclick="abrirLote(${idLote})" style="cursor: pointer;">
+                            onclick="abrirLote(${idLote}, ${lote.codigo_lote})" style="cursor: pointer;">
                             <p>Lote: ${lote.codigo_lote}</p>
                             <p>Situação: ${lote.statusLote}</p>
                             <p>Modelo: ${modelo}</p>
@@ -380,7 +380,7 @@ function filtrarPorData() {
 
                     lotes.innerHTML += `
                          <div class="${corFundo} p-4 rounded-lg text-white cards-lotes" 
-                            onclick="abrirLote(${idLote})" style="cursor: pointer;">
+                            onclick="abrirLote(${idLote}, ${lote.codigo_lote})" style="cursor: pointer;">
                             <p>Lote: ${lote.codigo_lote}</p>
                             <p>Situação: ${lote.statusLote}</p>
                             <p>Modelo: ${modelo}</p>
