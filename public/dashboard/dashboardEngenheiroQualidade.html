@@ -2,192 +2,189 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Engenheiro Qualidade</title>
-  <link rel="icon" href="../assets/navix-logo.jpg" />
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-  <script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
-  <script src="../js/sessao.js"></script>
-  <link rel="stylesheet" href="../css/dashboard.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link href='https://cdn.boxicons.com/3.0.3/fonts/basic/boxicons.min.css' rel='stylesheet'>
-  <link href='https://cdn.boxicons.com/3.0.3/fonts/brands/boxicons-brands.min.css' rel='stylesheet'>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Engenheiro Qualidade - Dashboard</title>
+<link rel="icon" href="../assets/navix-logo.jpg" />
 
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://kit.fontawesome.com/6921956092.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<link href='https://cdn.boxicons.com/2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
+<link rel="stylesheet" href="../css/dashboard.css" />
+<script src="../js/sessao.js"></script>
+
+<style>
+body {
+overflow-x: hidden;
+}
+</style>
 </head>
 
 <body class="bg-gray-100">
 
-  <div class="flex flex-row w-full">
-    <!-- nav bar -->
-    <div
-      class="min-h-screen w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600 **fixed top-0 left-0**">
-      <img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10" />
-      <div id="imagemUsuarioNavbar">
-        <div class="rounded-md w-20 h-20 mb-2" style="
-              background-image: url(../assets/img/foto-usuario.png);
-              background-size: cover;
-              background-repeat: no-repeat;
-              background-position: center;
-            "></div>
-      </div>
+<div class="flex flex-row w-full min-h-screen">
 
-      <div id="nomeProfissao" class="text-center mb-6"></div>
+<div
+class="w-[250px] flex flex-col items-center bg-slate-100 py-6 shadow-2xl shadow-slate-600 fixed top-0 left-0 h-full z-50">
+<img src="../assets/img/Logo.png" class="w-[120px] h-[60px] mb-10" />
 
-      <div class="flex flex-col gap-4 w-[80%]">
-        <a href="../perfil-visualizar.html"
-          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
-          Perfil
-        </a>
+<div id="imagemUsuarioNavbar">
+<div class="rounded-md w-20 h-20 mb-2 bg-gray-300" style="
+background-image: url(../assets/img/foto-usuario.png);
+background-size: cover;
+background-repeat: no-repeat;
+background-position: center;
+"></div>
+</div>
 
-        <a onclick="redirecionar()"
-          class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium"
-          style="cursor: pointer;">
-          Dashboard
-        </a>
+<div id="nomeProfissao" class="text-center mb-6"></div>
 
-        <a href="../admin.html" id="adm-only"
-          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
-          Cadastrar Funcionários
-        </a>
+<div class="flex flex-col gap-4 w-[80%]">
+<a href="../perfil-visualizar.html"
+class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium transition-all">Perfil</a>
+<a onclick="redirecionar()"
+class="w-full bg-white border-4 border-amber-500 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium cursor-pointer transition-all">Dashboard</a>
+<a href="../admin.html" id="adm-only"
+class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium transition-all">Cadastrar
+Funcionários</a>
+<a href="./cadastroVeiculos.html"
+class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium transition-all">Gerenciar
+Frota</a>
+<a href="https://navixsuporte.atlassian.net/jira/software/form/9d7593db-d676-44b4-a1f4-43762dea870c"
+target="_blank"
+class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium transition-all flex justify-center items-center gap-2">Suporte
+<i class='bx bx-message-dots'></i></a>
+<div
+class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer hover:bg-blue-900 transition-all"
+onclick="limparSessao()">
+<a href="../index.html" class="no-underline text-white block">Sair</a>
+</div>
+</div>
+</div>
 
-        <a href="./cadastroVeiculos.html"
-          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium">
-          Gerenciar Frota
-        </a>
+<main class="ml-[250px] w-full p-8 flex flex-col gap-6">
 
-        <a href="https://navixsuporte.atlassian.net/jira/software/form/9d7593db-d676-44b4-a1f4-43762dea870c"
-          target="_blank"
-          class="w-full bg-white border-2 border-blue-900 rounded-md text-center py-2 hover:text-blue-900 hover:font-medium ">
-          Suporte
-          <i class='bx  bx-message-dots-2'></i>
-        </a>
+<header class="flex justify-between items-center mb-2">
+<div>
+<h1 class="text-2xl font-bold text-blue-900">Dashboard de Qualidade</h1>
+<p class="text-gray-500 text-sm">Gerencie e analise os lotes de produção</p>
+</div>
+<div class="flex gap-4 text-sm bg-white px-4 py-2 rounded-md shadow-sm border border-gray-200">
+<span class="flex items-center gap-1"><span class="w-3 h-3 bg-green-500 rounded-full"></span> Ativo</span>
+<span class="flex items-center gap-1"><span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+Manutenção</span>
+<span class="flex items-center gap-1"><span class="w-3 h-3 bg-red-500 rounded-full"></span> Inativo</span>
+</div>
+</header>
 
-        <div class="w-full bg-blue-950 text-white rounded-md text-center px-4 py-2 mt-auto cursor-pointer"
-          onclick="limparSessao()">
-          <a href="../index.html" class="no-underline text-white">
-            <h3 class="m-0 p-0">Sair</h3>
-          </a>
-        </div>
-      </div>
-    </div>
+<section class="bg-white p-6 rounded-md shadow-md w-full border border-gray-200">
+<h3 class="text-lg font-semibold mb-4 text-gray-700 flex items-center gap-2">
+<i class='bx bx-filter-alt'></i> Filtros de Busca
+</h3>
 
-    <div class="flex flex-col">
-      <!-- section de graficos -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="lg:col-span-2">
+<label class="text-xs font-bold text-gray-600 ml-1">Código</label>
+<div class="relative w-full mt-1">
+<input id="ipt_pesquisa" oninput="pesquisar()" type="text" placeholder="Pesquisar lote..."
+class="border border-gray-300 rounded-md pl-10 pr-4 py-2 w-full focus:outline-none focus:border-blue-500 transition-colors" />
+<i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl'></i>
+</div>
+</div>
 
-      <!-- nav de atalhos de busca -->
-      <aside class="ml-[250px] p-6 h-[120px] border-b">
-        <ul class="flex flex-wrap gap-15 w-full justify-center">
-          <li>
-            <p class="font-bold mb-1">Modelo ou codigo do lote:</p>
-            <div class="relative w-64">
-              <input id="ipt_pesquisa" oninput="pesquisar()" type="text" placeholder="Pesquisar..."
-                class="border rounded-md pl-10 pr-4 py-2 w-full" />
-              <img src="../assets/imagensIndex/icons8-pesquisar-24.png"
-                class="absolute left-2 top-1/2 -translate-y-1/2 w-5 h-5 opacity-70" />
-            </div>
-          </li>
+<div>
+<label class="text-xs font-bold text-gray-600 ml-1">Status</label>
+<select id="select_Status"
+class="border border-gray-300 rounded-md px-3 py-2 w-full mt-1 focus:outline-none focus:border-blue-500 bg-white"
+onchange="filtrar()">
+<option value="#">Todos</option>
+<option value="ati">Ativo</option>
+<option value="man">Manutenção</option>
+<option value="ina">Inativo</option>
+</select>
+</div>
 
-          <li>
-            <p class="font-bold mb-2">Status do lote:</p>
-            <div class="flex gap-6">
-              <select id="select_Status" class="border rounded-md pl-10 pr-2 py-2" onchange="filtrar()">
-                <option value="#">Selecione</option>
-                <option value="ati">Ativo</option>
-                <option value="man">Manutenção</option>
-                <option value="ina">Inativo</option>
-              </select>
-            </div>
-          </li>
+<div>
+<label class="text-xs font-bold text-gray-600 ml-1">Data Fabricação</label>
+<input type="date" id="data"
+class="border border-gray-300 rounded-md px-3 py-2 w-full mt-1 focus:outline-none focus:border-blue-500 text-gray-600"
+onchange="filtrarPorData()" />
+</div>
+</div>
 
-          <li>
-            <p class="font-bold mb-1">Ver em ordem:</p>
-            <select id="ordem" class="border rounded-md pl-10 pr-2 py-2" onclick="filtrar()">
-              <option value="#">Selecione</option>
-              <option value="asc">Crescente</option>
-              <option value="desc" selected>Decrescente</option>
-            </select>
-          </li>
-          <li>
-            <p class="font-bold mb-1">Modelo</p>
-            <select id="select_modelo" class="border rounded-md pl-1 pr-1 py-2" onclick="filtrarModelo()">
-              <option value="#">Selecione</option>
-            </select>
-          </li>
+<div class="mt-4 flex justify-end items-center gap-2 text-sm">
+<span class="font-bold text-gray-600">Ordenar por:</span>
+<select id="ordem"
+class="border-b border-gray-300 bg-transparent py-1 px-2 focus:outline-none focus:border-blue-500 cursor-pointer"
+onclick="filtrar()">
+<option value="desc" selected>Mais recentes</option>
+<option value="asc">Mais antigos</option>
+</select>
+</div>
+</section>
 
-          <li>
-            <p class="font-bold mb-1">Data de fabricação:</p>
-            <div>
-              <input type="date" id="data" class="border rounded-md pl-10 pr-2 py-2" onchange="filtrarPorData()" />
-            </div>
-          </li>
-        </ul>
-      </aside>
+<section class="w-full flex-grow flex flex-col">
+<div class="flex justify-between items-center mb-4 px-1">
+<h3 class="text-lg font-semibold text-gray-700">Listagem de Lotes</h3>
+<span class="text-gray-500 text-sm bg-white border border-gray-200 px-3 py-1 rounded shadow-sm"
+id="contadorLotes">Total: --</span>
+</div>
 
-      <!-- Exemplos de cards -->
-      <section class="ml-[250px] h-[850px] overflow-y-auto rounded-md p-4 bg-white">
-        <div class="grid grid-cols-1 gap-4" id="lotes">
-          <!-- <div class="bg-blue-800 p-4 rounded-lg text-white">Lote 1</div>
-          <div class="bg-black p-4 rounded-lg text-white">Lote 2</div>
-          <div class="bg-blue-800 p-4 rounded-lg text-white">Lote 3</div>
-          <div class="bg-black p-4 rounded-lg text-white">Lote 4</div>
-          <div class="bg-blue-800 p-4 rounded-lg text-white">Lote 5</div>
-          <div class="bg-black p-4 rounded-lg text-white">Lote 6</div>
-          <div class="bg-blue-800 p-4 rounded-lg text-white">Lote 7</div>
-          <div class="bg-black p-4 rounded-lg text-white">Lote 8</div> -->
-        </div>
-      </section>
-    </div>
-    <div id="criarEditar"></div>
-  </div>
-</body>
+<div
+class="grid grid-cols-5 gap-4 font-bold text-sm text-gray-600 uppercase tracking-wide bg-gray-200 rounded-md p-3 mb-3">
+<span>Código / Lote</span>
+<!-- <span>Modelo</span> -->
+<span>Data Fabricação</span>
+<span class="text-center">Status</span>
+<!-- <span class="text-right">Ações</span> -->
+</div>
+
+<div class="overflow-y-auto h-[600px] pr-2 space-y-3" id="lotes">
+</div>
+</section>
+
+</main>
+
+<div id="criarEditar"></div>
+</div>
 
 <script src="../js/dashboardEngenheiroQualidade.js"></script>
 <script src="../js/usuario/verificadorCargo.js"></script>
+<script src="../js/redirecionar.js"></script>
 
 <script>
-  // Esta função agora será chamada pelo listener abaixo
-  function carregarFotoUsuario() {
-    var imagemUsuarioNavbar = document.getElementById("imagemUsuarioNavbar");
-    if (imagemUsuarioNavbar) {
-      imagemUsuarioNavbar.innerHTML = `
-        <div class="rounded-md w-20 h-20 mb-2"
-          style="background-image: url(${sessionStorage.imagem}); background-size: cover; background-repeat: no-repeat; background-position: center;">
-        </div>
-      `;
-    }
-  }
+function carregarFotoUsuario() {
+var imagemUsuarioNavbar = document.getElementById("imagemUsuarioNavbar");
+if (imagemUsuarioNavbar && sessionStorage.imagem) {
+imagemUsuarioNavbar.innerHTML = `
+<div class="rounded-md w-20 h-20 mb-2 shadow-md border-2 border-white"
+style="background-image: url(${sessionStorage.imagem}); background-size: cover; background-repeat: no-repeat; background-position: center;">
+</div>
+`;
+}
+}
 
-  // Espera o HTML carregar antes de executar qualquer script
-  document.addEventListener("DOMContentLoaded", function () {
-    // --- CHAMA AS FUNÇÕES DE INICIALIZAÇÃO ---
-    verificarCargo(); // SUA FUNÇÃO PARA ESCONDER O LINK!
-    carregarFotoUsuario(); // Função do seu script inline
+document.addEventListener("DOMContentLoaded", function () {
+if (typeof verificarCargo === 'function') verificarCargo();
+carregarFotoUsuario();
+if (typeof listarLotes === "function") listarLotes();
 
-    // Chama a função que estava no 'onload'
-    if (typeof listarLotes === "function") {
-      listarLotes();
-    }
+var nomeEmpresa = sessionStorage.getItem("nome_ss");
+var cargo = sessionStorage.getItem("cargo_ss");
+var nomeProfissao = document.getElementById("nomeProfissao");
 
-    // --- PREENCHE OS DADOS DO USUÁRIO ---
-    // (Este código estava quebrado, pois rodava antes do 'nomeProfissao' existir)
-    var nomeEmpresa = sessionStorage.getItem("nome_ss");
-    var cargo = sessionStorage.getItem("cargo_ss");
-    var nomeProfissao = document.getElementById("nomeProfissao");
-
-    if (nomeProfissao) {
-      // Verifica se o elemento foi encontrado
-      nomeProfissao.innerHTML = `
-        <p class="font-bold text-blue-900">${nomeEmpresa}</p>
-        <p class="mb-4 text-blue-900">Cargo: ${cargo}</p>
-      `;
-    }
-  });
+if (nomeProfissao) {
+nomeProfissao.innerHTML = `
+<p class="font-bold text-blue-900 text-lg">${nomeEmpresa || 'Empresa'}</p>
+<p class="mb-4 text-gray-500 text-sm italic">${cargo || 'Cargo'}</p>
+`;
+}
+});
 </script>
-<script src="../js/redirecionar.js"></script>
+</body>
 
 </html>
